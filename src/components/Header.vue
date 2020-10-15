@@ -7,10 +7,10 @@
 <div class="sidebar" v-if="sidebar" @click="sidebar = !sidebar">
 	<div class="sidebar-box" @click.stop="">
 		<ul>
-			<router-link tag="li" to="/asd"><span class="mdi mdi-cart-outline"></span>Заказы</router-link>
-			<router-link tag="li" to="/asd"><span class="mdi mdi-bookmark-outline"></span>Справочники</router-link>
-			<router-link tag="li" to="/asd"><span class="mdi mdi-chart-line"></span>Аналитика</router-link>
-			<router-link tag="li" to="/asd"><span class="mdi mdi-account-multiple-outline"></span>Пользователи</router-link>
+			<router-link tag="li" to="/"><span class="mdi mdi-cart-outline"></span>Заказы</router-link>
+			<router-link tag="li" to="/"><span class="mdi mdi-bookmark-outline"></span>Справочники</router-link>
+			<router-link tag="li" to="/"><span class="mdi mdi-chart-line"></span>Аналитика</router-link>
+			<router-link tag="li" to="/"><span class="mdi mdi-account-multiple-outline"></span>Пользователи</router-link>
 		</ul>
 		
 	</div>
@@ -20,12 +20,14 @@
 	
 		<button class="sidebar-btn" @click="sidebar = !sidebar"><span class="mdi mdi-menu"></span>Меню</button>
 
-		<h4>SHELION CRM</h4>
+		<!-- <h4>SHELION CRM</h4> -->
+		<h4>2302366230Pv.</h4>
 
 		<div class="log-box" @click="accpuntMenu = !accpuntMenu">
-			<div class="text-right">
+			<div class="text-right" v-if="user !== null">
 				<p>Константин Тимофееев</p>
 				<p><strong>Администратор</strong></p>
+				<p>{{user.data.user_email}}</p>
 			</div>
 			<div class="avatar">
 				<span>KT</span>
@@ -50,12 +52,17 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
+
 export default{
 	data(){
 		return{
 			accpuntMenu: false,
 			sidebar: false
 		}
+	},
+	computed:{
+		...mapState('goods', ['user'])
 	}
 }
     

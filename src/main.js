@@ -29,9 +29,10 @@ new Vue({
   router,
   store,
   vuetify : new Vuetify({lang: {
-locales: { ru },
-current: 'ru'
-}}),
+	locales: { ru },
+	current: 'ru'
+  }}),
 })
+
 
 

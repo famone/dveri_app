@@ -88,9 +88,10 @@
         const { redirect = false } = this.$route.query
         const path = redirect ? decodeURI(redirect) : '/'
         this.$router.push({ path })
-      }catch(e){
+        }catch(e){
         console.log("Error:")
         console.log(e)
+        alert(e.message)
       }
 
 			// console.log(this.name)

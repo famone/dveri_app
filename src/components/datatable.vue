@@ -193,7 +193,7 @@
         {text: 'Желаемая дата монтажа', value: 'date_mont'},
         {text: 'Замерщик', value: 'zamershik.name'},
         {text: 'Статус бухгалтера', value: 'status_premia'},
-        {text: 'Цена диллера', value: 'id'},
+        {text: 'Цена диллера', value: 'cost_diler'},
         {text: 'Сумма премии', value: 'sum_premia'},
         {text: 'Премия ВДЗ', value: 'vdz_premia'},
         {text: 'Примечание продавца', value: 'prim_saler'},

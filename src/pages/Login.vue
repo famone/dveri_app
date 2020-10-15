@@ -23,7 +23,7 @@
       @blur="$v.pass.$touch()"
     ></v-text-field>
     <br>
-    <v-btn depressed color="primary" @click="submit()">ВОЙТИ</v-btn>
+    <v-btn depressed color="primary" @click="login()">ВОЙТИ</v-btn>
   </form>
 		</div>
 	</section>
@@ -72,14 +72,30 @@
     },
 
     methods: {
-      submit () {
+      async login() {
        if(this.$v.$invalid) {
 					this.$v.$touch();
 					return;
-			}
-			console.log(this.name)
-			console.log(this.pass)
-      this.$router.push('/')
+			 }
+
+       let form = {
+          username: this.name,
+          password: this.pass
+       }
+
+      try{
+        const result = await this.$store.dispatch('goods/login', form)
+        const { redirect = false } = this.$route.query
+        const path = redirect ? decodeURI(redirect) : '/'
+        this.$router.push({ path })
+      }catch(e){
+        console.log("Error:")
+        console.log(e)
+      }
+
+			// console.log(this.name)
+			// console.log(this.pass)
+   //    this.$router.push('/')
       },
     }
   }

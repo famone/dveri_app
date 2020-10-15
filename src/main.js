@@ -33,3 +33,5 @@ locales: { ru },
 current: 'ru'
 }}),
 })
+
+

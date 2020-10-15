@@ -25,6 +25,7 @@
 		<div class="log-box" @click="accpuntMenu = !accpuntMenu">
 			<div class="text-right">
 				<p>Константин Тимофееев</p>
+				<p><strong>Администратор</strong></p>
 			</div>
 			<div class="avatar">
 				<span>KT</span>
@@ -34,7 +35,7 @@
 	<div class="login-drop" @mouseleave="accpuntMenu = !accpuntMenu">
 				<ul>
 				<router-link tag="li" to="/logout"><span class="mdi mdi-account-outline"></span>Настройки</router-link>
-				<router-link tag="li" to="/logout"><span class="mdi mdi-arrow-left"></span>Выйти</router-link>
+				<router-link tag="li" to="/login"><span class="mdi mdi-arrow-left"></span>Выйти</router-link>
 				</ul>
 			</div>
 </transition>

@@ -6,15 +6,10 @@
 
 
 
+<router-view></router-view>
 
 
 
-
- <section>
-   <div class="container-fluid">
-      <datatable />
-   </div>
- </section>
 
 
 </v-app>
@@ -22,13 +17,12 @@
 
 <script>
 import Header from './components/Header.vue'
-import datatable from './components/datatable.vue'
 import {mapState} from 'vuex'
 import './assets/css/style.css';
 import axios from 'axios'
 
 export default {
-  components: {Header, datatable},
+  components: {Header},
  data(){
   return{
    

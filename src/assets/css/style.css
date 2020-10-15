@@ -5,6 +5,13 @@ body{
 .v-application--wrap{
 	background-color: #f2f2f2!important;
 }
+th{
+	white-space: nowrap;	
+}
+td{
+	white-space: nowrap;	
+}
+
 
 /*ADAPTIIIIIIIIIV*/
 

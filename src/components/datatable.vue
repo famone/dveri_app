@@ -1,29 +1,32 @@
 <template>
 	<v-data-table
     :headers="headers"
-    :items="desserts"
-    sort-by="calories"
+    :items="doors"
+    :loading="load"
+    sort-by="id"
+    single-line
     class="elevation-1"
-    @click:row="handleClick"
   >
-    <template v-slot:item.calories="{ item }">
+      <!-- @click:row="handleClick" -->
+    <template v-slot:item.id="{ item }">
       <v-chip
-        :color="getColor(item.calories)"
+        :color="getColor(item.id)"
         dark
       >
-        {{ item.calories }}
+        {{ item.id }}
       </v-chip>
     </template>
     <template v-slot:top>
       <v-toolbar
         flat
       >
-        <v-toolbar-title>My CRUD</v-toolbar-title>
+        <v-toolbar-title>Заказы</v-toolbar-title>
         <v-divider
           class="mx-4"
           inset
           vertical
         ></v-divider>
+        <v-toolbar-title>Сегодня: 14.10.2020</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-dialog
           v-model="dialog"
@@ -154,7 +157,6 @@
     <template v-slot:no-data>
       <v-btn
         color="primary"
-        @click="initialize"
       >
         Reset
       </v-btn>
@@ -164,24 +166,40 @@
 
 
 	<script>
+  import axios from 'axios'
   export default {
     data: () => ({
       dialog: false,
       dialogDelete: false,
+      load: true,
       headers: [
-        {
-          text: 'Продавец',
-          sortable: true,
-          value: 'name',
-        },
-        { text: 'Код', value: 'calories' },
-        { text: 'Время монтажа', value: 'fat' },
-        { text: 'БР', value: 'carbs' },
-        { text: 'Часть города', value: 'protein' },
-        { text: 'Адрес', value: 'protein' },
-        { text: 'Редактировать', value: 'actions', sortable: false },
+  
+         { text: 'Ред.', value: 'actions', sortable: false },
+        { text: 'Код', value: 'id' },
+        { text: 'Время монтажа', value: 'time_mont' },
+        { text: 'БР', value: 'brigada_mont.name' },
+        { text: 'Часть города', value: 'part_city' },
+        { text: 'Адрес', value: 'adres' },
+        {text: 'Продавец', sortable: true, value: 'saler'},
+        {text: 'Статус заявки', value: 'status'},
+        {text: 'Дата', value: 'date'},
+        {text: 'Телефон', value: 'phone'},
+        {text: 'ФИО', value: 'fio'},
+        {text: 'Модель двери продавца', value: 'model_saler.name'},
+        {text: 'Модель двери рук', value: 'id'},
+        {text: 'Размер двери', value: 'door_size'},
+        {text: 'Сторона откр', value: 'door_direction'},
+        {text: 'Размер проема', value: 'proem_size'},
+        {text: 'Желаемая дата монтажа', value: 'date_mont'},
+        {text: 'Замерщик', value: 'zamershik.name'},
+        {text: 'Статус бухгалтера', value: 'status_premia'},
+        {text: 'Цена диллера', value: 'id'},
+        {text: 'Сумма премии', value: 'sum_premia'},
+        {text: 'Премия ВДЗ', value: 'vdz_premia'},
+        {text: 'Примечание продавца', value: 'prim_saler'},
+        {text: 'Примечание Руководителя', value: 'prim_rukvod'},
       ],
-      desserts: [],
+      doors: [],
       editedIndex: -1,
       editedItem: {
         name: '',
@@ -215,52 +233,48 @@
     },
 
     created () {
-      this.initialize()
+      
+
+
+      // api 
+
+        this.load = true
+      axios
+      .get('https://door.webink.site/wp-json/door/v1/get/sales')
+      .then(response => {
+        console.log(response.data)
+       this.doors = response.data
+
+       this.load = false
+      })
+
+
     },
 
     methods: {
-    	handleClick(value){
-    		console.log(value.calories)
-    		this.$router.push('/' + value.calories)
-    	},
+    	// handleClick(value){
+    	// 	console.log(value.calories)
+    	// 	this.$router.push('/' + value.calories)
+    	// },
     getColor (calories) {
         if (calories > 400) return 'red'
         else if (calories > 200) return 'orange'
         else return 'green'
       },
-      initialize () {
-        this.desserts = [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-          {
-            name: 'Otsosi',
-            calories: 2349,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-          },
-        ]
-      },
-
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.doors.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.doors.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialogDelete = true
       },
 
       deleteItemConfirm () {
-        this.desserts.splice(this.editedIndex, 1)
+        this.doors.splice(this.editedIndex, 1)
         this.closeDelete()
       },
 
@@ -282,12 +296,14 @@
 
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+          Object.assign(this.doors[this.editedIndex], this.editedItem)
         } else {
-          this.desserts.push(this.editedItem)
+          this.doors.push(this.editedItem)
         }
         this.close()
       },
+
+
     },
   }
 </script>

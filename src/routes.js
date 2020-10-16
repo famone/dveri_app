@@ -4,28 +4,8 @@ import Home from './pages/Home.vue'
 import Login from './pages/Login.vue'
 import store from './store'
 
-// export default new VueRouter({
-// 	routes: [
-// 		{
-// 			path: '/',
-// 			component: Home,
-// 			meta: {
-// 		      requiresAuth: true
-// 		    }
-// 		},
-// 		{
-// 			path: '/login',
-// 			component: Login
-// 		}
-// 	],
-// 	mode: 'history',
-// 	scrollBehavior (to, from, savedPosition) {
-//   		return { x: 0, y: 0 }
-// 	}
-// })
 
-
- const routes = [
+const routes = [
 		{
 			path: '/',
 			component: Home,
@@ -50,23 +30,22 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
+<<<<<<< HEAD
     // this route requires auth, check if user is logged in
     // if not, redirect to login page.
     if (!store.goods.state.user) {
+=======
+
+    if (!store.state.goods.user){
+>>>>>>> 8a919d5bf58e4edf6b7fae4ce21d3589ad6f9d31
       next({
-        path: '/login',
-        query: { redirect: to.fullPath }
+        path: '/login'
       })
-    } else {
-      // we have a state.user object but
-      // we need to check if the token is still valid
+    } else { 
       try{
-        const { status } = await store.dispatch('goods/validate')
-        // user is logged in with a valid token
+        const { status } = await store.dispatch('goods/validate') 
         next()
       }catch(e){
-        // the token is invalid so we will have the user login again
-        // clear the token and user info
         store.commit('goods/DELETE_USER')
         next({
           path: '/login',
@@ -75,7 +54,6 @@ router.beforeEach(async (to, from, next) => {
       }
     }
   } else {
-    // this is not a protected route
     next()
   }
 })

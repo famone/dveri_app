@@ -20,16 +20,16 @@
 	
 		<button class="sidebar-btn" @click="sidebar = !sidebar"><span class="mdi mdi-menu"></span>Меню</button>
 
-		<!-- <h4>SHELION CRM</h4> -->
-		<h4>2302366230Pv.</h4>
+		<h4>SHELION CRM</h4>
+
 
 		<div class="log-box" @click="accpuntMenu = !accpuntMenu">
 			<div class="text-right" v-if="user !== null">
-				<p>Константин Тимофееев</p>
-				<p><strong>Администратор</strong></p>
+				<p>{{user.data.role}}</p>
+				<p><strong>{{user.data.role}}</strong></p>
 				<p>{{user.data.user_email}}</p>
 			</div>
-			<div class="avatar">
+			<div class="avatar" v-if="user !== null">
 				<span>KT</span>
 			</div>
 

@@ -2,8 +2,12 @@
 
 <template>
 	<section id="logSec" class="text-center">
+    <v-snackbar v-model="snackbar" :timeout="2000" :color="snackbarColor" top>
+      {{ snackbarContent }}
+    </v-snackbar>
 		<div class="login-box">
-			<form>
+		
+    <form @submit.prevent="login()">
     <v-text-field
       v-model="name"
       :error-messages="nameErrors"
@@ -23,7 +27,7 @@
       @blur="$v.pass.$touch()"
     ></v-text-field>
     <br>
-    <v-btn depressed color="primary" @click="login()">ВОЙТИ</v-btn>
+    <v-btn depressed color="primary" type='submit'>ВОЙТИ</v-btn>
   </form>
 		</div>
 	</section>
@@ -53,6 +57,9 @@
         'Item 2',
       ],
       checkbox: false,
+      snackbar: false,
+      snackbarContent: "",
+      snackbarColor: "",
     }),
 
     computed: {
@@ -83,15 +90,18 @@
           password: this.pass
        }
 
+
       try{
         const result = await this.$store.dispatch('goods/login', form)
         const { redirect = false } = this.$route.query
         const path = redirect ? decodeURI(redirect) : '/'
-        this.$router.push({ path })
+        this.$router.push('/');
+        
         }catch(e){
-        console.log("Error:")
-        console.log(e)
-        alert(e.message)
+            this.snackbarColor = "error";
+            this.snackbar = true;
+            this.snackbarContent = e.message;        
+
       }
 
 			// console.log(this.name)

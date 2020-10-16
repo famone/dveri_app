@@ -9,7 +9,7 @@ const goods = {
 	mutations: {
 		SET_USER(state, user) {
       		state.user = user
-      		console.log(user)
+      		localStorage.setItem('user',JSON.stringify(user));
     	},
     	DELETE_USER(state) {
       		state.user = null
@@ -24,24 +24,22 @@ const goods = {
 	          	commit('SET_USER', data)
 	          	resolve(data)
 	          })
-	          
+	          	
 	        }catch(e){
-	        	
-	          reject(e.data);
+	          reject(e.response);
 	        }
 	      })
-	      
-
-
-
 	    },
 	    validate({ state }) {
-      return axios({
-        url: `https://door.webink.site/wp-json/jwt-auth/v1/token/validate`, 
-        method: 'post',
-        headers: {
-          'Authorization': `Bearer ${state.user.token}`
-        }
+
+	      let user = JSON.parse(localStorage.getItem('user')).data.token ? JSON.parse(localStorage.getItem('user')).data.token : state.user.data.token
+
+	      return axios({
+	        url: `https://door.webink.site/wp-json/jwt-auth/v1/token/validate`, 
+	        method: 'post',
+	        headers: {
+	          'Authorization': `Bearer ${user}`
+	        }
       })
     }
 	},

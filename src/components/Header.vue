@@ -126,6 +126,7 @@ p{
 	border-radius: 5px;
 	box-shadow: 0 4px 20px 0 rgba(0,0,0,.2);
 	top: 120%;
+	min-width: 140px;
 	z-index: 2;
 	background-color: #fff;
 	right: 0;

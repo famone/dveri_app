@@ -5,84 +5,80 @@ const auth = {
     namespaced: true,
     state: {
         user: null,
-        token: localStorage.getItem('user-token') || '',
-        status: "",
-        authenticated: false
+        token: null
     },
 
     getters: {
-        getUser: state => state.user,
-        getAuthenticated: state => state.authenticated,
-        authStatus: state => state.status,
+        getUser(state) {
+            return state.user
+        },
+        getAuthenticated(state) {
+            return state.token && state.user
+        }
     },
 
     mutations: {
-        AUTH_LOADING: (state) => {
-            state.status = 'loading'
-        },
-        AUTH_SUCCESS: (state, token) => {
-            state.status = 'success'
-            state.token = token
-        },
-        AUTH_ERROR: (state) => {
-            state.status = 'error'
+        SET_TOKEN(state, token) {
+            state.token = token;
         },
 
         SET_USER(state, user) {
             state.user = user;
         },
-
-        SET_AUTHENTICATED(state, payload) {
-            state.authenticated = payload;
-        }
     },
 
     actions: {
         async AUTH_REQUEST({ commit, dispatch }, payload) {
-            commit("AUTH_LOADING");
             try {
-
-                if (sessionStorage.getItem("token")) {
-                    const token = JSON.parse(sessionStorage.getItem("token"));
-
-                    commit("AUTH_SUCCESS", token);
-
-                    dispatch("VALIDATE");
-                }
-
-                else {
-                    const { data } = await axios.post(`https://door.webink.site/wp-json/jwt-auth/v1/token`, payload);
-
-
-                    sessionStorage.setItem('user-token', JSON.stringify(data.token));
-
-                    commit("AUTH_SUCCESS", data.token);
-                    commit("SET_USER", data);
-                    dispatch('VALIDATE')
-                }
+                const { data } = await axios.post(`https://door.webink.site/wp-json/jwt-auth/v1/token`, payload)
+                return dispatch('VALIDATE', data)
             }
-
             catch (err) {
-                commit("AUTH_ERROR");
+                const snackbar = {
+                    state: true,
+                    content: err.message,
+                    color: 'error',
+                    timeout: 2000
+                };
+
+                dispatch("ui/UPDATE_SNACKBAR", snackbar, { root: true })
             }
         },
 
-        async VALIDATE({ commit, getters }) {
-            const requestState = null;
+        async VALIDATE({ commit, state }, user) {
+            if (user) {
+                commit("SET_TOKEN", user.token);
+                commit("SET_USER", user);
+            }
 
-            const { status } = await axios({
-                url: `https://door.webink.site/wp-json/jwt-auth/v1/token/validate`,
-                method: 'post',
-                headers: {
-                    'Authorization': `Bearer ${getters.token}`
-                }
-            });
+            if (!state.user) {
+                return
+            }
 
-            console.log(status);
+            try {
+                const response = await axios({
+                    url: `https://door.webink.site/wp-json/jwt-auth/v1/token/validate`,
+                    method: 'post',
+                    headers: {
+                        'Authorization': `Bearer ${user.token}`
+                    }
+                });
 
-            status === 200 ? requestState = true : requestState = false
+                localStorage.setItem("user", JSON.stringify(user));
+                commit("SET_TOKEN", user.token);
+                commit("SET_USER", user);
+            }
+            catch (err) {
+                localStorage.removeItem("user");
+                commit("SET_TOKEN", null);
+                commit("SET_USER", null);
+            }
+        },
 
-            commit("SET_AUTHENTICATED", requestState)
+        async SIGN_OUT({ commit }) {
+            localStorage.removeItem("user");
+            commit("SET_TOKEN", null);
+            commit("SET_USER", null);
         }
     },
 }

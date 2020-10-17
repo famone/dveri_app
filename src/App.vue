@@ -6,19 +6,10 @@
 </template>
 
 <script>
-import Header from "./components/Header.vue";
-import { mapState } from "vuex";
+import Header from "./components/Header";
 import "./assets/css/style.css";
-import axios from "axios";
 
 export default {
   components: { Header },
-  data() {
-    return {};
-  },
 };
 </script>
-
-<style>
-</style>
-

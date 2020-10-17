@@ -3,12 +3,12 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-import goods from './goods'
 import auth from './auth'
+import ui from './ui'
 
 export default new Vuex.Store({
 	modules: {
-		goods,
-		auth
+		auth,
+		ui
 	}
-}) 
+})

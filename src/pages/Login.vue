@@ -2,8 +2,13 @@
 
 <template>
   <section id="logSec" class="text-center">
-    <v-snackbar v-model="snackbar" :timeout="2000" :color="snackbarColor" top>
-      {{ snackbarContent }}
+    <v-snackbar
+      v-model="snackbar.state"
+      :timeout="snackbar.timeout"
+      :color="snackbar.color"
+      top
+    >
+      {{ snackbar.content }}
     </v-snackbar>
     <div class="login-box">
       <form @submit.prevent="login">
@@ -31,11 +36,10 @@
   </section>
 </template>
 
-
-
 <script>
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   mixins: [validationMixin],
@@ -51,12 +55,15 @@ export default {
     select: null,
     items: ["Item 1", "Item 2"],
     checkbox: false,
-    snackbar: false,
-    snackbarContent: "",
-    snackbarColor: "",
+    // snackbar: false,
+    // snackbarContent: "",
+    // snackbarColor: "",
   }),
 
   computed: {
+    ...mapGetters({
+      snackbar: "ui/getSnackbar",
+    }),
     nameErrors() {
       const errors = [];
       if (!this.$v.name.$dirty) return errors;
@@ -72,6 +79,9 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      AUTH_REQUEST: "auth/AUTH_REQUEST",
+    }),
     login() {
       if (this.$v.$invalid) {
         this.$v.$touch();
@@ -83,20 +93,9 @@ export default {
         password: this.pass,
       };
 
-      this.$store.dispatch("auth/AUTH_REQUEST", form).then(() => {
-        this.$router.push("/");
+      this.AUTH_REQUEST(form).then(() => {
+        this.$router.replace("/");
       });
-      // const { redirect = false } = this.$route.query;
-      // const path = redirect ? decodeURI(redirect) : "/";
-      // this.$router.push("/");
-
-      // this.snackbarColor = "error";
-      // this.snackbar = true;
-      // this.snackbarContent = e.message;
-
-      // console.log(this.name)
-      // console.log(this.pass)
-      //    this.$router.push('/')
     },
   },
 };

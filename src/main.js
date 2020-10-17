@@ -21,7 +21,8 @@ Vue.use(Vuelidate)
 Vue.use(require('vue-cookies'))
 import ru from 'vuetify/es5/locale/ru'
 
-
+const user = JSON.parse(localStorage.getItem("user"))
+store.dispatch("auth/VALIDATE", user);
 
 new Vue({
   el: '#app',
@@ -35,6 +36,3 @@ new Vue({
     }
   }),
 })
-
-
-

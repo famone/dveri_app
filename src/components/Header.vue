@@ -29,36 +29,35 @@
 
     <div class="log-box" @click="accpuntMenu = !accpuntMenu">
       <div class="text-right" v-if="user !== null">
-        <p>{{ user.role }}</p>
+        <p>{{ user.roles[0] }}</p>
         <p>
-          <strong>{{ user.role }}</strong>
+          <strong>{{ user.user_display_name }}</strong>
         </p>
         <p>{{ user.user_email }}</p>
       </div>
       <div class="avatar" v-if="user !== null">
-        <span>KT</span>
+        <span>{{ user.user_nicename }}</span>
       </div>
 
       <transition v-if="accpuntMenu" name="slide-fade" mode="out-in">
-        <div class="login-drop" @mouseleave="accpuntMenu = !accpuntMenu">
+        <div class="login-drop" @focus="accpuntMenu = !accpuntMenu">
           <ul>
             <router-link tag="li" to="/logout"
               ><span class="mdi mdi-account-outline"></span
               >Настройки</router-link
             >
-            <router-link tag="li" to="/login"
-              ><span class="mdi mdi-arrow-left"></span>Выйти</router-link
+            <span tag="li" @click="logout"
+              ><span class="mdi mdi-arrow-left"></span>Выйти</span
             >
           </ul>
         </div>
       </transition>
     </div>
-    
   </header>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
@@ -69,6 +68,18 @@ export default {
   },
   computed: {
     ...mapGetters({ user: "auth/getUser" }),
+  },
+
+  methods: {
+    ...mapActions({
+      singOut: "auth/SIGN_OUT",
+    }),
+
+    logout() {
+      this.singOut().then(() => {
+        this.$router.replace("/login");
+      });
+    },
   },
 };
 </script>

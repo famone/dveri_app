@@ -15,21 +15,8 @@
 				<div class="col-lg-12">
 					<h3><span class="mdi mdi-account-multiple-outline"></span> Персональная информация:</h3>
 				</div>
-				<div class="col-lg-3">
-					<v-select :items="items" label="Продавец"></v-select>
-				</div>
-				<div class="col-lg-3">
-					<v-text-field label="Улица"></v-text-field>
-				</div>
-				<div class="col-lg-3">
-					<v-text-field label="Номер дома"></v-text-field>
-				</div>
-				<div class="col-lg-3">
-					<v-text-field label="Квартира"></v-text-field>
-				</div>
-				<!--  -->
-				<div class="col-lg-3">
-					<v-text-field label="Этаж"></v-text-field>
+				<div class="col-lg-6">
+					<v-text-field label="ФИО"></v-text-field>
 				</div>
 				<div class="col-lg-3">
 					<v-text-field label="Телефон" v-mask="'+7 (###) ###-##-##'"></v-text-field>
@@ -38,9 +25,21 @@
 					<v-text-field label="Дополнительный телефон" v-mask="'+7 (###) ###-##-##'"></v-text-field>
 				</div>
 				<div class="col-lg-3">
-					<v-text-field label="ФИО"></v-text-field>
+					<v-text-field label="Улица"></v-text-field>
 				</div>
-				<div class="col-lg-4">
+				<div class="col-lg-2">
+					<v-text-field label="Номер дома"></v-text-field>
+				</div>
+				<div class="col-lg-2">
+					<v-text-field label="Квартира"></v-text-field>
+				</div>
+				<!--  -->
+				<div class="col-lg-2">
+					<v-text-field label="Этаж"></v-text-field>
+				</div>
+				
+				
+				<div class="col-lg-3">
 					<p>Часть города:</p>
 					<v-radio-group v-model="sideOpen" row>
 				      <v-radio label="Север" value="Север"></v-radio>
@@ -67,33 +66,8 @@
 					<v-select :items="items" label="Модель двери руководителя"></v-select>
 				</div>
 				<!--  -->
+			
 				<div class="col-lg-3">
-					<v-menu
-			        ref="menu"
-			        v-model="menu"
-			        :close-on-content-click="false"
-			        :return-value.sync="dateZamer"
-			        transition="scale-transition"
-			        offset-y
-			        min-width="290px">
-					        <template v-slot:activator="{ on, attrs }">
-					          <v-text-field
-					            v-model="dateZamer"
-					            label="Желаемая дата замера"
-					            prepend-icon="mdi-calendar"
-					            readonly
-					            v-bind="attrs"
-					            v-on="on"
-					          ></v-text-field>
-					        </template>
-			        <v-date-picker v-model="dateZamer" no-title scrollable>
-			          <v-spacer></v-spacer>
-			          <v-btn text color="primary" @click="menu = false">Отмена</v-btn>
-			          <v-btn text color="primary" @click="$refs.menu.save(dateZamer)">Ок</v-btn>
-			        </v-date-picker>
-			      </v-menu>
-				</div>
-				<div class="col-lg-2">
 					<v-select :items="items" label="Размер двери"></v-select>
 				</div>
 				<div class="col-lg-3">
@@ -103,10 +77,10 @@
 				      <v-radio label="Правая" value="Правая"></v-radio>
 				    </v-radio-group>
 				</div>
-				<div class="col-lg-2">
+				<div class="col-lg-3">
 					<v-text-field label="Размер проема"></v-text-field>
 				</div>
-				<div class="col-lg-2">
+				<div class="col-lg-3">
 					<v-text-field label="Номер двери"></v-text-field>
 				</div>
 
@@ -119,35 +93,7 @@
 					<v-textarea label="Примечание руководителя:" rows="1" prepend-icon="mdi-comment">
 					</v-textarea>
 				</div>
-				<div class="col-lg-4">
-					<v-menu
-			        ref="menu"
-			        v-model="menu"
-			        :close-on-content-click="false"
-			        :return-value.sync="dateZamer"
-			        transition="scale-transition"
-			        offset-y
-			        min-width="290px">
-					        <template v-slot:activator="{ on, attrs }">
-					          <v-text-field
-					            v-model="dateZamer"
-					            label="Желаемая дата замера"
-					            prepend-icon="mdi-calendar"
-					            readonly
-					            v-bind="attrs"
-					            v-on="on"
-					          ></v-text-field>
-					        </template>
-			        <v-date-picker v-model="dateZamer" no-title scrollable>
-			          <v-spacer></v-spacer>
-			          <v-btn text color="primary" @click="menu = false">Отмена</v-btn>
-			          <v-btn text color="primary" @click="$refs.menu.save(dateZamer)">Ок</v-btn>
-			        </v-date-picker>
-			      </v-menu>
-				</div>
-				<div class="col-lg-4">
-					<v-select :items="items" label="Замерщик"></v-select>
-				</div>
+				
 			</div>
 
 			<!--  -->
@@ -214,6 +160,32 @@
 				</div>
 				<div class="col-lg-4">
 					<v-text-field label="Предоплата"></v-text-field>
+				</div>
+					<div class="col-lg-3">
+					<v-menu
+			        ref="menu"
+			        v-model="menu"
+			        :close-on-content-click="false"
+			        :return-value.sync="dateZamer"
+			        transition="scale-transition"
+			        offset-y
+			        min-width="290px">
+					        <template v-slot:activator="{ on, attrs }">
+					          <v-text-field
+					            v-model="dateZamer"
+					            label="Желаемая дата замера"
+					            prepend-icon="mdi-calendar"
+					            readonly
+					            v-bind="attrs"
+					            v-on="on"
+					          ></v-text-field>
+					        </template>
+			        <v-date-picker v-model="dateZamer" no-title scrollable>
+			          <v-spacer></v-spacer>
+			          <v-btn text color="primary" @click="menu = false">Отмена</v-btn>
+			          <v-btn text color="primary" @click="$refs.menu.save(dateZamer)">Ок</v-btn>
+			        </v-date-picker>
+			      </v-menu>
 				</div>
 				<div class="col-lg-4">
 					<v-text-field label="Скидка"></v-text-field>

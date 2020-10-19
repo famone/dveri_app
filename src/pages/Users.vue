@@ -6,7 +6,7 @@
 			</div>
 			<div class="row">
 				<div class="col-lg-12">
-					<usertable />
+					<usertable :users="users" :load="load" />
 				</div>
 			</div>
 		</div>
@@ -14,8 +14,24 @@
 </template>
 
 <script>
+import axios from 'axios'
 import usertable from '../components/usertable.vue'
 	export default{
-		components: {usertable}
+		data(){
+			return{
+				users: [],
+				load: true
+			}
+		},
+		components: {usertable},
+		created(){
+			axios
+			.get('https://door.webink.site/wp-json/door/v1/get/users')
+			.then(response =>{
+				console.log(response.data)
+				this.users = response.data
+				this.load = false
+			})
+		}
 	}
 </script>

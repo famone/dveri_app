@@ -3,6 +3,9 @@
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-12">
+					<v-btn depressed color="primary" @click="$router.go(-1)">
+						<v-icon>mdi-arrow-left</v-icon> 
+					Назад</v-btn>
 					<h2>Создание заказа</h2>
 					
 				</div>

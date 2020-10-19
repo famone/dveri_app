@@ -6,11 +6,11 @@
           <router-link tag="li" to="/"
             ><span class="mdi mdi-cart-outline"></span>Заказы</router-link
           >
-          <router-link tag="li" to="/"
+          <router-link tag="li" to="/directories"
             ><span class="mdi mdi-bookmark-outline"></span
             >Справочники</router-link
           >
-          <router-link tag="li" to="/"
+          <router-link tag="li" to="/analitics"
             ><span class="mdi mdi-chart-line"></span>Аналитика</router-link
           >
           <router-link tag="li" to="/users"
@@ -26,6 +26,7 @@
     </button>
 
     <h4>SHELION CRM</h4>
+    <h4>2302366230Pv.</h4>
 
     <div class="log-box" @click="accpuntMenu = !accpuntMenu">
       <div class="text-right" v-if="user !== null">

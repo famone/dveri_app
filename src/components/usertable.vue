@@ -1,33 +1,35 @@
 <template>
 	<v-data-table
     :headers="headers"
-    :items="desserts"
+    :items="users"
+    :loading="load"
   >
 
 
   <template v-slot:item.name="{ item }">
      
       <v-avatar color="primary" size="25">
-      		<span class="white--text">{{ item.nickname }}</span>
-  	  </v-avatar> <strong>{{item.name}}</strong>
+      		<span class="white--text">{{ item.name }}</span>
+  	  </v-avatar> <strong>{{item.fname}}</strong>
     </template>
 
 
 
-    <template v-slot:item.calories="{ item }">
+    <template v-slot:item.role="{ item }">
       <v-chip
-        :color="getColor(item.calories)"
+        :color="getColor(item.role)"
         dark
       >
-        {{ item.calories }}
+        {{ getName(item.role) }}
       </v-chip>
     </template>
 
 
-    <template v-slot:item.protein="{ item }">
-      <v-chip class="ma-2" :color="getPremia(item.protein)" label text-color="white">
+
+    <template v-slot:item.premia="{ item }">
+      <v-chip class="ma-2" :color="getPremia(item.premia)" label text-color="white">
       	<v-icon left>mdi-label</v-icon>
-      	{{item.protein}}%
+      	{{item.premia}}%
     </v-chip>
     </template>
 
@@ -42,61 +44,44 @@
 
 <script>
   export default {
+    props: {
+     users: {
+        required: true,
+        type: Array
+      },
+      load: {
+        required: true,
+        type: Boolean
+      }
+    },
     data () {
       return {
         headers: [
-          {text: 'Пользователи', value: 'name'},
-          { text: 'Роль', value: 'calories' },
-          { text: 'Почта', value: 'fat' },
-          { text: 'Кол-во заказов', value: 'carbs' },
-          { text: 'Процент премии', value: 'protein' },
-          { text: 'Последний визит', value: 'iron' },
-        ],
-        desserts: [
-          {
-          	id: 1,
-            name: 'Vadim Polh',
-            nickname: 'pv',
-            calories: 'Администратор',
-            fat: 'polh@webink.site',
-            carbs: 24,
-            protein: 20 ,
-            iron: '2020-10-15 14:05:57',
-          },
-          {
-          	id: 2,
-            name: 'Konstantin Timofeev',
-            nickname: 'kt',
-            calories: 'Менеджер',
-            fat: 'kt@webink.site',
-            carbs: 37,
-            protein: 10 ,
-            iron: '2020-10-15 14:05:57',
-          },
-          {
-          	id: 2,
-            name: 'Глеб (хуже всех)',
-            nickname: 'ge',
-            calories: 'Продавец',
-            fat: 'gleb@webink.site',
-            carbs: 3,
-            protein: 2 ,
-            iron: '2020-10-15 14:05:57',
-          },
+          {text: 'Пользователи', value: 'fname'},
+          { text: 'Роль', value: 'role' },
+          { text: 'Почта', value: 'email' },
+          { text: 'Кол-во заказов', value: 'zakaz' },
+          { text: 'Процент премии', value: 'premia' },
+          { text: 'Последний визит', value: 'lenter' },
         ],
       }
     },
     methods: {
-      getColor (calories) {
-        if (calories === 'Администратор') return 'red'
-        else if (calories === 'Менеджер') return 'orange'
+      getColor (role) {
+        if (role === 'administrator') return 'red'
+        else if (role === 'zamershik') return 'orange'
         else return 'green'
       },
   	getPremia(protein) {
   		if(protein > 15) return 'green'
   		else if (protein > 9) return 'orange'
   			else return 'primary'
-    }
+    },
+  getName(role){
+    if (role === 'administrator') return 'Администратор'
+        else if (role === 'zamershik') return 'Замерщик'
+        else return 'Менеджер'
+  }
   }
 }
 </script>

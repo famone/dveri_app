@@ -4,7 +4,8 @@ import Catalog from '../pages/Catalog/Catalog';
 import Users from '../pages/Users';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
-import Neworder from '../pages/Neworder.vue'
+import Neworder from '../pages/Neworder';
+import Directories from '../pages/Directories'
 
 const routes = [
   {
@@ -37,6 +38,10 @@ const routes = [
   {
     path: '/neworder',
     component: Neworder
+  },
+  {
+    path: '/directories',
+    component: Directories
   },
 ]
 

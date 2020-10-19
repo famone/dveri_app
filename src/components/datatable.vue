@@ -27,7 +27,10 @@
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-toolbar-title>Сегодня: 18.10.2020</v-toolbar-title>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
+        <router-link tag="a" to="/neworder">
+          <v-btn depressed color="primary"><v-icon>mdi-playlist-plus</v-icon> Новый заказ</v-btn>
+        </router-link>
+       <!--  <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
             <v-btn color="primary" dark class="mb-2" v-bind="attrs" v-on="on">
               Добавить
@@ -99,7 +102,7 @@
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
-        </v-dialog>
+        </v-dialog> -->
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">

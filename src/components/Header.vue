@@ -2,7 +2,7 @@
   <header>
     <div class="sidebar" v-if="sidebar" @click="sidebar = !sidebar">
       <div class="sidebar-box" @click.stop="">
-        <ul>
+        <ul @click="sidebar = !sidebar">
           <router-link tag="li" to="/"
             ><span class="mdi mdi-cart-outline"></span>Заказы</router-link
           >
@@ -13,7 +13,7 @@
           <router-link tag="li" to="/"
             ><span class="mdi mdi-chart-line"></span>Аналитика</router-link
           >
-          <router-link tag="li" to="/"
+          <router-link tag="li" to="/users"
             ><span class="mdi mdi-account-multiple-outline"></span
             >Пользователи</router-link
           >
@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <button class="sidebar-btn" @click="sidebar = !sidebar">
+    <button class="sidebar-btn" @click="sidebar = !sidebar" v-if="user !== null">
       <span class="mdi mdi-menu"></span>Меню
     </button>
 
@@ -40,15 +40,14 @@
       </div>
 
       <transition v-if="accpuntMenu" name="slide-fade" mode="out-in">
-        <div class="login-drop" @focus="accpuntMenu = !accpuntMenu">
+        <div class="login-drop" @mouseleave="accpuntMenu = !accpuntMenu" @click="accpuntMenu = !accpuntMenu">
           <ul>
             <router-link tag="li" to="/logout"
               ><span class="mdi mdi-account-outline"></span
               >Настройки</router-link
             >
-            <span tag="li" @click="logout"
-              ><span class="mdi mdi-arrow-left"></span>Выйти</span
-            >
+            <li  @click="logout"
+              ><span class="mdi mdi-arrow-left"></span>Выйти</li>
           </ul>
         </div>
       </transition>

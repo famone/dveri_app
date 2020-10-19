@@ -9,15 +9,23 @@
   >
     <!-- @click:row="handleClick" -->
     <template v-slot:item.id="{ item }">
-      <v-chip :color="getColor(item.id)" dark>
+      <v-chip :color="getColor(item.status)" dark>
         {{ item.id }}
       </v-chip>
     </template>
+
+    <template v-slot:item.adres="{ item }">
+      <v-avatar :color="getPart(item.part_city)" size="15"></v-avatar>
+         {{ item.adres }}
+      
+    </template>
+
+
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title>Заказы</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
-        <v-toolbar-title>Сегодня: 14.10.2020</v-toolbar-title>
+        <v-toolbar-title>Сегодня: 18.10.2020</v-toolbar-title>
         <v-spacer></v-spacer>
         <v-dialog v-model="dialog" max-width="500px">
           <template v-slot:activator="{ on, attrs }">
@@ -114,24 +122,21 @@ export default {
     load: true,
     headers: [
       { text: "Ред.", value: "actions", sortable: false },
-      { text: "Код", value: "id" },
+      { text: "№", value: "id" },
       { text: "Время монтажа", value: "time_mont" },
+      { text: "Желаемая дата монтажа", value: "date_mont" },
       { text: "БР", value: "brigada_mont.name" },
-      { text: "Часть города", value: "part_city" },
       { text: "Адрес", value: "adres" },
-      { text: "Продавец", sortable: true, value: "saler" },
-      { text: "Статус заявки", value: "status" },
-      { text: "Дата", value: "date" },
-      { text: "Телефон", value: "phone" },
       { text: "ФИО", value: "fio" },
+      { text: "Телефон", value: "phone" },
+      { text: "Продавец", sortable: true, value: "saler" },
+      { text: "Дата", value: "date" },
       { text: "Модель двери продавца", value: "model_saler.name" },
       { text: "Модель двери рук", value: "id" },
       { text: "Размер двери", value: "door_size" },
       { text: "Сторона откр", value: "door_direction" },
       { text: "Размер проема", value: "proem_size" },
-      { text: "Желаемая дата монтажа", value: "date_mont" },
       { text: "Замерщик", value: "zamershik.name" },
-      { text: "Статус бухгалтера", value: "status_premia" },
       { text: "Цена диллера", value: "cost_diler" },
       { text: "Сумма премии", value: "sum_premia" },
       { text: "Премия ВДЗ", value: "vdz_premia" },
@@ -189,10 +194,15 @@ export default {
     // 	console.log(value.calories)
     // 	this.$router.push('/' + value.calories)
     // },
-    getColor(calories) {
-      if (calories > 400) return "red";
-      else if (calories > 200) return "orange";
+    getColor(status) {
+      if (status === 'pending') return "red";
+      else if (status === 'processing') return "orange";
       else return "green";
+    },
+    getPart(part){
+      if (part === 'Север') return "primary";
+      else if(part === 'Юг') return "orange";
+      else return "grey"
     },
     editItem(item) {
       this.editedIndex = this.doors.indexOf(item);

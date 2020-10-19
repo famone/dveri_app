@@ -13,6 +13,46 @@ td{
 }
 
 
+.v-data-table__wrapper{
+	padding-bottom: 15px;
+}
+
+.v-data-table__wrapper::-webkit-scrollbar {
+	height: 5px;
+	margin:0;
+	border-radius: 20px;
+}
+
+/* Track */
+.v-data-table__wrapper::-webkit-scrollbar-track {
+	background: #ececec;
+	border-radius: 20px;
+}
+
+/* Handle */
+.v-data-table__wrapper::-webkit-scrollbar-thumb {
+	background: #1976d2;
+	border-radius: 20px;
+}
+
+/* Handle on hover */
+.v-data-table__wrapper::-webkit-scrollbar-thumb:hover {
+	background: #1976d2;
+	border-radius: 20px;
+}
+
+
+.shad-box{
+	box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.1);
+  	margin: 20px;
+  	border-radius: 10px;
+  	padding: 30px 30px;
+}
+h3{
+	margin: 0;
+	margin-bottom: 20px;
+}
+
 /*ADAPTIIIIIIIIIV*/
 
 

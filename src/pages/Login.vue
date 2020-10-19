@@ -8,7 +8,8 @@
       :color="snackbar.color"
       top
     >
-      {{ snackbar.content }}
+      <!-- {{ snackbar.content }}  -->
+      Некоректный пароль или логин
     </v-snackbar>
     <div class="login-box">
       <form @submit.prevent="login">

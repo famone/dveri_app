@@ -6,6 +6,7 @@ import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Neworder from '../pages/Neworder';
 import Directories from '../pages/Directories'
+import Edit_order from '../pages/Edit_order.vue'
 
 const routes = [
   {
@@ -43,6 +44,10 @@ const routes = [
     path: '/directories',
     component: Directories
   },
+  {
+    path: '/edit_order/:id',
+    component: Edit_order
+  }
 ]
 
 export default routes;

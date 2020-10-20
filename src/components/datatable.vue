@@ -37,8 +37,11 @@
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small @click="deleteItem(item)"> mdi-delete </v-icon>
+      <router-link tag="a" :to=" '/edit_order/' + item.id ">
+        <v-icon small class="mr-2"> mdi-pencil </v-icon>
+      </router-link>
+      
+      <v-icon small > mdi-delete </v-icon>
     </template>
     <template v-slot:no-data>
       <v-btn color="primary"> Reset </v-btn>

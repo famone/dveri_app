@@ -65,42 +65,50 @@
 				</div>
 				<div class="col-lg-3">
 					<v-select :items="doorsModels" 
-					item-text="post_title"
+					item-text="name"
 					v-model="doorModel"
+					@change="changeSize($event)"
+					return-object
 					label="Модель двери продавца"></v-select>
 				</div>
 				<div class="col-lg-3">
-					<v-select :items="items" label="Группа двери руководителя"></v-select>
+					<v-select :items="items" label="Группа двери руководителя" v-model="groopRuk"></v-select>
 				</div>
 				<div class="col-lg-3">
-					<v-select :items="items" label="Модель двери руководителя"></v-select>
+					<v-select :items="items" label="Модель двери руководителя" v-model="modelRuk"></v-select>
 				</div>
 				<!--  -->
 			
 				<div class="col-lg-3">
-					<v-select :items="items" label="Размер двери"></v-select>
+					<v-select :items="doorSizes" 
+					label="Размер двери"
+					@change="showPrice($event)"
+					return-object
+					></v-select>
 				</div>
 				<div class="col-lg-3">
 					<p>Сторона открывания:</p>
 					<v-radio-group v-model="sideOpen" row>
-				      <v-radio label="Левая" value="Левая"></v-radio>
-				      <v-radio label="Правая" value="Правая"></v-radio>
+				      <v-radio label="Лево" value="Лево"></v-radio>
+				      <v-radio label="Право" value="Право"></v-radio>
 				    </v-radio-group>
 				</div>
 				<div class="col-lg-3">
-					<v-text-field label="Размер проема"></v-text-field>
+					<v-text-field label="Размер проема" v-model="proemSize"></v-text-field>
 				</div>
 				<div class="col-lg-3">
-					<v-text-field label="Номер двери"></v-text-field>
+					<v-text-field label="Номер двери" v-model="doorNumber"></v-text-field>
 				</div>
 
 
 				<div class="col-lg-6">
-					<v-textarea label="Примечание продавца:" rows="1" prepend-icon="mdi-comment">
+					<v-textarea label="Примечание продавца:" rows="1" prepend-icon="mdi-comment"
+					v-model="primecProd">
 					</v-textarea>
 				</div>
 				<div class="col-lg-6">
-					<v-textarea label="Примечание руководителя:" rows="1" prepend-icon="mdi-comment">
+					<v-textarea label="Примечание руководителя:" rows="1" prepend-icon="mdi-comment"
+					v-model="primecRuk">
 					</v-textarea>
 				</div>
 				
@@ -131,8 +139,9 @@
 								<v-icon left>mdi-delete</v-icon>Удалить</v-btn>
 						</div>
 					</div>
-					<v-btn depressed color="primary" @click="addDop()">
-					<v-icon left>mdi-cart-plus</v-icon>Добавить</v-btn>
+					<v-btn depressed color="primary" @click="addDop()" >
+						<v-icon left>mdi-cart-plus</v-icon>Добавить
+					</v-btn>
 				</div>
 			</div>
 
@@ -171,7 +180,12 @@
 				</div>
 
 				<div class="col-lg-6">
-					<v-select :items="items" label="Замерщик"></v-select>
+					<v-select label="Замерщик"
+					:items="zamershiks"
+					item-text="fname"
+					item-value="id"
+					@change="setZamer($event)"
+					return-object></v-select>
 				</div>
 
 				<div class="col-lg-6">
@@ -202,7 +216,11 @@
 				</div>
 
 				<div class="col-lg-6">
-					<v-select :items="items" label="Бригада"></v-select>
+					<v-select :items="brigadi" 
+					label="Бригада"
+					item-text="title"
+					item-value="id"
+					@change="setTeam($event)"></v-select>
 				</div>
 			</div>
 
@@ -213,44 +231,42 @@
 					<h3><span class="mdi mdi-bookmark-outline"></span> Заявка:</h3>
 				</div>
 				<div class="col-lg-6">
-					<v-select :items="items" label="Замерщик"></v-select>
-				</div>
-				<div class="col-lg-6">
-					<v-select :items="items" label="Статус заявки"></v-select>
+					<v-select :items="statuses" v-model="status_zayavka" label="Статус заявки"></v-select>
 				</div>
 				<div class="col-lg-4">
-					<v-text-field label="Цена продавца со скидкой"></v-text-field>
+					<v-text-field label="Цена продавца со скидкой" v-model="prod_sale"></v-text-field>
 				</div>
 				<div class="col-lg-4">
-					<v-text-field label="Цена двери руководителя"></v-text-field>
+					<v-text-field label="Цена двери руководителя" v-model="ruk_cena"></v-text-field>
 				</div>
 				<div class="col-lg-4">
-					<v-text-field label="Стоимость замера, доставки и установки"></v-text-field>
+					<v-text-field label="Стоимость замера, доставки и установки" v-model="delivery"></v-text-field>
 				</div>
 
 			</div>
 
 				<!--  -->
 
+	
 			<div class="row shad-box">
 				<div class="col-lg-12">
 					<h2><span class="mdi mdi-sale"></span> Итого:</h2>
 				</div>
 				<div class="col-lg-4">
-					<v-text-field label="Предоплата"></v-text-field>
+					<v-text-field label="Предоплата" v-model="predoplata"></v-text-field>
 				</div>
 					
 				<div class="col-lg-4">
-					<v-text-field label="Скидка"></v-text-field>
+					<v-text-field label="Скидка"  v-model="sale"></v-text-field>
 				</div>
 				<div class="col-lg-4">
-					<v-text-field label="Итого"></v-text-field>
+					<v-text-field label="Итого" v-model="doorPrice"></v-text-field>
 				</div>
 				<div class="col-lg-4">
-					<v-text-field label="Сумма премии"></v-text-field>
+					<v-text-field label="Сумма премии" v-model="sum_premii"></v-text-field>
 				</div>
 				<div class="col-lg-4">
-					<v-select :items="items" label="Статус премии"></v-select>
+					<v-select :items="items" label="Статус премии" v-model="status_premii"></v-select>
 				</div>
 
 			</div>
@@ -272,17 +288,20 @@ import axios from 'axios'
 			return{
 				doorsCategory: [],
 				doorsModels: [],
-				items: ['Foo', 'Bar', 'Fizz', 'Buzz'],
+				items: ['Тест 1', 'Тест 2', 'Тест 3', 'Тест 4'],
 				dateZamer: new Date().toISOString().substr(0, 10),
 				dateMont: '',
-				sideOpen: 'Левая',
 				sideCity: '',
 				menu: false,
 				menu2: false,
-				rej: '',
+				statuses: ['В обработке', 'Оплачено', 'На складе'],
 				dopServArray: [],
 				dopolnServ: [],
-				
+				selectedModel: {},
+				doorSizes: [],
+				doorPrice: '', 
+				zamershiks: [],
+				brigadi: [],
 				// 
 				fio: '',
 				phone: '',
@@ -293,22 +312,26 @@ import axios from 'axios'
 				floor: '',
 				part_city: '',
 				doorGroup: '',
-				doorModel: ''
-			}
-		},
-		methods: {
-			addDop(){
-				this.dopolnServ.push({name: '', price: 0})
-				console.log(this.dopolnServ)
-			},
-			deliteDop(index){
-				this.dopolnServ.splice(index, 1);
-				console.log(this.dopolnServ)
-			},
-			atInput(index, event){
-				this.dopolnServ[index].name = event.name
-				this.dopolnServ[index].price = event.price
-				console.log(this.dopolnServ)
+				doorModel: '',
+				doorSize: '',
+				groopRuk: '',
+				modelRuk: '',
+				sideOpen: '',
+				proemSize: '',
+				doorNumber: '',
+				primecProd: '',		
+				primecRuk: '',
+				zamershik: '',
+				team: '',
+				status_zayavka: '',
+				prod_sale: '',
+				ruk_cena: '',
+				delivery: '',
+				predoplata: '',
+				sale: '',
+				sum_premii: '',
+				status_premii: '',
+
 			}
 		},
 		computed: {
@@ -329,18 +352,56 @@ import axios from 'axios'
 				
 				this.doorsCategory = response.data
 			})
+
+			// замерщики
+			axios
+			.get('https://door.webink.site/wp-json/door/v1/get/users?type=zamershik')
+			.then(response =>{
+				
+				this.zamershiks = response.data
+			})
+
+			// ,бригады
+			axios
+			.get('https://door.webink.site/wp-json/door/v1/get/teams')
+			.then(response =>{
+				this.brigadi = response.data
+				console.log(this.brigadi)
+			})
 		},
 		methods: {
+			addDop(){
+					this.dopolnServ.push({name: '', price: 0})
+			},
+			deliteDop(index){
+				this.dopolnServ.splice(index, 1);
+			},
+			atInput(index, event){
+				this.dopolnServ[index].name = event.name
+				this.dopolnServ[index].price = event.price
+			},
 			changeModel(param){
 				
 				this.doorModel = ''
 				axios
 				.get(`https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`)
 				.then(response =>{
-					// console.log(response.data)
 					this.doorsModels = response.data
-
 				})
+			},
+			changeSize(sizes){
+				this.selectedModel = sizes
+				this.doorSizes = Object.keys(sizes.price)
+			},
+			showPrice(num){
+				this.doorPrice = this.selectedModel.price[num]
+				this.doorSize = num
+			},
+			setZamer(zam){
+				this.zamershik = zam.id
+			},
+			setTeam(tm){
+				this.team = tm
 			},
 			addNewOrder(){
 				let newOrder = {
@@ -353,14 +414,40 @@ import axios from 'axios'
 					floor: this.floor,
 					part_city: this.part_city,
 					doorGroup: this.doorGroup.name,
-					doorModel: this.doorModel
+					doorModel: this.doorModel.name,
+					doorSize: this.doorSize,
+					groopRuk: this.groopRuk,
+					modelRuk: this.modelRuk,
+					sideOpen: this.sideOpen,
+					proemSize: this.proemSize,
+					doorNumber: this.doorNumber,
+					primecProd: this.primecProd,		
+					primecRuk: this.primecRuk,
+					dopolnServ: this.dopolnServ,
+					dateZamer: this.dateZamer,
+					zamershik: this.zamershik,
+					dateMont: this.dateMont,
+					team: this.team,
+					status_zayavka: this.status_zayavka,
+					prod_sale: this.prod_sale,
+					ruk_cena: this.ruk_cena,
+					delivery: this.delivery,
+					predoplata: this.predoplata,
+					sale: this.sale,
+					sum_premii: this.sum_premii,
+					status_premii: this.status_premii,
+					doorPrice: this.doorPrice,
 				}
 				
-				axios
-				.post('https://door.webink.site/wp-json/door/v1/add/sales', newOrder)
-				.then(response =>{
-					console.log(response)
-				})
+				console.log(newOrder)
+
+				// отправить новый заказ
+
+				// axios
+				// .post('https://door.webink.site/wp-json/door/v1/add/sales', newOrder)
+				// .then(response =>{
+				// 	console.log(response)
+				// })
 			}
 		}
 	}

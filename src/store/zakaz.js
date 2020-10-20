@@ -8,7 +8,9 @@ const zakaz = {
     },
 
     getters: {
-        
+        getDoorEdit: (state) => (id) => {
+          return state.doors.find(item => item.id == id)
+        },
     },
 
     mutations: {
@@ -25,7 +27,7 @@ const zakaz = {
           .get("https://door.webink.site/wp-json/door/v1/get/sales")
           .then((response) => {
             commit("SET_DOORS", response.data)
-            
+
           });
        }
     },

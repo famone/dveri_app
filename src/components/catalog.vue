@@ -14,7 +14,6 @@
   <v-data-table
     :headers="headers"
     :items="filteredItems"
-    sort-by="calories"
     :loading="load"
     class="elevation-1"
   >
@@ -153,9 +152,9 @@ import axios from 'axios'
           text: 'Производитель',
           align: 'start',
           sortable: false,
-          value: 'name',
+          value: 'category.name',
         },
-        { text: 'Модель', sortable: false, value: 'post_title' },
+        { text: 'Модель', sortable: false, value: 'name' },
         { text: 'Редактировать', value: 'actions', sortable: false }
       ],
       models: [],
@@ -179,7 +178,7 @@ import axios from 'axios'
         return this.models
       }else{
           return this.models.filter((i) => {
-            return !this.brand || (i.name === this.brand);
+            return !this.brand || (i.category.name === this.brand);
          })
       }
     }
@@ -214,6 +213,7 @@ import axios from 'axios'
       .get('https://door.webink.site/wp-json/door/v1/get/models')
       .then(response =>{
         this.models = response.data
+        console.log(this.models)
       })
 
 

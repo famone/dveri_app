@@ -16,10 +16,13 @@
 
     <template v-slot:item.adres="{ item }">
       <v-avatar :color="getPart(item.part_city)" size="15"></v-avatar>
-         {{ item.adres }}
-      
+         {{ item.adres }}     
     </template>
 
+    <template v-slot:item.zamershik.name="{ item }">
+      <!-- TODO: если поле пустое должна быть надпись установить замерщика и выскакивать поп ап с выбором замерщика -->
+         {{ item.zamershik.name }}
+    </template>
 
     <template v-slot:top>
       <v-toolbar flat>
@@ -61,10 +64,10 @@ export default {
       { text: "Адрес", value: "adres" },
       { text: "ФИО", value: "fio" },
       { text: "Телефон", value: "phone" },
-      { text: "Продавец", sortable: true, value: "saler" },
+      { text: "Продавец", sortable: true, value: "saler.name" },
       { text: "Дата", value: "date" },
       { text: "Модель двери продавца", value: "model_saler.name" },
-      { text: "Модель двери рук", value: "id" },
+      { text: "Модель двери рук", value: "" },
       { text: "Размер двери", value: "door_size" },
       { text: "Сторона откр", value: "door_direction" },
       { text: "Размер проема", value: "proem_size" },

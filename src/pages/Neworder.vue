@@ -355,9 +355,9 @@ import axios from 'axios'
 					doorGroup: this.doorGroup.name,
 					doorModel: this.doorModel
 				}
-
+				
 				axios
-				.post('https://door.webink.site/wp-json/door/v1/add/sales', this.newOrder)
+				.post('https://door.webink.site/wp-json/door/v1/add/sales', newOrder)
 				.then(response =>{
 					console.log(response)
 				})

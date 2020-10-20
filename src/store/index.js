@@ -5,10 +5,12 @@ Vue.use(Vuex)
 
 import auth from './auth'
 import ui from './ui'
+import zakaz from './zakaz'
 
 export default new Vuex.Store({
 	modules: {
 		auth,
-		ui
+		ui,
+		zakaz
 	}
 })

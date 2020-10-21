@@ -121,7 +121,7 @@
 				</div>
 				<div class="col-lg-12">
 					<div class="row repeater" v-for="(dop, index) in dopolnServ" :key="index">
-						<div class="col-lg-6">
+						<div class="col-lg-4">
 							<v-select
 								:items="dopServArray" 
 								label="Доп услуга" 
@@ -131,6 +131,9 @@
 						        return-object
 								></v-select>
 						</div>
+						<div class="col-lg-2">
+							<v-text-field type="number" label="Количество" v-model="dop.count"></v-text-field>
+						</div>	
 						<div class="col-lg-3">
 							<v-text-field label="Стоимость руб." v-model="dop.price"></v-text-field>
 						</div>
@@ -152,7 +155,7 @@
 					<h2><span class="mdi mdi-bookmark-plus-outline"></span> Замер и монтаж:</h2>
 				</div>
 
-				<div class="col-lg-6">
+				<div class="col-lg-3">
 					<v-menu
 			        ref="menu"
 			        v-model="menu"
@@ -179,7 +182,7 @@
 			      </v-menu>
 				</div>
 
-				<div class="col-lg-6">
+				<div class="col-lg-3">
 					<v-select label="Замерщик"
 					:items="zamershiks"
 					item-text="fname"
@@ -188,7 +191,7 @@
 					return-object></v-select>
 				</div>
 
-				<div class="col-lg-6">
+				<div class="col-lg-3">
 					<v-menu
 			        ref="menu2"
 			        v-model="menu2"
@@ -215,7 +218,7 @@
 			      </v-menu>
 				</div>
 
-				<div class="col-lg-6">
+				<div class="col-lg-3">
 					<v-select :items="brigadi" 
 					label="Бригада"
 					item-text="title"
@@ -223,51 +226,62 @@
 					@change="setTeam($event)"></v-select>
 				</div>
 			</div>
-
-			<!--  -->
-
-			<div class="row shad-box">
-				<div class="col-lg-12">
-					<h3><span class="mdi mdi-bookmark-outline"></span> Заявка:</h3>
-				</div>
-				<div class="col-lg-6">
-					<v-select :items="statuses" v-model="status_zayavka" label="Статус заявки"></v-select>
-				</div>
-				<div class="col-lg-4">
-					<v-text-field label="Цена продавца со скидкой" v-model="prod_sale"></v-text-field>
-				</div>
-				<div class="col-lg-4">
-					<v-text-field label="Цена двери руководителя" v-model="ruk_cena"></v-text-field>
-				</div>
-				<div class="col-lg-4">
-					<v-text-field label="Стоимость замера, доставки и установки" v-model="delivery"></v-text-field>
-				</div>
-
-			</div>
-
-				<!--  -->
-
 	
 			<div class="row shad-box">
 				<div class="col-lg-12">
 					<h2><span class="mdi mdi-sale"></span> Итого:</h2>
 				</div>
-				<div class="col-lg-4">
+
+				<div class="col-lg-3">
+					<v-select :items="payments_metod" v-model="spayments_metod" label="Тип расчета"></v-select>
+				</div>
+				<div class="col-lg-3">
+					<v-text-field label="Цена продавца со скидкой" v-model="prod_sale"></v-text-field>
+				</div>
+				<div class="col-lg-3">
+					<v-text-field label="Цена двери руководителя" v-model="ruk_cena"></v-text-field>
+				</div>
+				<div class="col-lg-3">
+					<v-text-field label="Стоимость замера, доставки и установки" v-model="delivery"></v-text-field>
+				</div>
+
+				
+				<div class="col-lg-2">
 					<v-text-field label="Предоплата" v-model="predoplata"></v-text-field>
 				</div>
 					
-				<div class="col-lg-4">
+				<div class="col-lg-2">
 					<v-text-field label="Скидка"  v-model="sale"></v-text-field>
 				</div>
-				<div class="col-lg-4">
+				<div class="col-lg-2">
 					<v-text-field label="Итого" v-model="doorPrice"></v-text-field>
 				</div>
+			</div>
+
+			<div class="row shad-box">
+
+				<div class="col-lg-3">
+				<div class="col-lg-12">
+					<h2><span class="mdi mdi-bookmark-outline"></span> Заявка:</h2>
+				</div>
+				<div class="col-lg-12">
+					<v-select :items="statuses" v-model="status_zayavka" label="Статус заявки"></v-select>
+				</div>
+
+				</div>
+
+				<div class="col-lg-8">
+					<div class="col-lg-12 ">
+						<h2><span class="mdi mdi-sale"></span> Премия:</h2>
+					</div>
 				<div class="col-lg-4">
 					<v-text-field label="Сумма премии" v-model="sum_premii"></v-text-field>
 				</div>
 				<div class="col-lg-4">
 					<v-select :items="items" label="Статус премии" v-model="status_premii"></v-select>
 				</div>
+				</div>
+				
 
 			</div>
 
@@ -295,6 +309,8 @@ import axios from 'axios'
 				menu: false,
 				menu2: false,
 				statuses: ['В обработке', 'Оплачено', 'На складе'],
+				payments_metod: ['Наличными', 'Терминал', 'Оплата по безналичному расчету'],
+				spayments_metod: '',
 				dopServArray: [],
 				dopolnServ: [],
 				selectedModel: {},
@@ -371,22 +387,30 @@ import axios from 'axios'
 		},
 		methods: {
 			addDop(){
-					this.dopolnServ.push({name: '', price: 0})
+					this.dopolnServ.push({name: '', count:1 ,price: 0})
 			},
 			deliteDop(index){
 				this.dopolnServ.splice(index, 1);
 			},
 			atInput(index, event){
 				this.dopolnServ[index].name = event.name
+				this.dopolnServ[index].count = event.count
 				this.dopolnServ[index].price = event.price
 			},
 			changeModel(param){
 				
 				this.doorModel = ''
+				//получение доп услуг по производителю двери
 				axios
 				.get(`https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`)
 				.then(response =>{
 					this.doorsModels = response.data
+				})
+
+				axios
+				.get(`https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param.term_id}`)
+				.then(response =>{
+					this.dopServArray = response.data
 				})
 			},
 			changeSize(sizes){
@@ -413,8 +437,8 @@ import axios from 'axios'
 					flat: this.flat,
 					floor: this.floor,
 					part_city: this.part_city,
-					doorGroup: this.doorGroup.name,
-					doorModel: this.doorModel.name,
+					doorGroup: this.doorGroup.id,
+					doorModel: this.doorModel.id,
 					doorSize: this.doorSize,
 					groopRuk: this.groopRuk,
 					modelRuk: this.modelRuk,
@@ -441,13 +465,13 @@ import axios from 'axios'
 				
 				console.log(newOrder)
 
-				// отправить новый заказ
+				//отправить новый заказ
 
-				// axios
-				// .post('https://door.webink.site/wp-json/door/v1/add/sales', newOrder)
-				// .then(response =>{
-				// 	console.log(response)
-				// })
+				axios
+				.post('https://door.webink.site/wp-json/door/v1/add/sales', newOrder)
+				.then(response =>{
+					console.log(response)
+				})
 			}
 		}
 	}

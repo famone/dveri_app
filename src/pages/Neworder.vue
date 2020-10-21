@@ -72,10 +72,18 @@
 					label="Модель двери продавца"></v-select>
 				</div>
 				<div class="col-lg-3">
-					<v-select :items="items" label="Группа двери руководителя" v-model="groopRuk"></v-select>
+					<v-select :items="doorsCategory" 
+					item-text="name" 
+					label="Группа двери руководителя" 
+					v-model="groopRuk"
+					@change="changeModelRuk($event)"
+					return-object></v-select>
 				</div>
 				<div class="col-lg-3">
-					<v-select :items="items" label="Модель двери руководителя" v-model="modelRuk"></v-select>
+					<v-select :items="modelsRuk" 
+					item-text="name" 
+					label="Модель двери руководителя" 
+					v-model="modelRuk"></v-select>
 				</div>
 				<!--  -->
 			
@@ -132,7 +140,7 @@
 								></v-select>
 						</div>
 						<div class="col-lg-2">
-							<v-text-field type="number" label="Количество" v-model="dop.count"></v-text-field>
+							<v-text-field type="number"  label="Количество" v-model="dop.count"></v-text-field>
 						</div>	
 						<div class="col-lg-3">
 							<v-text-field label="Стоимость руб." v-model="dop.price"></v-text-field>
@@ -297,6 +305,7 @@
 
 <script>
 import axios from 'axios'
+import {mapState} from 'vuex'
 	export default{
 		data(){
 			return{
@@ -318,6 +327,7 @@ import axios from 'axios'
 				doorPrice: '', 
 				zamershiks: [],
 				brigadi: [],
+				modelsRuk: [],
 				// 
 				fio: '',
 				phone: '',
@@ -351,7 +361,7 @@ import axios from 'axios'
 			}
 		},
 		computed: {
-			
+			...mapState('auth', ['user'])
 		},
 		created(){
 			// дополнительные услуги
@@ -413,6 +423,15 @@ import axios from 'axios'
 					this.dopServArray = response.data
 				})
 			},
+			changeModelRuk(param){
+				this.modelRuk = ''
+
+				axios
+				.get(`https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`)
+				.then(response =>{
+					this.modelsRuk = response.data
+				})
+			},
 			changeSize(sizes){
 				this.selectedModel = sizes
 				this.doorSizes = Object.keys(sizes.price)
@@ -440,7 +459,7 @@ import axios from 'axios'
 					doorGroup: this.doorGroup.id,
 					doorModel: this.doorModel.id,
 					doorSize: this.doorSize,
-					groopRuk: this.groopRuk,
+					groopRuk: this.groopRuk.name,
 					modelRuk: this.modelRuk,
 					sideOpen: this.sideOpen,
 					proemSize: this.proemSize,
@@ -461,10 +480,12 @@ import axios from 'axios'
 					sum_premii: this.sum_premii,
 					status_premii: this.status_premii,
 					doorPrice: this.doorPrice,
+					user_id: this.user.id
 				}
 				
 				console.log(newOrder)
 
+				return
 				//отправить новый заказ
 
 				axios

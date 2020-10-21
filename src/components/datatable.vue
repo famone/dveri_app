@@ -33,6 +33,23 @@
         <router-link tag="a" to="/neworder">
           <v-btn depressed color="primary"><v-icon>mdi-playlist-plus</v-icon> Новый заказ</v-btn>
         </router-link>
+
+
+
+        <v-dialog v-model="dialogDelete" max-width="500px">
+          <v-card>
+            <v-card-title class="headline">Вы точно хотите удалить этот заказ?</v-card-title>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="closeDelete">Отмена</v-btn>
+              <v-btn color="blue darken-1" v-model="deliting" text @click="deleteItemConfirm(deliting)">Удалить</v-btn>
+              <v-spacer></v-spacer>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+
+
+
        
       </v-toolbar>
     </template>
@@ -41,7 +58,8 @@
         <v-icon small class="mr-2"> mdi-pencil </v-icon>
       </router-link>
       
-      <v-icon small > mdi-delete </v-icon>
+      <v-icon small @click="deleteItem(item.id)"> mdi-delete </v-icon>
+
     </template>
     <template v-slot:no-data>
       <v-btn color="primary"> Reset </v-btn>
@@ -58,6 +76,7 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
+    deliting: '',
     headers: [
       { text: "Ред.", value: "actions", sortable: false },
       { text: "№", value: "id" },
@@ -91,16 +110,6 @@ export default {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
   },
-
-  watch: {
-    dialog(val) {
-      val || this.close();
-    },
-    dialogDelete(val) {
-      val || this.closeDelete();
-    },
-  },
-
   created() {
     // api
 
@@ -108,20 +117,37 @@ export default {
   },
 
   methods: {
-    // handleClick(value){
-    // 	console.log(value.calories)
-    // 	this.$router.push('/' + value.calories)
-    // },
-    getColor(status) {
-      if (status === 'pending') return "red";
-      else if (status === 'processing') return "orange";
-      else return "green";
-    },
-    getPart(part){
-      if (part === 'Север') return "primary";
-      else if(part === 'Юг') return "orange";
-      else return "grey"
-    }
+        // handleClick(value){
+        // 	console.log(value.calories)
+        // 	this.$router.push('/' + value.calories)
+        // },
+        getColor(status) {
+          if (status === 'pending') return "red";
+          else if (status === 'processing') return "orange";
+          else return "green";
+        },
+        getPart(part){
+          if (part === 'Север') return "primary";
+          else if(part === 'Юг') return "orange";
+          else return "grey"
+        },
+        deleteItem(item){
+
+          this.dialogDelete = true
+          this.deliting = item
+
+        },
+        closeDelete(){
+           this.dialogDelete = false
+           this.deliting = ''
+        },
+        deleteItemConfirm(item){
+          this.$store.dispatch('zakaz/startLoader')
+          this.$store.dispatch('zakaz/deliteZakaz', item);
+          this.dialogDelete = false
+           this.deliting = ''
+        }
+
   }
 };
 </script>

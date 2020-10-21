@@ -7,6 +7,7 @@ import Login from '../pages/Login';
 import Neworder from '../pages/Neworder';
 import Directories from '../pages/Directories'
 import Edit_order from '../pages/Edit_order.vue'
+import Edit_model from '../pages/Edit_model.vue'
 
 const routes = [
   {
@@ -47,6 +48,10 @@ const routes = [
   {
     path: '/edit_order/:id',
     component: Edit_order
+  },
+  {
+    path: '/edit_model/:id',
+    component: Edit_model
   }
 ]
 

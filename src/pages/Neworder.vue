@@ -59,7 +59,6 @@
 					<v-select :items="doorsCategory" 
 					item-text="name" 
 					label="Группа двери продавца"
-					v-model="doorGroup"
 					@change="changeModel($event)"
 					return-object></v-select>
 				</div>
@@ -82,6 +81,7 @@
 				<div class="col-lg-3">
 					<v-select :items="modelsRuk" 
 					item-text="name" 
+					item-value="id" 
 					label="Модель двери руководителя" 
 					v-model="modelRuk"></v-select>
 				</div>
@@ -295,7 +295,7 @@
 
 			<div class="row">
 				<v-btn depressed x-large dark color="grey" class="m-15">НАЗАД</v-btn>
-				<v-btn depressed x-large color="primary" class="m-15"
+				<v-btn depressed x-large color="primary" class="m-15" :loading="loadBtn"
 				@click="addNewOrder()">ДОБАВИТЬ ЗАКАЗ</v-btn>
 			</div>
 
@@ -309,6 +309,7 @@ import {mapState} from 'vuex'
 	export default{
 		data(){
 			return{
+				loadBtn:false,
 				doorsCategory: [],
 				doorsModels: [],
 				items: ['Тест 1', 'Тест 2', 'Тест 3', 'Тест 4'],
@@ -408,6 +409,7 @@ import {mapState} from 'vuex'
 				this.dopolnServ[index].price = event.price
 			},
 			changeModel(param){
+				this.doorGroup = param.term_id
 				
 				this.doorModel = ''
 				//получение доп услуг по производителю двери
@@ -456,10 +458,10 @@ import {mapState} from 'vuex'
 					flat: this.flat,
 					floor: this.floor,
 					part_city: this.part_city,
-					doorGroup: this.doorGroup.id,
+					doorGroup: this.doorGroup,
 					doorModel: this.doorModel.id,
 					doorSize: this.doorSize,
-					groopRuk: this.groopRuk.name,
+					groopRuk: this.groopRuk.term_id,
 					modelRuk: this.modelRuk,
 					sideOpen: this.sideOpen,
 					proemSize: this.proemSize,
@@ -485,13 +487,15 @@ import {mapState} from 'vuex'
 				
 				console.log(newOrder)
 
-				return
+				this.loadBtn = true
 				//отправить новый заказ
 
 				axios
 				.post('https://door.webink.site/wp-json/door/v1/add/sales', newOrder)
 				.then(response =>{
 					console.log(response)
+					this.loadBtn = false;
+					this.$router.push('/')
 				})
 			}
 		}

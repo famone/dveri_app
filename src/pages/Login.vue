@@ -96,6 +96,7 @@ export default {
 
       this.AUTH_REQUEST(form).then(() => {
         this.$router.replace("/");
+
       });
     },
   },

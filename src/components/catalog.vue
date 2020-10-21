@@ -7,6 +7,10 @@
           <h2>Модели дверей:</h2>
         </div>
         <div class="row">
+
+
+
+     
           
 
 
@@ -14,7 +18,7 @@
   <v-data-table
     :headers="headers"
     :items="filteredItems"
-    :loading="load"
+    :loading="loadModels"
     class="elevation-1"
   >
     <template v-slot:top>
@@ -28,74 +32,11 @@
 
     ></v-select>
         <v-spacer></v-spacer>
-        <v-dialog
-          v-model="dialog"
-          max-width="500px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn
-              color="primary"
-              dark
-              class="mb-5"
-              v-bind="attrs"
-              v-on="on"
-            >
-              Добавить
-            </v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">Новый товар</span>
-            </v-card-title>
+        
 
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.name"
-                      label="Бренд производителя"
-                    ></v-text-field>
-                  </v-col>
-                  <v-col
-                    cols="12"
-                    sm="6"
-                    md="6"
-                  >
-                    <v-text-field
-                      v-model="editedItem.post_title"
-                      label="Название модели"
-                    ></v-text-field>
-                  </v-col>
-                
-                </v-row>
-              </v-container>
-            </v-card-text>
 
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="close"
-              >
-                Отмена
-              </v-btn>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="save()"
-              >
-                Сохранить
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-        <v-dialog v-model="dialogDelete" max-width="500px">
+
+        <!-- <v-dialog v-model="dialogDelete" max-width="500px">
           <v-card>
             <v-card-title class="headline">Вы уверены?</v-card-title>
             <v-card-actions>
@@ -105,23 +46,18 @@
               <v-spacer></v-spacer>
             </v-card-actions>
           </v-card>
-        </v-dialog>
+        </v-dialog> -->
+
       </v-toolbar>
     </template>
+
     <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
-      >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
+
+      <router-link tag="a" :to=" '/edit_model/' + item.id ">
+        <v-icon small class="mr-2">mdi-pencil</v-icon>
+      </router-link>
+      <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+
     </template>
     
   </v-data-table>
@@ -140,6 +76,7 @@
 
 <script>
 import axios from 'axios'
+import {mapState} from 'vuex'
   export default {
     data: () => ({
       dialog: false,
@@ -149,30 +86,17 @@ import axios from 'axios'
       dialogDelete: false,
       headers: [
         {
-          text: 'Производитель',
+          text: 'Производитель двери',
           align: 'start',
           sortable: false,
           value: 'category.name',
         },
-        { text: 'Модель', sortable: false, value: 'name' },
+        { text: 'Модель двери', sortable: false, value: 'name' },
         { text: 'Редактировать', value: 'actions', sortable: false }
-      ],
-      models: [],
-      editedIndex: -1,
-      editedItem: {
-        name: '',
-        calories: 0,
-      },
-      defaultItem: {
-        name: '',
-        calories: 0,
-      },
+      ]
     }),
 
     computed: {
-      formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
-      },
       filteredItems() {
       if(this.brand === 'Все'){
         return this.models
@@ -181,16 +105,8 @@ import axios from 'axios'
             return !this.brand || (i.category.name === this.brand);
          })
       }
-    }
     },
-
-    watch: {
-      dialog (val) {
-        val || this.close()
-      },
-      dialogDelete (val) {
-        val || this.closeDelete()
-      },
+    ...mapState('zakaz', ['models', 'loadModels'])
     },
     created(){
       // категории
@@ -203,64 +119,16 @@ import axios from 'axios'
             this.categorys.push(item.name)
         })
            this.categorys.push('Все')
-           this.load = false
-        
       })
 
       // модели
-
-      axios 
-      .get('https://door.webink.site/wp-json/door/v1/get/models')
-      .then(response =>{
-        this.models = response.data
-        console.log(this.models)
-      })
-
+      this.$store.dispatch('zakaz/loadModels')
 
     },
     methods: {
-      
-      editItem (item) {
-        this.editedIndex = this.models.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialog = true
-      },
-
-      deleteItem (item) {
-        this.editedIndex = this.models.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.dialogDelete = true
-      },
-
-      deleteItemConfirm () {
-        this.models.splice(this.editedIndex, 1)
-        this.closeDelete()
-      },
-
-      close () {
-        this.dialog = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      closeDelete () {
-        this.dialogDelete = false
-        this.$nextTick(() => {
-          this.editedItem = Object.assign({}, this.defaultItem)
-          this.editedIndex = -1
-        })
-      },
-
-      save () {
-        if (this.editedIndex > -1) {
-          Object.assign(this.models[this.editedIndex], this.editedItem)
-        } else {
-          this.models.push(this.editedItem)
+        editItem (item) {
+          console.log(item)
         }
-        this.close()
-      },
     },
   }
 </script>

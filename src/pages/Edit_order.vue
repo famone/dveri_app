@@ -112,24 +112,25 @@
 				      <v-radio label="Право" value="Право"></v-radio>
 				    </v-radio-group>
 				</div>
-				<!-- <div class="col-lg-3">
-					<v-text-field label="Размер проема" v-model="proemSize"></v-text-field>
-				</div>
 				<div class="col-lg-3">
-					<v-text-field label="Номер двери" v-model="doorNumber"></v-text-field>
+					<v-text-field label="Размер проема" v-model="EditingOrder.proem_size"></v-text-field>
+				</div>
+				
+				<div class="col-lg-3">
+					<v-text-field label="Номер двери" v-model="EditingOrder.door_number"></v-text-field>
 				</div>
 
 
 				<div class="col-lg-6">
 					<v-textarea label="Примечание продавца:" rows="1" prepend-icon="mdi-comment"
-					v-model="primecProd">
+					v-model="EditingOrder.prim_saler">
 					</v-textarea>
 				</div>
 				<div class="col-lg-6">
 					<v-textarea label="Примечание руководителя:" rows="1" prepend-icon="mdi-comment"
-					v-model="primecRuk">
+					v-model="EditingOrder.prim_rukvod">
 					</v-textarea>
-				</div> -->
+				</div> 
 				
 			</div>
 
@@ -141,6 +142,161 @@
 
 
 
+
+			<div class="row shad-box">
+				<div class="col-lg-12">
+					<h2><span class="mdi mdi-bookmark-plus-outline"></span> Замер и монтаж:</h2>
+				</div>
+
+				 <div class="col-lg-3">
+					<v-menu
+			        ref="menu"
+			        v-model="menu"
+			        :close-on-content-click="false"
+			        :return-value.sync="EditingOrder.data_zamera"
+			        transition="scale-transition"
+			        offset-y
+			        min-width="290px">
+					        <template v-slot:activator="{ on, attrs }">
+					          <v-text-field
+					            v-model="EditingOrder.data_zamera"
+					            label="Желаемая дата замера"
+					            prepend-icon="mdi-calendar"
+					            readonly
+					            v-bind="attrs"
+					            v-on="on"
+					          ></v-text-field>
+					        </template>
+			        <v-date-picker v-model="EditingOrder.data_zamera" no-title scrollable>
+			          <v-spacer></v-spacer>
+			          <v-btn text color="primary" @click="menu = false">Отмена</v-btn>
+			          <v-btn text color="primary" @click="$refs.menu.save(EditingOrder.data_zamera)">Ок</v-btn>
+			        </v-date-picker>
+			      </v-menu>
+				</div> 
+
+				<div class="col-lg-3">
+					<v-select label="Замерщик"
+					:items="zamershiks"
+					item-text="fname"
+					item-value="id"
+					></v-select>
+				</div>
+
+				<div class="col-lg-3">
+					<v-menu
+			        ref="menu2"
+			        v-model="menu2"
+			        :close-on-content-click="false"
+			        :return-value.sync="EditingOrder.date_mont"
+			        transition="scale-transition"
+			        offset-y
+			        min-width="290px">
+					        <template v-slot:activator="{ on, attrs }">
+					          <v-text-field
+					            v-model="EditingOrder.date"
+					            label="Желаемая дата монтажа"
+					            prepend-icon="mdi-calendar"
+					            readonly
+					            v-bind="attrs"
+					            v-on="on"
+					          ></v-text-field>
+					        </template>
+			        <v-date-picker v-model="EditingOrder.date_mont" no-title scrollable>
+			          <v-spacer></v-spacer>
+			          <v-btn text color="primary" @click="menu2 = false">Отмена</v-btn>
+			          <v-btn text color="primary" @click="$refs.menu2.save(EditingOrder.date_mont)">Ок</v-btn>
+			        </v-date-picker>
+			      </v-menu>
+				</div>
+
+				<div class="col-lg-3">
+					<v-select :items="brigadi" 
+					label="Бригада"
+					v-model="EditingOrder.brigada_mont"
+					item-text="title"
+					item-value="id""></v-select>
+				</div> 
+			</div>
+
+
+
+
+
+
+<div class="row shad-box">
+				<div class="col-lg-12">
+					<h2><span class="mdi mdi-sale"></span> Итого:</h2>
+				</div>
+
+				<div class="col-lg-3">
+					<v-select :items="payments_metod" v-model="spayments_metod" label="Тип расчета"></v-select>
+				</div>
+				<div class="col-lg-3">
+					<v-text-field label="Цена продавца со скидкой" v-model="EditingOrder.prod_sale"></v-text-field>
+				</div>
+				<div class="col-lg-3">
+					<v-text-field label="Цена двери руководителя" v-model="ruk_cena"></v-text-field>
+				</div>
+				<div class="col-lg-3">
+					<v-text-field label="Стоимость замера, доставки и установки" v-model="delivery"></v-text-field>
+				</div>
+
+				
+				<div class="col-lg-2">
+					<v-text-field label="Предоплата" v-model="predoplata"></v-text-field>
+				</div>
+					
+				<div class="col-lg-2">
+					<v-text-field label="Скидка"  v-model="sale"></v-text-field>
+				</div>
+				<div class="col-lg-2">
+					<v-text-field label="Итого" v-model="doorPrice"></v-text-field>
+				</div>
+			</div>
+
+
+
+
+<div class="row shad-box">
+
+				<div class="col-lg-3">
+				<div class="col-lg-12">
+					<h2><span class="mdi mdi-bookmark-outline"></span> Заявка:</h2>
+				</div>
+				<div class="col-lg-12">
+					<v-select :items="statuses" v-model="status_zayavka" label="Статус заявки"></v-select>
+				</div>
+
+				</div>
+
+				<div class="col-lg-8">
+					<div class="col-lg-12 ">
+						<h2><span class="mdi mdi-sale"></span> Премия:</h2>
+					</div>
+				<div class="col-lg-4">
+					<v-text-field label="Сумма премии" v-model="sum_premii"></v-text-field>
+				</div>
+				<div class="col-lg-4">
+					<v-select :items="items" label="Статус премии" v-model="status_premii"></v-select>
+				</div>
+				</div>
+				
+
+			</div>
+
+
+
+
+			<div class="row">
+				<div class="row">
+				<v-btn depressed x-large dark color="grey" class="m-15">НАЗАД</v-btn>
+				<v-btn depressed x-large color="primary" class="m-15" :loading="loadBtn"
+				@click="updateOrder()">Обновить ЗАКАЗ</v-btn>
+			</div>
+			</div>
+
+			
 
 
 
@@ -162,17 +318,28 @@ export default{
 		return{
 			loading: true,
 			routeId: '',
+			menu: false,
+			menu2: false,
+			zamershiks: [],
+			brigadi: [],
+			statuses: ['В обработке', 'Оплачено', 'На складе'],
+			payments_metod: ['Наличными', 'Терминал', 'Оплата по безналичному расчету'],
 			EditingOrder: {
-				fio: '',
-				phone: '',
-				dop_phone: '',
-				street: '',
-				house: '',
-				flat: '',
-				floor: '',
-				part_city: '',
+				// fio: '',
+				// phone: '',
+				// dop_phone: '',
+				// street: '',
+				// house: '',
+				// flat: '',
+				// floor: '',
+				// part_city: '',
 
-				door_direction: '',
+				// door_direction: '',
+				// proem_size: '',
+				// prim_saler: '',
+				// prim_rukvod: '',
+				// date_mont: ''
+				brigada_mont: ''
 			}
 		}
 	},
@@ -189,8 +356,26 @@ export default{
             console.log(this.EditingOrder)
             this.loading = false
          });
-		
 
+
+          // замерщики
+			axios
+			.get('https://door.webink.site/wp-json/door/v1/get/users?type=zamershik')
+			.then(response =>{
+				
+				this.zamershiks = response.data
+			})
+
+		// ,бригады
+			axios
+			.get('https://door.webink.site/wp-json/door/v1/get/teams')
+			.then(response =>{
+				this.brigadi = response.data
+				
+			})
+
+	},
+	methods: {
 	}
 }
 </script>

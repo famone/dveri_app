@@ -26,7 +26,6 @@
     </button>
 
     <h4>SHELION CRM</h4>
-    <h4>2302366230Pv.</h4>
 
     <div class="log-box" @click="accpuntMenu = !accpuntMenu">
       <div class="text-right" v-if="user !== null">

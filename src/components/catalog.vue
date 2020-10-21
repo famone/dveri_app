@@ -51,7 +51,7 @@
       </v-toolbar>
     </template>
 
-    <template v-slot:item.actions="{ item }">
+    <template v-slot:item.actions="{item}">
 
       <router-link tag="a" :to=" '/edit_model/' + item.id ">
         <v-icon small class="mr-2">mdi-pencil</v-icon>

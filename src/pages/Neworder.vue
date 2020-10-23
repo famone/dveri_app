@@ -163,7 +163,7 @@
 					<h2><span class="mdi mdi-bookmark-plus-outline"></span> Замер и монтаж:</h2>
 				</div>
 
-				<div class="col-lg-3">
+				<div class="col-lg-2">
 					<v-menu
 			        ref="menu"
 			        v-model="menu"
@@ -189,8 +189,11 @@
 			        </v-date-picker>
 			      </v-menu>
 				</div>
+				<div class="col-lg-2">
+					Время замера
+				</div>
 
-				<div class="col-lg-3">
+				<div class="col-lg-2">
 					<v-select label="Замерщик"
 					:items="zamershiks"
 					item-text="fname"
@@ -199,7 +202,7 @@
 					return-object></v-select>
 				</div>
 
-				<div class="col-lg-3">
+				<div class="col-lg-2">
 					<v-menu
 			        ref="menu2"
 			        v-model="menu2"
@@ -225,8 +228,10 @@
 			        </v-date-picker>
 			      </v-menu>
 				</div>
-
-				<div class="col-lg-3">
+				<div class="col-lg-2">
+					Время монтажа
+				</div>
+				<div class="col-lg-2">
 					<v-select :items="brigadi" 
 					label="Бригада"
 					item-text="title"
@@ -462,7 +467,7 @@ import {mapState} from 'vuex'
 					doorModel: this.doorModel.id,
 					doorSize: this.doorSize,
 					groopRuk: this.groopRuk.term_id,
-					modelRuk: this.modelRuk,
+					modelRuk: this.modelRuk.id,
 					sideOpen: this.sideOpen,
 					proemSize: this.proemSize,
 					doorNumber: this.doorNumber,
@@ -479,6 +484,7 @@ import {mapState} from 'vuex'
 					delivery: this.delivery,
 					predoplata: this.predoplata,
 					sale: this.sale,
+					payments_metod: this.spayments_metod,
 					sum_premii: this.sum_premii,
 					status_premii: this.status_premii,
 					doorPrice: this.doorPrice,
@@ -489,7 +495,6 @@ import {mapState} from 'vuex'
 
 				this.loadBtn = true
 				//отправить новый заказ
-
 				axios
 				.post('https://door.webink.site/wp-json/door/v1/add/sales', newOrder)
 				.then(response =>{

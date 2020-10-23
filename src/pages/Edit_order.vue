@@ -40,7 +40,7 @@
 					v-mask="'+7 (###) ###-##-##'"></v-text-field>
 				</div>
 				<div class="col-lg-3">
-					<v-text-field label="Улица" v-model="EditingOrder.street"></v-text-field>
+					<v-text-field label="Улица" v-model="EditingOrder.adress"></v-text-field>
 				</div>
 				<div class="col-lg-2">
 					<v-text-field label="Номер дома" v-model="EditingOrder.house"></v-text-field>

@@ -16,7 +16,7 @@
 
     <template v-slot:item.adres="{ item }">
       <v-avatar :color="getPart(item.part_city)" size="15"></v-avatar>
-         {{ item.adres }}     
+         {{ item.adress }} {{ item.house }} {{ item.flat }}        
     </template>
 
     <template v-slot:item.zamershik.name="{ item }">

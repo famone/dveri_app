@@ -13,7 +13,7 @@
 
 			<div class="row shad-box">
 				<div class="col-lg-12">
-					<h3><span class="mdi mdi-account-multiple-outline"></span> Персональная информация:</h3>
+				<h3><span style="color: red;">*</span><span class="mdi mdi-account-multiple-outline"></span>Персональная информация:</h3>
 				</div>
 				<div class="col-lg-6">
 					<v-text-field label="ФИО" v-model="fio"></v-text-field>
@@ -189,9 +189,42 @@
 			        </v-date-picker>
 			      </v-menu>
 				</div>
+
+
+
 				<div class="col-lg-2">
-					Время замера
+					<v-menu
+				        ref="menu3"
+				        v-model="menu3"
+				        :close-on-content-click="false"
+				        :nudge-right="40"
+				        :return-value.sync="time"
+				        transition="scale-transition"
+				        offset-y
+				        max-width="290px"
+				        min-width="290px"
+				      >
+				        <template v-slot:activator="{ on, attrs }">
+				          <v-text-field
+				            v-model="time"
+				            label="Время замера"
+				            prepend-icon="mdi-calendar-clock"
+				            readonly
+				            v-bind="attrs"
+				            v-on="on"
+				          ></v-text-field>
+				        </template>
+				        <v-time-picker
+				        format="24hr"
+				          v-if="menu3"
+				          v-model="time"
+				          full-width
+				          @click:minute="$refs.menu3.save(time)"
+				        ></v-time-picker>
+				      </v-menu>
+
 				</div>
+
 
 				<div class="col-lg-2">
 					<v-select label="Замерщик"
@@ -228,9 +261,44 @@
 			        </v-date-picker>
 			      </v-menu>
 				</div>
+
+
+
 				<div class="col-lg-2">
-					Время монтажа
+					<v-menu
+				        ref="menu4"
+				        v-model="menu4"
+				        :close-on-content-click="false"
+				        :nudge-right="40"
+				        :return-value.sync="time2"
+				        transition="scale-transition"
+				        offset-y
+				        max-width="290px"
+				        min-width="290px"
+				      >
+				        <template v-slot:activator="{ on, attrs }">
+				          <v-text-field
+				            v-model="time2"
+				            label="Время монтажа"
+				            prepend-icon="mdi-calendar-clock"
+				            readonly
+				            v-bind="attrs"
+				            v-on="on"
+				          ></v-text-field>
+				        </template>
+				        <v-time-picker
+				        format="24hr"
+				          v-if="menu4"
+				          v-model="time2"
+				          full-width
+				          @click:minute="$refs.menu4.save(time2)"
+				        ></v-time-picker>
+				      </v-menu>
+
 				</div>
+
+
+
 				<div class="col-lg-2">
 					<v-select :items="brigadi" 
 					label="Бригада"
@@ -311,7 +379,9 @@
 <script>
 import axios from 'axios'
 import {mapState} from 'vuex'
-	export default{
+
+	export default {
+
 		data(){
 			return{
 				loadBtn:false,
@@ -323,6 +393,10 @@ import {mapState} from 'vuex'
 				sideCity: '',
 				menu: false,
 				menu2: false,
+				time: null,
+        		menu3: false,
+        		time2: null,
+        		menu4: false,
 				statuses: ['В обработке', 'Оплачено', 'На складе'],
 				payments_metod: ['Наличными', 'Терминал', 'Оплата по безналичному расчету'],
 				spayments_metod: '',
@@ -367,7 +441,8 @@ import {mapState} from 'vuex'
 			}
 		},
 		computed: {
-			...mapState('auth', ['user'])
+			...mapState('auth', ['user']),
+
 		},
 		created(){
 			// дополнительные услуги
@@ -467,7 +542,7 @@ import {mapState} from 'vuex'
 					doorModel: this.doorModel.id,
 					doorSize: this.doorSize,
 					groopRuk: this.groopRuk.term_id,
-					modelRuk: this.modelRuk.id,
+					modelRuk: this.modelRuk,
 					sideOpen: this.sideOpen,
 					proemSize: this.proemSize,
 					doorNumber: this.doorNumber,
@@ -488,11 +563,14 @@ import {mapState} from 'vuex'
 					sum_premii: this.sum_premii,
 					status_premii: this.status_premii,
 					doorPrice: this.doorPrice,
-					user_id: this.user.id
+					user_id: this.user.id,
+					vremya_zamera: this.time,
+					vremya_montaja: this.time2
 				}
 				
-				console.log(newOrder)
 
+				console.log(newOrder)
+			
 				this.loadBtn = true
 				//отправить новый заказ
 				axios

@@ -1,11 +1,11 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="doors"
+    :items="filteredItems"
     :loading="loadDoors"
     sort-by="id"
     single-line
-    class="elevation-1"
+    class="elevation-1 rounded-lg"
   >
     <!-- @click:row="handleClick" -->
     <template v-slot:item.id="{ item }">
@@ -13,6 +13,40 @@
         {{ item.id }}
       </v-chip>
     </template>
+
+
+
+
+    <template v-slot:item.date_mont="{ item }">
+
+               <span>{{ item.date_mont }}</span> 
+               <span v-if="item.time_mont">, {{item.time_mont}}</span>
+        
+      </v-chip>
+    </template>
+
+
+
+
+
+
+
+
+
+     <template v-slot:item.data_zamera="{ item }">
+        <span>{{ item.data_zamera }}</span> 
+        <span v-if="item.vremya_zamera">, {{item.vremya_zamera}}</span>
+      </v-chip>
+    </template>
+
+
+    <template v-slot:item.zamershik="{ item }">
+      <v-select v-if="!item.zamershik.name" :items="['вася', 'петя']" label="Выбрать" style="font-size: 12px!important;"></v-select>
+      <span v-else>{{item.zamershik.name}}</span>
+    </template>
+
+
+
 
     <template v-slot:item.adres="{ item }">
       <v-avatar :color="getPart(item.part_city)" size="15"></v-avatar>
@@ -29,6 +63,10 @@
         <v-toolbar-title>Заказы</v-toolbar-title>
         <v-divider class="mx-4" inset vertical></v-divider>
         <v-toolbar-title>Сегодня: 18.10.2020</v-toolbar-title>
+         <v-divider class="mx-4" inset vertical></v-divider>
+
+        <v-select label="Выберите город" style="margin-bottom: -15px;" :items="cities" v-model="city"></v-select>
+
         <v-spacer></v-spacer>
         <router-link tag="a" to="/neworder">
           <v-btn depressed color="primary"><v-icon>mdi-playlist-plus</v-icon> Новый заказ</v-btn>
@@ -76,12 +114,16 @@ export default {
   data: () => ({
     dialog: false,
     dialogDelete: false,
+    menu2: false,
+    doMont: '',
     deliting: '',
+    cities: ['Все', 'Санкт-Петербург', 'Москва'],
+    city: '',
     headers: [
       { text: "Ред.", value: "actions", sortable: false },
       { text: "№", value: "id" },
-      { text: "Время монтажа", value: "time_mont" },
       { text: "Желаемая дата монтажа", value: "date_mont" },
+      { text: "Желаемая дата замера", value: "data_zamera" },
       { text: "БР", value: "brigada_mont.name" },
       { text: "Адрес", value: "adres" },
       { text: "ФИО", value: "fio" },
@@ -93,7 +135,7 @@ export default {
       { text: "Размер двери", value: "door_size" },
       { text: "Сторона откр", value: "door_direction" },
       { text: "Размер проема", value: "proem_size" },
-      { text: "Замерщик", value: "zamershik.name" },
+      { text: "Замерщик", value: "zamershik" },
       { text: "Цена диллера", value: "cost_diler" },
       { text: "Сумма премии", value: "sum_premia" },
       { text: "Премия ВДЗ", value: "vdz_premia" },
@@ -109,6 +151,15 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
+    filteredItems() {
+      if(this.city === 'Все'){
+        return this.doors
+      }else{
+          return this.doors.filter((i) => {
+            return !this.city || (i.city === this.city);
+         })
+      }
+    },
   },
   created() {
     // api
@@ -117,10 +168,10 @@ export default {
   },
 
   methods: {
-        // handleClick(value){
-        // 	console.log(value.calories)
-        // 	this.$router.push('/' + value.calories)
-        // },
+        setMont(n){
+          alert('asdas')
+          console.log(n)
+        },
         getColor(status) {
           if (status === 'pending') return "red";
           else if (status === 'processing') return "orange";
@@ -151,3 +202,13 @@ export default {
   }
 };
 </script>
+
+<style>
+table td{
+  font-size: 14px!important;
+  font-weight: 500;
+}
+table th{
+  font-size: 14px!important;
+}
+</style>

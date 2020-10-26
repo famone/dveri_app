@@ -19,8 +19,30 @@
 				</div>
 
 				<div class="col-lg-12">
-					<p>{{getModelEdit(routeId).price}}</p>
+					<div class="row repeater" v-for="(model, index) in modelsArray">
+						<div class="col-lg-3">
+							<v-text-field type="number" v-model="model.size"  label="Размер"></v-text-field>
+						</div>
+						<div class="col-lg-3">
+							<v-text-field type="number" v-model="model.price" label="Цена"></v-text-field>
+						</div>
+						<div class="col-lg-3">
+							<v-btn depressed color="error" class="m-15" @click="deliteModel(index)">
+								<v-icon left>mdi-delete</v-icon>Удалить
+							</v-btn>
+						</div>
+					</div>
+					<v-btn depressed color="primary" @click="addModel()" >
+						<v-icon left>mdi-cart-plus</v-icon>Добавить
+					</v-btn>
 				</div>
+			</div>
+
+
+			<div class="row">
+				<v-btn depressed x-large dark color="grey" class="m-15">НАЗАД</v-btn>
+				<v-btn depressed x-large color="primary" class="m-15"
+				@click="changeModels()">Сохранить изменения</v-btn>
 			</div>
 
 
@@ -38,6 +60,7 @@ export default{
 	data(){
 		return{
 			routeId: '',
+			modelsArray: []
 			
 		}
 	},
@@ -49,13 +72,29 @@ export default{
       	this.$store.dispatch('zakaz/loadModels')
 		this.routeId = this.$route.params.id
 
-		// axios
-  //         .get("https://door.webink.site/wp-json/door/v1/get/models")
-  //         .then((response) => {
-  //           this.door = response.data.find(item => item.id == this.routeId)
-  //           console.log(this.door)
-            
-  //        });
+		let newKey = Object.keys(this.getModelEdit(this.routeId).price)
+		let newVal = Object.values(this.getModelEdit(this.routeId).price)
+
+		newKey.forEach(item => {
+			this.modelsArray.push({size: item, price: '' })
+		})
+
+		for (let i = 0; i < newVal.length; i++){
+			this.modelsArray[i].price = newVal[i]
+		}
+
+	},
+	methods: {
+		addModel(){
+			this.modelsArray.push({size: '' , price: ''})
+		},
+		deliteModel(index){
+			this.modelsArray.splice(index, 1);
+		},
+		changeModels(){
+			console.log(this.modelsArray)
+			this.$router.push('/directories')
+		}
 	}
 }
 

@@ -6,11 +6,107 @@
       :addServiceSlotName="addServiceSlotName"
     >
       <template #brigada>
-        <v-card class="pa-12" @click="addServiceDialog = false">BRIGADA</v-card>
+        <v-card class="pa-4">
+          <!-- <v-card-title class="pa-0">Выберите бригаду</v-card-title> -->
+          <div>
+            <v-select
+              :items="teams"
+              v-model="team"
+              return-object
+              item-text="title"
+              label="Выберите бригаду"
+            ></v-select>
+          </div>
+          <div class="d-flex justify-end">
+            <v-btn @click="chooseTeam" color="primary" small>Выбрать</v-btn>
+          </div>
+        </v-card>
       </template>
-      <!-- dveri are for test remove later  -->
-      <template #dveri>
-        <v-card class="pa-12" @click="addServiceDialog = false">DVERI</v-card>
+
+      <template #date_mont>
+        <v-card class="pa-4">
+          <!-- <v-card-title class="pa-0">Выберите дату монтажа</v-card-title> -->
+          <div>
+            <v-menu
+              ref="menu_date_mont"
+              v-model="menu_date_mont"
+              :close-on-content-click="false"
+              :return-value.sync="date_mont"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="date_mont"
+                  label="Выберите дату монтажа"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker v-model="date_mont" no-title scrollable>
+                <v-spacer></v-spacer>
+                <v-btn text color="primary" @click="menu_date_mont = false"
+                  >Отмена</v-btn
+                >
+                <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.menu_date_mont.save(date_mont)"
+                  >Ок</v-btn
+                >
+              </v-date-picker>
+            </v-menu>
+          </div>
+          <div class="d-flex justify-end">
+            <v-btn @click="chooseTeam" color="primary" small>Выбрать</v-btn>
+          </div>
+        </v-card>
+      </template>
+
+      <template #date_zamera>
+        <v-card class="pa-4">
+          <!-- <v-card-title class="pa-0">Выберите дату монтажа</v-card-title> -->
+          <div>
+            <v-menu
+              ref="menu_date_zamera"
+              v-model="menu_date_zamera"
+              :close-on-content-click="false"
+              :return-value.sync="date_zamera"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  v-model="date_zamera"
+                  label="Выберите дату замера"
+                  prepend-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker v-model="date_zamera" no-title scrollable>
+                <v-spacer></v-spacer>
+                <v-btn text color="primary" @click="menu_date_zamera = false"
+                  >Отмена</v-btn
+                >
+                <v-btn
+                  text
+                  color="primary"
+                  @click="$refs.menu_date_zamera.save(date_zamera)"
+                  >Ок</v-btn
+                >
+              </v-date-picker>
+            </v-menu>
+          </div>
+          <div class="d-flex justify-end">
+            <v-btn @click="chooseTeam" color="primary" small>Выбрать</v-btn>
+          </div>
+        </v-card>
       </template>
     </AddServiceDetailModal>
 
@@ -37,19 +133,25 @@
         <div
           v-else
           class="popupBtn px-1"
-          @click="changeAddServiceDialog('dveri')"
+          @click="changeAddServiceDialog('date_mont')"
         >
           <!-- <v-icon small class="mr-2">mdi-pencil</v-icon> -->
           назначить монтаж
         </div>
       </template>
 
-      <template v-slot:item.data_zamera="{ item }">
+      <template #item.data_zamera="{ item }">
         <v-chip v-if="item.data_zamera">
           <span>{{ item.data_zamera }}</span>
           <span v-if="item.vremya_zamera">, {{ item.vremya_zamera }}</span>
         </v-chip>
-        <div v-else class="popupBtn">назначить дату замера</div>
+        <div
+          v-else
+          class="popupBtn px-1"
+          @click="changeAddServiceDialog('date_zamera')"
+        >
+          назначить дату замера
+        </div>
       </template>
 
       <template #item.brigada_mont.name="{ item }">
@@ -142,7 +244,7 @@
 
 	<script>
 import axios from "axios";
-import { mapState } from "vuex";
+import { mapActions, mapGetters, mapState } from "vuex";
 
 import AddServiceDetailModal from "../components/AddServiceDetailModal";
 
@@ -158,6 +260,7 @@ export default {
     addBrigadaDialog: false,
     addServiceSlotName: "",
     menu2: false,
+    menu_date_mont: false,
     doMont: "",
     deliting: "",
     cities: ["Все", "Санкт-Петербург", "Москва"],
@@ -186,10 +289,17 @@ export default {
       { text: "Примечание Руководителя", value: "prim_rukvod" },
     ],
     editedIndex: -1,
+    team: "",
+    date_mont: null,
   }),
 
   computed: {
     ...mapState("zakaz", ["doors", "loadDoors"]),
+
+    ...mapGetters({
+      teams: "zakaz/GET_TEAMS",
+    }),
+
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
@@ -203,13 +313,17 @@ export default {
       }
     },
   },
-  created() {
+  mounted() {
     // api
-
+    this.fetchTeams();
     this.$store.dispatch("zakaz/getDoors");
   },
 
   methods: {
+    ...mapActions({
+      fetchTeams: "zakaz/UPDATE_TEAMS",
+    }),
+
     setMont(n) {
       alert("asdas");
       console.log(n);
@@ -242,6 +356,12 @@ export default {
     changeAddServiceDialog(slotName) {
       this.addServiceSlotName = slotName;
       this.addServiceDialog = !this.addServiceDialog;
+    },
+
+    chooseTeam() {
+      console.log("CHOOSE TEAM AND RERENDER TABLE WITH NEW DATA");
+      this.team = null;
+      this.addServiceDialog = false;
     },
   },
 };

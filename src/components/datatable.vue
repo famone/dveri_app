@@ -18,7 +18,7 @@
             ></v-select>
           </div>
           <div class="d-flex justify-end">
-            <v-btn @click="chooseTeam" color="primary" small>Выбрать</v-btn>
+            <v-btn @click="submitChosenEdition('team')" color="primary" small>Выбрать</v-btn>
           </div>
         </v-card>
       </template>
@@ -61,7 +61,7 @@
             </v-menu>
           </div>
           <div class="d-flex justify-end">
-            <v-btn @click="chooseTeam" color="primary" small>Выбрать</v-btn>
+            <v-btn @click="submitChosenEdition('date_mont')" color="primary" small>Выбрать</v-btn>
           </div>
         </v-card>
       </template>
@@ -104,7 +104,25 @@
             </v-menu>
           </div>
           <div class="d-flex justify-end">
-            <v-btn @click="chooseTeam" color="primary" small>Выбрать</v-btn>
+            <v-btn @click="submitChosenEdition('date_zamera')" color="primary" small>Выбрать</v-btn>
+          </div>
+        </v-card>
+      </template>
+
+      <template #zamershiki>
+        <v-card class="pa-4">
+          <!-- <v-card-title class="pa-0">Выберите бригаду</v-card-title> -->
+          <div>
+            <v-select
+              :items="zamershiki"
+              v-model="zamershik"
+              return-object
+              item-text="fname"
+              label="установить замерщика"
+            ></v-select>
+          </div>
+          <div class="d-flex justify-end">
+            <v-btn @click="submitChosenEdition('zamershik')" color="primary" small>Выбрать</v-btn>
           </div>
         </v-card>
       </template>
@@ -163,14 +181,11 @@
         </div>
       </template>
 
-      <template v-slot:item.zamershik="{ item }">
-        <v-select
-          v-if="!item.zamershik.name"
-          :items="['вася', 'петя']"
-          label="Выбрать"
-          style="font-size: 12px !important"
-        ></v-select>
-        <span v-else>{{ item.zamershik.name }}</span>
+      <template #item.zamershik="{ item }">
+        <span v-if="item.zamershik.name">{{ item.zamershik.name }}</span>
+        <div v-else class="popupBtn" @click="changeAddServiceDialog('zamershiki')">
+          установить замерщика
+        </div>
       </template>
 
       <template v-slot:item.adres="{ item }">
@@ -178,10 +193,10 @@
         {{ item.adress }} {{ item.house }} {{ item.flat }}
       </template>
 
-      <template v-slot:item.zamershik.name="{ item }">
-        <!-- TODO: если поле пустое должна быть надпись установить замерщика и выскакивать поп ап с выбором замерщика -->
-        {{ item.zamershik.name }}
-      </template>
+      <!-- <template v-slot:item.zamershik.name="{ item }"> -->
+      <!-- TODO: если поле пустое должна быть надпись установить замерщика и выскакивать поп ап с выбором замерщика -->
+      <!-- {{ item.zamershik.name }} -->
+      <!-- </template> -->
 
       <template v-slot:top>
         <v-toolbar flat>
@@ -291,6 +306,8 @@ export default {
     editedIndex: -1,
     team: "",
     date_mont: null,
+    // zamershiki: [],
+    zamershik: null,
   }),
 
   computed: {
@@ -298,6 +315,7 @@ export default {
 
     ...mapGetters({
       teams: "zakaz/GET_TEAMS",
+      zamershiki:"zakaz/GET_ZAMERSHIKI"
     }),
 
     formTitle() {
@@ -316,12 +334,14 @@ export default {
   mounted() {
     // api
     this.fetchTeams();
+    this.fetchZamershiki();
     this.$store.dispatch("zakaz/getDoors");
   },
 
   methods: {
     ...mapActions({
       fetchTeams: "zakaz/UPDATE_TEAMS",
+      fetchZamershiki: "zakaz/UPDATE_ZAMERSHIKI",
     }),
 
     setMont(n) {
@@ -358,9 +378,9 @@ export default {
       this.addServiceDialog = !this.addServiceDialog;
     },
 
-    chooseTeam() {
+    submitChosenEdition(type) {
       console.log("CHOOSE TEAM AND RERENDER TABLE WITH NEW DATA");
-      this.team = null;
+      this[type] = null;
       this.addServiceDialog = false;
     },
   },

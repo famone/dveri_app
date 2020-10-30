@@ -7,7 +7,8 @@ const zakaz = {
     loadDoors: true,
     models: [],
     loadModels: true,
-    teams: []
+    teams: [],
+    zamershiki: []
   },
 
   getters: {
@@ -19,7 +20,11 @@ const zakaz = {
     },
     GET_TEAMS(state) {
       return state.teams
-    }
+    },
+    GET_ZAMERSHIKI(state) {
+      return state.zamershiki
+    },
+
   },
 
   mutations: {
@@ -36,6 +41,9 @@ const zakaz = {
     },
     SET_TEAMS(state, teams) {
       state.teams = teams
+    },
+    SET_ZAMERSHIKI(state, zamershiki) {
+      state.zamershiki = zamershiki
     }
   },
 
@@ -87,8 +95,17 @@ const zakaz = {
           console.log(data);
           commit("SET_TEAMS", data)
         })
-    }
+    },
+
+    UPDATE_ZAMERSHIKI({ commit }) {
+      axios
+        .get("https://door.webink.site/wp-json/door/v1/get/users?type=zamershik")
+        .then(({ data }) => {
+          commit("SET_ZAMERSHIKI", data)
+        });
+    },
   },
+
 }
 
 export default zakaz

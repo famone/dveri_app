@@ -7,7 +7,6 @@
     >
       <template #brigada>
         <v-card class="pa-4">
-          <!-- <v-card-title class="pa-0">Выберите бригаду</v-card-title> -->
           <div>
             <v-select
               :items="teams"
@@ -17,94 +16,86 @@
               label="Выберите бригаду"
             ></v-select>
           </div>
-          <div class="d-flex justify-end">
-            <v-btn @click="submitChosenEdition('team')" color="primary" small>Выбрать</v-btn>
+          <div class="d-flex justify-end mt-4">
+            <v-btn
+              @click="submitChosenEdition('team')"
+              :disabled="!team"
+              color="primary"
+              small
+              class="mr-2"
+              >Выбрать</v-btn
+            >
+            <v-btn @click="changeAddServiceDialog" color="error" dark small
+              >Закрыть</v-btn
+            >
           </div>
         </v-card>
       </template>
 
       <template #date_mont>
         <v-card class="pa-4">
-          <!-- <v-card-title class="pa-0">Выберите дату монтажа</v-card-title> -->
-          <div>
-            <v-menu
-              ref="menu_date_mont"
-              v-model="menu_date_mont"
-              :close-on-content-click="false"
-              :return-value.sync="date_mont"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="date_mont"
-                  label="Выберите дату монтажа"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker v-model="date_mont" no-title scrollable>
-                <v-spacer></v-spacer>
-                <v-btn text color="primary" @click="menu_date_mont = false"
-                  >Отмена</v-btn
-                >
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.menu_date_mont.save(date_mont)"
-                  >Ок</v-btn
-                >
-              </v-date-picker>
-            </v-menu>
-          </div>
+          <v-datetime-picker
+            label="Выберите дату монтажа"
+            v-model="date_mont"
+            clearText="отмена"
+            okText="выбрать"
+            :timePickerProps="{
+              format: '24hr',
+            }"
+          >
+            <template #dateIcon>
+              <v-icon> mdi-calendar </v-icon>
+            </template>
+            <template #timeIcon>
+              <v-icon> mdi-clock </v-icon>
+            </template>
+          </v-datetime-picker>
           <div class="d-flex justify-end">
-            <v-btn @click="submitChosenEdition('date_mont')" color="primary" small>Выбрать</v-btn>
+            <v-btn
+              @click="submitChosenEdition('date_mont')"
+              color="primary"
+              small
+              class="mr-2"
+              :disabled="!date_mont"
+              >Выбрать</v-btn
+            >
+            <v-btn @click="changeAddServiceDialog" color="error" dark small
+              >Закрыть</v-btn
+            >
           </div>
         </v-card>
       </template>
 
       <template #date_zamera>
         <v-card class="pa-4">
-          <!-- <v-card-title class="pa-0">Выберите дату монтажа</v-card-title> -->
-          <div>
-            <v-menu
-              ref="menu_date_zamera"
-              v-model="menu_date_zamera"
-              :close-on-content-click="false"
-              :return-value.sync="date_zamera"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="date_zamera"
-                  label="Выберите дату замера"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker v-model="date_zamera" no-title scrollable>
-                <v-spacer></v-spacer>
-                <v-btn text color="primary" @click="menu_date_zamera = false"
-                  >Отмена</v-btn
-                >
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.menu_date_zamera.save(date_zamera)"
-                  >Ок</v-btn
-                >
-              </v-date-picker>
-            </v-menu>
-          </div>
+          <v-datetime-picker
+            label="Выберите дату замера"
+            v-model="date_zamera"
+            clearText="отмена"
+            okText="выбрать"
+            :timePickerProps="{
+              format: '24hr',
+            }"
+          >
+            <template #dateIcon>
+              <v-icon> mdi-calendar </v-icon>
+            </template>
+            <template #timeIcon>
+              <v-icon> mdi-clock </v-icon>
+            </template>
+          </v-datetime-picker>
           <div class="d-flex justify-end">
-            <v-btn @click="submitChosenEdition('date_zamera')" color="primary" small>Выбрать</v-btn>
+            <v-btn
+              @click="submitChosenEdition('date_zamera')"
+              color="primary"
+              small
+              class="mr-2"
+              :disabled="!date_zamera"
+              >Выбрать</v-btn
+            >
+            <v-btn @click="changeAddServiceDialog" color="error" dark small
+              >Закрыть</v-btn
+            >
           </div>
         </v-card>
       </template>
@@ -122,7 +113,17 @@
             ></v-select>
           </div>
           <div class="d-flex justify-end">
-            <v-btn @click="submitChosenEdition('zamershik')" color="primary" small>Выбрать</v-btn>
+            <v-btn
+              @click="submitChosenEdition('zamershik')"
+              color="primary"
+              small
+              class="mr-2"
+              :disabled="!zamershik"
+              >Выбрать</v-btn
+            >
+            <v-btn @click="changeAddServiceDialog" color="error" dark small
+              >Закрыть</v-btn
+            >
           </div>
         </v-card>
       </template>
@@ -183,7 +184,11 @@
 
       <template #item.zamershik="{ item }">
         <span v-if="item.zamershik.name">{{ item.zamershik.name }}</span>
-        <div v-else class="popupBtn" @click="changeAddServiceDialog('zamershiki')">
+        <div
+          v-else
+          class="popupBtn"
+          @click="changeAddServiceDialog('zamershiki')"
+        >
           установить замерщика
         </div>
       </template>
@@ -274,8 +279,6 @@ export default {
     addServiceDialog: false,
     addBrigadaDialog: false,
     addServiceSlotName: "",
-    menu2: false,
-    menu_date_mont: false,
     doMont: "",
     deliting: "",
     cities: ["Все", "Санкт-Петербург", "Москва"],
@@ -306,7 +309,7 @@ export default {
     editedIndex: -1,
     team: "",
     date_mont: null,
-    // zamershiki: [],
+    date_zamera: null,
     zamershik: null,
   }),
 
@@ -315,7 +318,7 @@ export default {
 
     ...mapGetters({
       teams: "zakaz/GET_TEAMS",
-      zamershiki:"zakaz/GET_ZAMERSHIKI"
+      zamershiki: "zakaz/GET_ZAMERSHIKI",
     }),
 
     formTitle() {
@@ -380,7 +383,11 @@ export default {
 
     submitChosenEdition(type) {
       console.log("CHOOSE TEAM AND RERENDER TABLE WITH NEW DATA");
-      this[type] = null;
+
+      if (type === "date_mont" || type === "date_zamera") {
+        this[type] = this[type].toISOString();
+      }
+      // send post request and then this.[type] = null;
       this.addServiceDialog = false;
     },
   },

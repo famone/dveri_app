@@ -136,8 +136,8 @@
       sort-by="id"
       single-line
       class="elevation-1 rounded-lg"
+      @click:row="selectOrderRow"
     >
-      <!-- @click:row="handleClick" -->
       <template v-slot:item.id="{ item }">
         <v-chip :color="getColor(item.status)" dark>
           {{ item.id }}
@@ -264,7 +264,7 @@
 
 	<script>
 import axios from "axios";
-import { mapActions, mapGetters, mapState } from "vuex";
+import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 
 import AddServiceDetailModal from "../components/AddServiceDetailModal";
 
@@ -319,11 +319,13 @@ export default {
     ...mapGetters({
       teams: "zakaz/GET_TEAMS",
       zamershiki: "zakaz/GET_ZAMERSHIKI",
+      GET_CHOSEN_ZAKAZ: "zakaz/GET_CHOSEN_ZAKAZ",
     }),
 
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
+
     filteredItems() {
       if (this.city === "Все") {
         return this.doors;
@@ -338,14 +340,24 @@ export default {
     // api
     this.fetchTeams();
     this.fetchZamershiki();
-    this.$store.dispatch("zakaz/getDoors");
+    this.fetchDoors();
   },
 
   methods: {
+    ...mapMutations({
+      SET_CHOSEN_ZAKAZ: "zakaz/SET_CHOSEN_ZAKAZ",
+    }),
+
     ...mapActions({
       fetchTeams: "zakaz/UPDATE_TEAMS",
       fetchZamershiki: "zakaz/UPDATE_ZAMERSHIKI",
+      fetchDoors: "zakaz/getDoors",
+      EDIT_ZAKAZ: "zakaz/EDIT_ZAKAZ",
     }),
+
+    selectOrderRow(item) {
+      this.SET_CHOSEN_ZAKAZ(item);
+    },
 
     setMont(n) {
       alert("asdas");
@@ -382,12 +394,17 @@ export default {
     },
 
     submitChosenEdition(type) {
-      console.log("CHOOSE TEAM AND RERENDER TABLE WITH NEW DATA");
-
       if (type === "date_mont" || type === "date_zamera") {
         this[type] = this[type].toISOString();
       }
-      // send post request and then this.[type] = null;
+
+      this.EDIT_ZAKAZ({ ...this.GET_CHOSEN_ZAKAZ, [type]: this[type] }).then(
+        () => {
+          this.fetchDoors();
+          this[type] = null;
+        }
+      );
+
       this.addServiceDialog = false;
     },
   },

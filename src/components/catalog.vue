@@ -47,10 +47,11 @@
               </v-toolbar>
             </template>
 
-            <template v-slot:item.actions="{ item }">
-              <router-link tag="a" :to="'/edit_model/' + item.id">
-                <v-icon small class="mr-2">mdi-pencil</v-icon>
-              </router-link>
+            <template #item.actions="{ item }">
+              <v-icon small class="mr-2" @click="editItem(item)"
+                >mdi-pencil</v-icon
+              >
+
               <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
             </template>
           </v-data-table>
@@ -62,7 +63,7 @@
 
 <script>
 import axios from "axios";
-import { mapState } from "vuex";
+import { mapMutations, mapState } from "vuex";
 export default {
   data: () => ({
     dialog: false,
@@ -110,8 +111,14 @@ export default {
     this.$store.dispatch("zakaz/loadModels");
   },
   methods: {
+    ...mapMutations({
+      SET_CHOSEN_MODEL: "zakaz/SET_CHOSEN_MODEL",
+    }),
+
     editItem(item) {
       console.log(item);
+      this.SET_CHOSEN_MODEL(item);
+      this.$router.push("/edit_model/" + item.id);
     },
   },
 };

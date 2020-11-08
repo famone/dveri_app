@@ -359,22 +359,19 @@
             </div>
           </div>
         </div>
-
+      </div>
+      <div class="row">
         <div class="row">
-          <div class="row">
-            <v-btn depressed x-large dark color="grey" class="m-15"
-              >НАЗАД</v-btn
-            >
-            <v-btn
-              depressed
-              x-large
-              color="primary"
-              class="m-15"
-              :loading="loadBtn"
-              @click="updateOrder"
-              >Обновить ЗАКАЗ</v-btn
-            >
-          </div>
+          <v-btn depressed x-large dark color="grey" class="m-15" @click="$router.go(-1)">НАЗАД</v-btn>
+          <v-btn
+            depressed
+            x-large
+            color="primary"
+            class="m-15"
+            :loading="loadBtn"
+            @click="updateOrder"
+            >Обновить ЗАКАЗ</v-btn
+          >
         </div>
       </div>
     </div>
@@ -448,9 +445,9 @@ export default {
       });
   },
   methods: {
-	  updateOrder(){
-		console.log("UPDATE_ORDER API")
-	  }
+    updateOrder() {
+      console.log("UPDATE_ORDER API");
+    },
   },
 };
 </script>

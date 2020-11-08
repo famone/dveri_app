@@ -51,7 +51,8 @@ const routes = [
   },
   {
     path: '/edit_model/:id',
-    component: Edit_model
+    component: Edit_model,
+    props: true
   }
 ]
 

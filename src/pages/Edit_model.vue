@@ -7,18 +7,41 @@
             <v-icon>mdi-arrow-left</v-icon>
             Назад</v-btn
           >
-          <h2>{{ getModelEdit(routeId).category.name }}</h2>
-          <h3>{{ getModelEdit(routeId).name }}</h3>
         </div>
       </div>
 
       <div class="row shad-box">
+        <div class="col-lg-12 py-0">
+          <div class="row">
+            <div class="col-lg-4 pb-0">
+              <v-select
+                label="Производитель"
+                :items="manufacturer"
+                item-text="name"
+                v-model="brand"
+                return-object
+              ></v-select>
+            </div>
+            <div class="col-lg-4 pb-0">
+              <v-select
+                label="Модель двери"
+                :items="doorModels"
+                item-text="name"
+                v-model="doorModel"
+              ></v-select>
+            </div>
+          </div>
+        </div>
         <div class="col-lg-12">
           <h2><span class="mdi mdi-arrow-all"></span> Размеры:</h2>
         </div>
 
         <div class="col-lg-12">
-          <div class="row repeater" v-for="(model, index) in modelsArray">
+          <div
+            class="row repeater"
+            v-for="(model, index) in modelsArray"
+            :key="model.id"
+          >
             <div class="col-lg-3">
               <v-text-field
                 type="number"
@@ -52,7 +75,15 @@
       </div>
 
       <div class="row">
-        <v-btn depressed x-large dark color="grey" class="m-15" @click="$router.go(-1)">НАЗАД</v-btn>
+        <v-btn
+          depressed
+          x-large
+          dark
+          color="grey"
+          class="m-15"
+          @click="$router.go(-1)"
+          >НАЗАД</v-btn
+        >
         <v-btn
           depressed
           x-large
@@ -68,25 +99,44 @@
 
 <script>
 import axios from "axios";
-import { mapGetters } from "vuex";
+
+import { mapActions, mapGetters } from "vuex";
 
 export default {
+  props: ["id"],
+
   data() {
     return {
-      routeId: "",
       modelsArray: [],
+      brand: "",
+      manufacturer: [],
+      doorModels: [],
+      doorModel: "",
     };
   },
   computed: {
-    ...mapGetters("zakaz", ["getModelEdit"]),
+    ...mapGetters({
+      getModelEdit: "zakaz/getModelEdit",
+      GET_MODELS: "zakaz/GET_MODELS",
+      GET_CHOSEN_MODEL: "zakaz/GET_CHOSEN_MODEL",
+    }),
   },
-  created() {
+  mounted() {
+    this.brand = this.getModelEdit(this.id).category;
+    console.log(this.brand);
+    this.doorModels = this.GET_MODELS(this.brand);
+    this.doorModel = this.getModelEdit(this.id).name;
     // модели
     this.$store.dispatch("zakaz/loadModels");
-    this.routeId = this.$route.params.id;
 
-    let newKey = Object.keys(this.getModelEdit(this.routeId).price);
-    let newVal = Object.values(this.getModelEdit(this.routeId).price);
+    axios
+      .get("https://door.webink.site/wp-json/door/v1/get/categorys")
+      .then((response) => {
+        this.manufacturer = response.data;
+      });
+
+    let newKey = Object.keys(this.getModelEdit(this.id).price);
+    let newVal = Object.values(this.getModelEdit(this.id).price);
 
     newKey.forEach((item) => {
       this.modelsArray.push({ size: item, price: "" });
@@ -97,6 +147,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      EDIT_MODELS: "zakaz/EDIT_MODELS",
+    }),
+
     addModel() {
       this.modelsArray.push({ size: "", price: "" });
     },
@@ -104,8 +158,21 @@ export default {
       this.modelsArray.splice(index, 1);
     },
     changeModels() {
-      console.log(this.modelsArray);
+      this.EDIT_MODELS({
+        ...this.GET_CHOSEN_MODEL,
+        name: this.doorModel,
+        category: {
+          name: this.brand.name,
+          id: this.brand.term_id,
+        },
+      });
       this.$router.push("/directories");
+    },
+  },
+
+  watch: {
+    brand(newValue) {
+      this.doorModels = this.GET_MODELS(newValue);
     },
   },
 };

@@ -9,7 +9,7 @@
         <div class="col-lg-12">
           <v-data-table
             :headers="headers"
-            :items="dopServices"
+            :items="filteredDopServices"
             :loading="loadServ"
             class="elevation-1"
           >
@@ -115,6 +115,7 @@ import { mapState } from "vuex";
 export default {
   data: () => ({
     dopServices: [],
+    manufacturer: null,
     loadServ: true,
     dialog: false,
     dialogDelete: false,
@@ -143,6 +144,16 @@ export default {
         ? "Создать доп. услугу"
         : "Редактировать доп. услугу";
     },
+
+    filteredDopServices() {
+      if (this.brand === "Все" || !this.brand) {
+        return this.dopServices;
+      } else {
+        return this.dopServices.filter((item) => {
+          return item.manufacturer === this.brand;
+        });
+      }
+    },
   },
   created() {
     // дополнительные услуги
@@ -151,6 +162,15 @@ export default {
       .then((response) => {
         this.dopServices = response.data;
         this.loadServ = false;
+      });
+
+    axios
+      .get("https://door.webink.site/wp-json/door/v1/get/categorys")
+      .then((response) => {
+        response.data.forEach((item) => {
+          this.categorys.push(item.name);
+        });
+        this.categorys.push("Все");
       });
   },
   methods: {

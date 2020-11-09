@@ -8,6 +8,7 @@ import Neworder from '../pages/Neworder';
 import Directories from '../pages/Directories'
 import Edit_order from '../pages/Edit_order.vue'
 import Edit_model from '../pages/Edit_model.vue'
+import NewDoor from '../pages/NewDoor.vue'
 
 const routes = [
   {
@@ -53,7 +54,11 @@ const routes = [
     path: '/edit_model/:id',
     component: Edit_model,
     props: true
-  }
+  },
+  {
+    path: '/new_door',
+    component: NewDoor,
+  },
 ]
 
 export default routes;

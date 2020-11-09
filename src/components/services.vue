@@ -150,7 +150,7 @@ export default {
         return this.dopServices;
       } else {
         return this.dopServices.filter((item) => {
-          return item.manufacturer === this.brand;
+          return item.manufacturer.name === this.brand;
         });
       }
     },

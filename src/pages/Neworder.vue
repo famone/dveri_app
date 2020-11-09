@@ -198,26 +198,27 @@
               >
             </div>
             <div class="col-lg-4" v-if="dop.additionalInfoShow">
+              <!-- additionalName -->
+              <!-- additionalCount -->
+              <!-- additionalPrice -->
               <v-text-field
-                v-model="dop.additionalInfo"
+                v-model="dop.additionalName"
                 label="Дополнительная информация"
               >
               </v-text-field>
             </div>
             <div class="col-lg-11 pa-0"></div>
-            <div class="col-lg-4 py-0">
-              <v-btn depressed color="secondary" @click="addOther(index)">
-                <v-icon left>mdi-plus</v-icon>Добавить другое
-              </v-btn>
-            </div>
           </div>
           <v-btn
             depressed
             color="primary"
             @click="addDop('dopolnServ')"
-            class="mt-7"
+            class="mr-4"
           >
             <v-icon left>mdi-cart-plus</v-icon>Добавить
+          </v-btn>
+          <v-btn depressed color="secondary" @click="addOther('dopolnServ')">
+            <v-icon left>mdi-plus</v-icon>Добавить другое
           </v-btn>
         </div>
       </div>
@@ -649,7 +650,6 @@ export default {
       .get("https://door.webink.site/wp-json/door/v1/get/teams")
       .then((response) => {
         this.brigadi = response.data;
-        console.log(this.brigadi);
       });
   },
   methods: {
@@ -658,13 +658,23 @@ export default {
         name: "",
         count: 1,
         price: 0,
-        additionalInfo: "",
-        additionalInfoShow: false,
       });
     },
 
-    addOther(index) {
-      this.dopolnServ[index].additionalInfoShow = true;
+    addOther(type) {
+      let lastAddedDop = this[type][[this[type].length - 1]];
+
+      let editedLastAddedDop = {
+        ...lastAddedDop,
+        additionalName: "",
+        additionalCount: 0,
+        additionalPrice: 0,
+        additionalInfoShow: true,
+      };
+
+      this[type].splice(this[type][this[type].length], 1, editedLastAddedDop);
+
+      console.log(this[type]);
     },
 
     deliteDop(type, index) {
@@ -782,12 +792,6 @@ export default {
   },
 };
 </script>
-
-
-
-
-
-
 
 <style>
 .v-input--selection-controls {

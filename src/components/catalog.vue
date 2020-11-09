@@ -25,7 +25,7 @@
                     </v-col>
                     <v-spacer></v-spacer>
 
-                    <router-link tag="a" to="/neworder">
+                    <router-link to="/new_door">
                       <v-btn depressed color="primary"
                         ><v-icon>mdi-playlist-plus</v-icon>Создать</v-btn
                       >

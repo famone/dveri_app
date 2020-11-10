@@ -197,15 +197,40 @@
                 <v-icon left>mdi-delete</v-icon>Удалить</v-btn
               >
             </div>
-            <div class="col-lg-4" v-if="dop.additionalInfoShow">
-              <!-- additionalName -->
-              <!-- additionalCount -->
-              <!-- additionalPrice -->
-              <v-text-field
-                v-model="dop.additionalName"
-                label="Дополнительная информация"
-              >
-              </v-text-field>
+            <div
+              class="col-lg-12"
+              v-for="(item, addDopIndex) in dopolnServ[index].additionalInfo"
+              :key="item.name"
+            >
+              <div class="col-lg-4">
+                <v-text-field v-model="dop.additionalName" label="Услуга">
+                </v-text-field>
+              </div>
+              <div class="col-lg-2">
+                <v-text-field
+                  type="number"
+                  v-model="dop.additionalCount"
+                  label="Количество"
+                >
+                </v-text-field>
+              </div>
+              <div class="col-lg-3">
+                <v-text-field
+                  v-model="dop.additionalPrice"
+                  label="Стоимость руб."
+                >
+                </v-text-field>
+              </div>
+              <div class="col-lg-2">
+                <v-btn
+                  depressed
+                  color="error"
+                  class="m-15"
+                  @click="deliteAddDop(addDopIndex, index)"
+                >
+                  <v-icon left>mdi-delete</v-icon>Удалить</v-btn
+                >
+              </div>
             </div>
             <div class="col-lg-11 pa-0"></div>
           </div>
@@ -658,27 +683,29 @@ export default {
         name: "",
         count: 1,
         price: 0,
+        // additionalInfoShow: false,
+        additionalInfo: [],
       });
     },
 
     addOther(type) {
       let lastAddedDop = this[type][[this[type].length - 1]];
 
-      let editedLastAddedDop = {
-        ...lastAddedDop,
+      lastAddedDop.additionalInfo.push({
         additionalName: "",
         additionalCount: 0,
         additionalPrice: 0,
-        additionalInfoShow: true,
-      };
-
-      this[type].splice(this[type][this[type].length], 1, editedLastAddedDop);
-
-      console.log(this[type]);
+      });
     },
 
     deliteDop(type, index) {
       this[type].splice(index, 1);
+    },
+
+    deliteAddDop(addDopIndex, index) {
+      let currentDopAdditionalInfo = this.dopolnServ[index].additionalInfo;
+
+      currentDopAdditionalInfo.splice(addDopIndex, 1);
     },
 
     atInput(index, event, type) {

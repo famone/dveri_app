@@ -8,6 +8,7 @@ import VueTheMask from 'vue-the-mask'
 import Vuelidate from 'vuelidate'
 import Vuetify from 'vuetify'
 import DatetimePicker from 'vuetify-datetime-picker'
+import VueTippy, { TippyComponent } from "vue-tippy";
 
 import 'vuetify/dist/vuetify.min.css'
 
@@ -21,6 +22,9 @@ Vue.use(VueTheMask)
 Vue.use(Vuelidate)
 Vue.use(DatetimePicker)
 Vue.use(require('vue-cookies'))
+Vue.use(VueTippy);
+Vue.component("tippy", TippyComponent);
+
 import ru from 'vuetify/es5/locale/ru'
 
 const user = JSON.parse(localStorage.getItem("user"))

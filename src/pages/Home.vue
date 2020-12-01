@@ -2,11 +2,11 @@
 	 <section>
    <div class="container-fluid">
 
- 		<!-- <v-chip-group active-class="primary--text" column>
+ 		<v-chip-group active-class="primary--text" column>
             <v-chip v-for="tag in tags" :key="tag" class="ma-2" @click="showFiltered(tag)">
               {{ tag }}
             </v-chip>
-         </v-chip-group> -->
+         </v-chip-group>
 
       	<datatable />
 
@@ -23,10 +23,18 @@ export default{
 	data(){
 		return{
 			tags: [
-        		'Фильтр 1',
-        		'Фильтр 2',
-        		'Фильтр 3',
-        		'Фильтр 4',
+        		'Заявки за сегодня',
+        		'Необработанные заявки',
+        		'Передано замерщику',
+        		'Монтаж завтра',
+        		'Монтаж сегодня',
+        		'Ожидают монтаж',
+        		'Возврат дилеру',
+        		'Ожидают прибытия',
+        		'В исполнении',
+        		'Купоны',
+        		'Изменения продавцов',
+
       		],
 		}
 	},

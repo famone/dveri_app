@@ -20,8 +20,11 @@ Vue.use(VueRouter)
 Vue.use(VueTheMask)
 Vue.use(Vuelidate)
 Vue.use(DatetimePicker)
+Vue.use(VueTippy);
 Vue.use(require('vue-cookies'))
 Vue.use(require('vue-moment'))
+
+Vue.component("tippy", TippyComponent);
 
 import ru from 'vuetify/es5/locale/ru'
 

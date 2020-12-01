@@ -139,7 +139,8 @@
       @click:row="selectOrderRow"
     >
       <template v-slot:item.id="{ item }">
-        <v-chip :color="getColor(item.status)" dark>
+        <v-chip :color="getColor(item.status)" dark  :content="getTippyTittle(item.status)" 
+        v-tippy="{ placement : 'right',  arrow: true }">
           {{ item.id }}
         </v-chip>
       </template>
@@ -221,11 +222,13 @@
             v-model="city"
           ></v-select>
 
+
           <v-spacer></v-spacer>
+
+          <v-btn depressed color="primary ma-4"><v-icon>mdi-download</v-icon> Выгрузить EXEL</v-btn>
+
           <router-link tag="a" to="/neworder">
-            <v-btn depressed color="primary"
-              ><v-icon>mdi-playlist-plus</v-icon> Новый заказ</v-btn
-            >
+            <v-btn depressed color="primary"><v-icon>mdi-playlist-plus</v-icon> Новый заказ</v-btn>
           </router-link>
 
           <v-dialog v-model="dialogDelete" max-width="500px">
@@ -371,6 +374,11 @@ export default {
       if (status === "pending") return "red";
       else if (status === "processing") return "orange";
       else return "green";
+    },
+    getTippyTittle(status){
+      if (status === "pending") return "Ожидает";
+      else if (status === "processing") return "В процессе";
+      else return "В работе";
     },
     getPart(part) {
       if (part === "Север") return "primary";

@@ -144,6 +144,10 @@
         </v-chip>
       </template>
 
+       <template #item.door_size="{ item }">
+        {{ item.door_size }} / {{ item.door_direction }}
+      </template>
+
       <template v-slot:item.date_mont="{ item }">
         <v-chip v-if="item.date_mont">
           <span>{{ item.date_mont }}</span>
@@ -207,7 +211,7 @@
         <v-toolbar flat>
           <v-toolbar-title>Заказы</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
-          <v-toolbar-title>Сегодня: 18.10.2020</v-toolbar-title>
+          <v-toolbar-title>Сегодня: {{ now | moment("d.m.YYYY") }}</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
 
           <v-select
@@ -274,6 +278,7 @@ export default {
   },
 
   data: () => ({
+    now: new Date(),
     dialog: false,
     dialogDelete: false,
     addServiceDialog: false,
@@ -286,25 +291,24 @@ export default {
     headers: [
       { text: "Ред.", value: "actions", sortable: false },
       { text: "№", value: "id" },
-      { text: "Желаемая дата монтажа", value: "date_mont" },
-      { text: "Желаемая дата замера", value: "data_zamera" },
-      { text: "БР", value: "brigada_mont.name" },
       { text: "Адрес", value: "adres" },
-      { text: "ФИО", value: "fio" },
       { text: "Телефон", value: "phone" },
-      { text: "Продавец", sortable: true, value: "saler.name" },
-      { text: "Дата", value: "date" },
+      { text: "ФИО", value: "fio" },
       { text: "Модель двери продавца", value: "model_saler.name" },
       { text: "Модель двери рук", value: "" },
-      { text: "Размер двери", value: "door_size" },
-      { text: "Сторона откр", value: "door_direction" },
-      { text: "Размер проема", value: "proem_size" },
+      { text: "Размер / Сторона", value: "door_size" },
+      { text: "Проем", value: "proem_size" }, 
+      { text: "Дата замера", value: "data_zamera" },
       { text: "Замерщик", value: "zamershik" },
-      { text: "Цена диллера", value: "cost_diler" },
-      { text: "Сумма премии", value: "sum_premia" },
-      { text: "Премия ВДЗ", value: "vdz_premia" },
+      { text: "Дата монтажа", value: "date_mont" },    
+      { text: "Бригада", value: "brigada_mont.name" },
+      { text: "Цена диллера", value: "cost_diler" },  
       { text: "Примечание продавца", value: "prim_saler" },
       { text: "Примечание Руководителя", value: "prim_rukvod" },
+      { text: "Дата продажи", value: "date" },
+      { text: "Продавец", sortable: true, value: "saler.name" },     
+      { text: "Сумма премии", value: "sum_premia" },
+      { text: "Премия ВДЗ", value: "vdz_premia" },
     ],
     editedIndex: -1,
     team: "",

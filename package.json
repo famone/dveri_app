@@ -1,7 +1,7 @@
 {
-  "name": "zatochka",
-  "description": "A Vue.js Zatochka WP theme",
-  "version": "0.4.5",
+  "name": "shelion crm",
+  "description": "A Vue.js Chelieon CRM theme",
+  "version": "0.0.5",
   "author": "Konstantin Timofeev <kt@webink.site>",
   "license": "MIT",
   "private": true,
@@ -12,10 +12,12 @@
   "dependencies": {
     "axios": "^0.19.2",
     "imagemin-webpack-plugin": "^2.4.2",
+    "moment": "^2.29.1",
     "swiper": "^5.4.5",
     "vue": "^2.6.12",
     "vue-awesome-swiper": "^4.1.1",
     "vue-cookies": "^1.7.4",
+    "vue-moment": "^4.1.0",
     "vue-router": "^3.4.6",
     "vue-the-mask": "^0.11.1",
     "vuelidate": "^0.7.5",

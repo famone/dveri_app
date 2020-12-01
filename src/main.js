@@ -21,6 +21,8 @@ Vue.use(VueTheMask)
 Vue.use(Vuelidate)
 Vue.use(DatetimePicker)
 Vue.use(require('vue-cookies'))
+Vue.use(require('vue-moment'))
+
 import ru from 'vuetify/es5/locale/ru'
 
 const user = JSON.parse(localStorage.getItem("user"))

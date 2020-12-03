@@ -1,5 +1,5 @@
 {
-  "name": "shelion crm",
+  "name": "shelion_crm",
   "description": "A Vue.js Chelieon CRM theme",
   "version": "0.0.5",
   "author": "Konstantin Timofeev <kt@webink.site>",
@@ -17,6 +17,7 @@
     "vue": "^2.6.12",
     "vue-awesome-swiper": "^4.1.1",
     "vue-cookies": "^1.7.4",
+    "vue-json-excel": "^0.3.0",
     "vue-moment": "^4.1.0",
     "vue-router": "^3.4.6",
     "vue-the-mask": "^0.11.1",

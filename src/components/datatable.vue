@@ -108,7 +108,7 @@
               :items="zamershiki"
               v-model="zamershik"
               return-object
-              item-text="fname"
+              item-text="name"
               label="установить замерщика"
             ></v-select>
           </div>
@@ -130,22 +130,40 @@
     </AddServiceDetailModal>
 
     <v-data-table
+      v-if="items"
       :headers="headers"
-      :items="filteredItems"
+      :items="items"
       :loading="loadDoors"
       sort-by="id"
       single-line
       class="elevation-1 rounded-lg"
       @click:row="selectOrderRow"
     >
+      <!-- =========================================================================================================== -->
+
+      <template #body.prepend="{ headers }">
+        <td class="px-4" v-for="header in headers" :key="header.value">
+          <v-text-field
+            dense
+            @input="searchByColumn(header.value)"
+          ></v-text-field>
+        </td>
+      </template>
+
+      <!-- =========================================================================================================== -->
+
       <template v-slot:item.id="{ item }">
-        <v-chip :color="getColor(item.status)" dark  :content="getTippyTittle(item.status)" 
-        v-tippy="{ placement : 'right',  arrow: true }">
+        <v-chip
+          :color="getColor(item.status)"
+          dark
+          :content="getTippyTittle(item.status)"
+          v-tippy="{ placement: 'right', arrow: true }"
+        >
           {{ item.id }}
         </v-chip>
       </template>
 
-       <template #item.door_size="{ item }">
+      <template #item.door_size="{ item }">
         {{ item.door_size }} / {{ item.door_direction }}
       </template>
 
@@ -187,7 +205,7 @@
         </div>
       </template>
 
-      <template #item.zamershik="{ item }">
+      <template #item.zamershik.name="{ item }">
         <span v-if="item.zamershik.name">{{ item.zamershik.name }}</span>
         <div
           v-else
@@ -198,7 +216,7 @@
         </div>
       </template>
 
-      <template v-slot:item.adres="{ item }">
+      <template v-slot:item.adress="{ item }">
         <v-avatar :color="getPart(item.part_city)" size="15"></v-avatar>
         {{ item.adress }} {{ item.house }} {{ item.flat }}
       </template>
@@ -212,7 +230,9 @@
         <v-toolbar flat>
           <v-toolbar-title>Заказы</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
-          <v-toolbar-title>Сегодня: {{ now | moment("d.m.YYYY") }}</v-toolbar-title>
+          <v-toolbar-title
+            >Сегодня: {{ now | moment("DD.MM.YY") }}</v-toolbar-title
+          >
           <v-divider class="mx-4" inset vertical></v-divider>
 
           <v-select
@@ -220,15 +240,19 @@
             style="margin-bottom: -15px"
             :items="cities"
             v-model="city"
+            @change="filterByCity"
           ></v-select>
-
 
           <v-spacer></v-spacer>
 
-          <v-btn depressed color="primary ma-4"><v-icon>mdi-download</v-icon> Выгрузить EXEL</v-btn>
+          <v-btn depressed color="primary ma-4"
+            ><v-icon>mdi-download</v-icon> Выгрузить EXСEL</v-btn
+          >
 
           <router-link tag="a" to="/neworder">
-            <v-btn depressed color="primary"><v-icon>mdi-playlist-plus</v-icon> Новый заказ</v-btn>
+            <v-btn depressed color="primary"
+              ><v-icon>mdi-playlist-plus</v-icon> Новый заказ</v-btn
+            >
           </router-link>
 
           <v-dialog v-model="dialogDelete" max-width="500px">
@@ -254,6 +278,7 @@
           </v-dialog>
         </v-toolbar>
       </template>
+
       <template v-slot:item.actions="{ item }">
         <router-link tag="a" :to="'/edit_order/' + item.id">
           <v-icon small class="mr-2"> mdi-pencil </v-icon>
@@ -271,6 +296,7 @@
 
 	<script>
 import axios from "axios";
+
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 
 import AddServiceDetailModal from "../components/AddServiceDetailModal";
@@ -294,22 +320,22 @@ export default {
     headers: [
       { text: "Ред.", value: "actions", sortable: false },
       { text: "№", value: "id" },
-      { text: "Адрес", value: "adres" },
+      { text: "Адрес", value: "adress" },
       { text: "Телефон", value: "phone" },
       { text: "ФИО", value: "fio" },
       { text: "Модель двери продавца", value: "model_saler.name" },
       { text: "Модель двери рук", value: "" },
       { text: "Размер / Сторона", value: "door_size" },
-      { text: "Проем", value: "proem_size" }, 
+      { text: "Проем", value: "proem_size" },
       { text: "Дата замера", value: "data_zamera" },
-      { text: "Замерщик", value: "zamershik" },
-      { text: "Дата монтажа", value: "date_mont" },    
+      { text: "Замерщик", value: "zamershik.name" },
+      { text: "Дата монтажа", value: "date_mont" },
       { text: "Бригада", value: "brigada_mont.name" },
-      { text: "Цена диллера", value: "cost_diler" },  
+      { text: "Цена диллера", value: "cost_diler" },
       { text: "Примечание продавца", value: "prim_saler" },
       { text: "Примечание Руководителя", value: "prim_rukvod" },
       { text: "Дата продажи", value: "date" },
-      { text: "Продавец", sortable: true, value: "saler.name" },     
+      { text: "Продавец", sortable: true, value: "saler.name" },
       { text: "Сумма премии", value: "sum_premia" },
       { text: "Премия ВДЗ", value: "vdz_premia" },
     ],
@@ -318,6 +344,7 @@ export default {
     date_mont: null,
     date_zamera: null,
     zamershik: null,
+    items: "",
   }),
 
   computed: {
@@ -331,16 +358,6 @@ export default {
 
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
-    },
-
-    filteredItems() {
-      if (this.city === "Все") {
-        return this.doors;
-      } else {
-        return this.doors.filter((i) => {
-          return !this.city || i.city === this.city;
-        });
-      }
     },
   },
   mounted() {
@@ -362,20 +379,68 @@ export default {
       EDIT_ZAKAZ: "zakaz/EDIT_ZAKAZ",
     }),
 
+    filterByCity() {
+      if (this.city === "Все") {
+        this.items = [...this.doors];
+      } else {
+        this.items = this.doors.filter((i) => {
+          return !this.city || i.city === this.city;
+        });
+      }
+    },
+
+    searchByColumn(headerValue) {
+      console.log(headerValue)
+      let searchStr = (value) => {
+        const arrHeaderValue = headerValue.split(".");
+        let innerCount = arrHeaderValue.length;
+        let resultValue = { ...value };
+
+        function recurs(value2) {
+          if (innerCount >= 1) {
+            resultValue = resultValue[arrHeaderValue[0]];
+            arrHeaderValue.splice(0, 1);
+            innerCount--;
+
+            return recurs(resultValue);
+          } else {
+            return resultValue;
+          }
+        }
+
+        return recurs(value);
+      };
+
+      let searchVal = event.target.value;
+      const toCommonCaseStr = (value) => value.toString().toLocaleLowerCase();
+
+      if (searchVal) {
+        // let copyDoors = this.doors.map((el) => searchStr(el));
+        this.items = this.doors.filter((el) => {
+          const comparedStr = searchStr(el) || false;
+          return (
+            comparedStr &&
+            // comparedStr != null &&
+            // searchVal != null &&
+            toCommonCaseStr(comparedStr).includes(toCommonCaseStr(searchVal))
+          );
+        });
+      } else this.items = [...this.doors];
+    },
+
     selectOrderRow(item) {
       this.SET_CHOSEN_ZAKAZ(item);
     },
 
     setMont(n) {
       alert("asdas");
-      console.log(n);
     },
     getColor(status) {
       if (status === "pending") return "red";
       else if (status === "processing") return "orange";
       else return "green";
     },
-    getTippyTittle(status){
+    getTippyTittle(status) {
       if (status === "pending") return "Ожидает";
       else if (status === "processing") return "В процессе";
       else return "В работе";
@@ -418,6 +483,12 @@ export default {
       );
 
       this.addServiceDialog = false;
+    },
+  },
+
+  watch: {
+    doors(newVal) {
+      this.items = newVal;
     },
   },
 };

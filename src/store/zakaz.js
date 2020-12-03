@@ -79,8 +79,6 @@ const zakaz = {
       axios
         .get("https://door.webink.site/wp-json/door/v1/get/sales")
         .then((response) => {
-          console.log(response.data);
-          response.data.map(el => console.log(el.date_mont))
           commit("SET_DOORS", response.data)
         });
     },
@@ -126,7 +124,6 @@ const zakaz = {
     UPDATE_TEAMS({ commit }) {
       axios.get("https://door.webink.site/wp-json/door/v1/get/teams")
         .then(({ data }) => {
-          console.log(data);
           commit("SET_TEAMS", data)
         })
     },

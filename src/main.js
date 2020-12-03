@@ -10,13 +10,16 @@ import Vuetify from 'vuetify'
 import DatetimePicker from 'vuetify-datetime-picker'
 import VueTippy, { TippyComponent } from "vue-tippy";
 
+import JsonExcel from "vue-json-excel";
+
 import 'vuetify/dist/vuetify.min.css'
 
-
-Vue.use(Vuetify)
+import ru from 'vuetify/es5/locale/ru'
 
 import 'swiper/css/swiper.css'
 
+
+Vue.use(Vuetify)
 Vue.use(VueRouter)
 Vue.use(VueTheMask)
 Vue.use(Vuelidate)
@@ -26,8 +29,8 @@ Vue.use(require('vue-cookies'))
 Vue.use(require('vue-moment'))
 
 Vue.component("tippy", TippyComponent);
+Vue.component("downloadExcel", JsonExcel);
 
-import ru from 'vuetify/es5/locale/ru'
 
 const user = JSON.parse(localStorage.getItem("user"))
 store.dispatch("auth/VALIDATE", user);

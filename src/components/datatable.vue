@@ -139,8 +139,6 @@
       class="elevation-1 rounded-lg"
       @click:row="selectOrderRow"
     >
-      <!-- =========================================================================================================== -->
-
       <template #body.prepend="{ headers }">
         <td class="px-4" v-for="header in headers" :key="header.value">
           <v-text-field
@@ -149,8 +147,6 @@
           ></v-text-field>
         </td>
       </template>
-
-      <!-- =========================================================================================================== -->
 
       <template v-slot:item.id="{ item }">
         <v-chip
@@ -245,9 +241,11 @@
 
           <v-spacer></v-spacer>
 
-          <v-btn depressed color="primary ma-4"
-            ><v-icon>mdi-download</v-icon> Выгрузить EXСEL</v-btn
-          >
+          <downloadExcel :data="excelJsonData">
+            <v-btn depressed color="primary ma-4"
+              ><v-icon>mdi-download</v-icon> Выгрузить EXСEL</v-btn
+            >
+          </downloadExcel>
 
           <router-link tag="a" to="/neworder">
             <v-btn depressed color="primary"
@@ -345,6 +343,7 @@ export default {
     date_zamera: null,
     zamershik: null,
     items: "",
+    excelJsonData: "",
   }),
 
   computed: {
@@ -390,7 +389,7 @@ export default {
     },
 
     searchByColumn(headerValue) {
-      console.log(headerValue)
+      console.log(headerValue);
       let searchStr = (value) => {
         const arrHeaderValue = headerValue.split(".");
         let innerCount = arrHeaderValue.length;
@@ -489,6 +488,18 @@ export default {
   watch: {
     doors(newVal) {
       this.items = newVal;
+      this.excelJsonData = newVal.map((el) => {
+        return {
+          ...el,
+          saler: el.saler.name,
+          brigada_mont: el.brigada_mont.name,
+          category_ruk: el.category_ruk.name,
+          category_saler: el.category_saler.name,
+          model_ruk: el.model_ruk.name,
+          model_saler: el.model_saler.name,
+          zamershik: el.zamershik.name,
+        };
+      });
     },
   },
 };

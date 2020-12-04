@@ -197,60 +197,58 @@
                 <v-icon left>mdi-delete</v-icon>Удалить</v-btn
               >
             </div>
-            <div
-              class="col-lg-12"
-              v-for="(item, addDopIndex) in dopolnServ[index].additionalInfo"
-              :key="item.name"
-            >
-              <div class="col-lg-4">
-                <v-text-field v-model="dop.additionalName" label="Услуга">
-                </v-text-field>
-              </div>
-              <div class="col-lg-2">
-                <v-text-field
-                  type="number"
-                  v-model="dop.additionalCount"
-                  label="Количество"
-                >
-                </v-text-field>
-              </div>
-              <div class="col-lg-3">
-                <v-text-field
-                  v-model="dop.additionalPrice"
-                  label="Стоимость руб."
-                >
-                </v-text-field>
-              </div>
-              <div class="col-lg-2">
-                <v-btn
-                  depressed
-                  color="error"
-                  class="m-15"
-                  @click="deliteAddDop(addDopIndex, index)"
-                >
-                  <v-icon left>mdi-delete</v-icon>Удалить</v-btn
-                >
-              </div>
-            </div>
+
             <div class="col-lg-11 pa-0"></div>
           </div>
-          <v-btn
-            depressed
-            color="primary"
-            @click="addDop('dopolnServ')"
-            class="mr-4"
-          >
-            <v-icon left>mdi-cart-plus</v-icon>Добавить
-          </v-btn>
-          <v-btn depressed color="secondary" @click="addOther('dopolnServ')">
-            <v-icon left>mdi-plus</v-icon>Добавить другое
-          </v-btn>
         </div>
+        <div
+          class="col-lg-12"
+          v-for="(item, addDopIndex) in additionalInfo"
+          :key="item.name"
+        >
+          <div class="col-lg-4">
+            <v-text-field v-model="item.additionalName" label="Услуга">
+            </v-text-field>
+          </div>
+          <div class="col-lg-2">
+            <v-text-field
+              type="number"
+              v-model="item.additionalCount"
+              label="Количество"
+            >
+            </v-text-field>
+          </div>
+          <div class="col-lg-3">
+            <v-text-field v-model="item.additionalPrice" label="Стоимость руб.">
+            </v-text-field>
+          </div>
+          <div class="col-lg-2">
+            <v-btn
+              depressed
+              color="error"
+              class="m-15"
+              @click="deliteDop('additionalInfo', addDopIndex)"
+            >
+              <v-icon left>mdi-delete</v-icon>Удалить</v-btn
+            >
+          </div>
+        </div>
+        <v-btn
+          depressed
+          color="primary"
+          @click="addDop('dopolnServ')"
+          class="mr-4"
+        >
+          <v-icon left>mdi-cart-plus</v-icon>Добавить
+        </v-btn>
+        <v-btn depressed color="secondary" @click="addDop('additionalInfo')">
+          <v-icon left>mdi-plus</v-icon>Добавить другое
+        </v-btn>
       </div>
 
       <!--  -->
 
-      <div class="row shad-box" v-if="bossAdditionalWorksCard">
+      <div class="row shad-box" v-show="bossAdditionalWorksCard">
         <div class="col-lg-12">
           <h2>
             <span class="mdi mdi-bookmark-plus-outline"></span> Дополнительные
@@ -593,6 +591,7 @@ export default {
       spayments_metod: "",
       dopServArray: [],
       dopolnServ: [],
+      additionalInfo: [],
       bossDopolnServ: [],
       selectedModel: {},
       doorSizes: [],
@@ -679,40 +678,41 @@ export default {
   },
   methods: {
     addDop(type) {
-      this[type].push({
-        name: "",
-        count: 1,
-        price: 0,
-        // additionalInfoShow: false,
-        additionalInfo: [],
-      });
+      if (type === "additionalInfo") {
+        this[type].push({
+          additionalName: "",
+          additionalCount: 0,
+          additionalPrice: 0,
+        });
+      } else {
+        this[type].push({
+          name: "",
+          count: 1,
+          price: 0,
+        });
+      }
     },
 
-    addOther(type) {
-      let lastAddedDop = this[type][[this[type].length - 1]];
-
-      lastAddedDop.additionalInfo.push({
-        additionalName: "",
-        additionalCount: 0,
-        additionalPrice: 0,
-      });
-    },
+    // addOther() {
+    //   this.additionalInfo.push({
+    //     additionalName: "",
+    //     additionalCount: 0,
+    //     additionalPrice: 0,
+    //   });
+    // },
 
     deliteDop(type, index) {
       this[type].splice(index, 1);
     },
 
-    deliteAddDop(addDopIndex, index) {
-      let currentDopAdditionalInfo = this.dopolnServ[index].additionalInfo;
+    // deliteAddDop(index) {
+    //   this.additionalInfo.splice(index, 1);
+    // },
 
-      currentDopAdditionalInfo.splice(addDopIndex, 1);
-    },
-
-    atInput(index, event, type) {
+    atInput(type, index, event) {
       this[type][index].name = event.name;
       this[type][index].count = event.count;
       this[type][index].price = event.price;
-      this[type][index].additionalInfo = event.additionalInfo;
     },
 
     changeModel(param) {
@@ -801,8 +801,6 @@ export default {
         vremya_zamera: this.time,
         vremya_montaja: this.time2,
       };
-
-      console.log(newOrder);
 
       this.loadBtn = true;
       //отправить новый заказ

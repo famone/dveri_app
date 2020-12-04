@@ -57,6 +57,15 @@
                                   type="number"
                                 ></v-text-field>
                               </v-col>
+                              <v-col cols="12">
+                                <v-select
+                                  label="Производитель"
+                                  :items="manufacturers"
+                                  item-text="name"
+                                  v-model="editedItem.manufacturer"
+                                  return-object
+                                ></v-select>
+                              </v-col>
                             </v-row>
                           </v-container>
                         </v-card-text>
@@ -115,7 +124,7 @@ import { mapState } from "vuex";
 export default {
   data: () => ({
     dopServices: [],
-    manufacturer: null,
+    manufacturers: [],
     loadServ: true,
     dialog: false,
     dialogDelete: false,
@@ -131,6 +140,7 @@ export default {
     editedItem: {
       name: "",
       price: 0,
+      manufacturer: null,
     },
     defaultItem: {
       name: "",
@@ -167,12 +177,14 @@ export default {
     axios
       .get("https://door.webink.site/wp-json/door/v1/get/categorys")
       .then((response) => {
+        this.manufacturers = response.data;
         response.data.forEach((item) => {
           this.categorys.push(item.name);
         });
         this.categorys.push("Все");
       });
   },
+  
   methods: {
     editItem(item) {
       this.editedIndex = this.dopServices.indexOf(item);

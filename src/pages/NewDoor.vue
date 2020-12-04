@@ -63,9 +63,9 @@
               </v-btn>
             </div>
           </div>
-          <v-btn depressed color="primary" @click="addModel">
+          <!-- <v-btn depressed color="primary" @click="addModel">
             <v-icon left>mdi-cart-plus</v-icon>Добавить
-          </v-btn>
+          </v-btn> -->
         </div>
       </div>
 
@@ -108,7 +108,18 @@ export default {
       manufacturers: [],
       modelName: "",
       doorModels: [],
-      modelsArray: [],
+      modelsArray: [
+        { size: 78, price: null },
+        { size: 80, price: null },
+        { size: 85, price: null },
+        { size: 86, price: null },
+        { size: 88, price: null },
+        { size: 90, price: null },
+        { size: 96, price: null },
+        { size: 98, price: null },
+        { size: 99, price: null },
+        { size: 105, price: null },
+      ],
     };
   },
   computed: {},
@@ -122,9 +133,9 @@ export default {
   },
 
   methods: {
-    addModel() {
-      this.modelsArray.push({ size: "", price: "" });
-    },
+    // addModel() {
+    //   this.modelsArray.push({ size: "", price: "" });
+    // },
     deliteModel(index) {
       this.modelsArray.splice(index, 1);
     },

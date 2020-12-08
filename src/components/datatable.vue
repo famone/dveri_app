@@ -144,6 +144,8 @@
           <v-text-field
             dense
             @input="searchByColumn(header.value)"
+            :value="columnSearchQueries[header.value]"
+            clearable
           ></v-text-field>
         </td>
       </template>
@@ -217,11 +219,6 @@
         {{ item.adress }} {{ item.house }} {{ item.flat }}
       </template>
 
-      <!-- <template v-slot:item.zamershik.name="{ item }"> -->
-      <!-- TODO: если поле пустое должна быть надпись установить замерщика и выскакивать поп ап с выбором замерщика -->
-      <!-- {{ item.zamershik.name }} -->
-      <!-- </template> -->
-
       <template v-slot:top>
         <v-toolbar flat>
           <v-toolbar-title>Заказы</v-toolbar-title>
@@ -285,7 +282,7 @@
         <v-icon small @click="deleteItem(item.id)"> mdi-delete </v-icon>
       </template>
       <template v-slot:no-data>
-        <v-btn color="primary"> Reset </v-btn>
+        <v-btn color="primary" @click="searchByColumn('reset')"> Reset </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -295,6 +292,8 @@
 	<script>
 import axios from "axios";
 
+import moment from "moment";
+
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 
 import AddServiceDetailModal from "../components/AddServiceDetailModal";
@@ -302,6 +301,15 @@ import AddServiceDetailModal from "../components/AddServiceDetailModal";
 export default {
   components: {
     AddServiceDetailModal,
+  },
+
+  props: {
+    filterTag: {
+      type: String,
+    },
+    selectFilterTag: {
+      type: Function,
+    },
   },
 
   data: () => ({
@@ -344,6 +352,26 @@ export default {
     zamershik: null,
     items: "",
     excelJsonData: "",
+    columnSearchQueries: {
+      id: "",
+      adress: "",
+      phone: "",
+      fio: "",
+      "model_saler.name": "",
+      door_size: "",
+      proem_size: "",
+      data_zamera: "",
+      "zamershik.name": "",
+      date_mont: "",
+      "brigada_mont.name": "",
+      cost_diler: "",
+      prim_saler: "",
+      prim_rukvod: "",
+      date: "",
+      "saler.name": "",
+      sum_premia: "",
+      vdz_premia: "",
+    },
   }),
 
   computed: {
@@ -358,12 +386,6 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";
     },
-  },
-  mounted() {
-    // api
-    this.fetchTeams();
-    this.fetchZamershiki();
-    this.fetchDoors();
   },
 
   methods: {
@@ -389,7 +411,18 @@ export default {
     },
 
     searchByColumn(headerValue) {
-      console.log(headerValue);
+      this.columnSearchQueries[headerValue] = event.target.value;
+
+      if (headerValue === "reset") {
+        for (const objProp in this.columnSearchQueries) {
+          this.columnSearchQueries[objProp] = "";
+        }
+
+        this.selectFilterTag("");
+
+        this.items = [...this.doors];
+      }
+
       let searchStr = (value) => {
         const arrHeaderValue = headerValue.split(".");
         let innerCount = arrHeaderValue.length;
@@ -414,6 +447,11 @@ export default {
       const toCommonCaseStr = (value) => value.toString().toLocaleLowerCase();
 
       if (searchVal) {
+        for (const objProp in this.columnSearchQueries) {
+          if (objProp !== headerValue) {
+            this.columnSearchQueries[objProp] = "";
+          }
+        }
         // let copyDoors = this.doors.map((el) => searchStr(el));
         this.items = this.doors.filter((el) => {
           const comparedStr = searchStr(el) || false;
@@ -485,6 +523,13 @@ export default {
     },
   },
 
+  mounted() {
+    // api
+    this.fetchTeams();
+    this.fetchZamershiki();
+    this.fetchDoors();
+  },
+
   watch: {
     doors(newVal) {
       this.items = newVal;
@@ -500,6 +545,61 @@ export default {
           zamershik: el.zamershik.name,
         };
       });
+    },
+
+    filterTag: {
+      handler(newVal) {
+        switch (newVal) {
+          case "Все":
+            this.items = [...this.doors];
+            break;
+          case "Заявки за сегодня":
+            this.items = this.doors.filter((el) => {
+              return el.data_zamera === moment().format("DD/MM/YYYY");
+            });
+            break;
+          case "Необработанные заявки":
+            console.log("Необработанные заявки");
+            break;
+          case "Передано замерщику":
+            this.items = this.doors.filter((el) => {
+              return el.zamershik.name;
+            });
+            break;
+          case "Монтаж завтра":
+            this.items = this.doors.filter(
+              (el) => el.date_mont === moment().add(1, "d").format("DD/MM/YYYY")
+            );
+            break;
+          case "Монтаж сегодня":
+            this.items = this.doors.filter(
+              (el) => el.date_mont === moment().format("DD/MM/YYYY")
+            );
+            break;
+          case "Ожидают монтаж":
+            this.items = this.doors.filter((el) => !el.date_mont);
+            break;
+          case "Возврат дилеру":
+            console.log("Возврат дилеру");
+            break;
+          case "Ожидают прибытия":
+            console.log("Ожидают прибытия");
+            break;
+          case "В исполнении":
+            console.log("В исполнении");
+            break;
+          case "Купоны":
+            console.log("Купоны");
+            break;
+          case "Изменения продавцов":
+            console.log("Изменения продавцов");
+            break;
+
+          default:
+            this.items = [...this.doors];
+            break;
+        }
+      },
     },
   },
 };

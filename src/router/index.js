@@ -21,7 +21,6 @@ router.beforeEach((to, from, next) => {
         }
         else tokenValid = false;
 
-        console.log(tokenValid);
 
         if (tokenValid) {
             next()

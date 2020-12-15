@@ -156,8 +156,10 @@
           dark
           :content="getTippyTittle(item.status)"
           v-tippy="{ placement: 'right', arrow: true }"
+          :outlined="item.status === 'processing'"
+          :class="getChipTextColor(item.status)"
         >
-          {{ item.id }}
+          <span :class="getChipTextColor(item.status)">{{ item.id }}</span>
         </v-chip>
       </template>
 
@@ -473,9 +475,22 @@ export default {
       alert("asdas");
     },
     getColor(status) {
-      if (status === "pending") return "red";
-      else if (status === "processing") return "orange";
-      else return "green";
+      switch (status) {
+        case "processing":
+          return "black";
+        case "waitmontazh":
+          return "yellow";
+        case "cancelled":
+          return "red";
+        case "individual":
+          return "grey";
+        case "zamer":
+          return "#5E35B1";
+        case "completed":
+          return "green";
+        case "pending":
+          return "light-blue";
+      }
     },
     getTippyTittle(status) {
       if (status === "pending") return "Ожидает";
@@ -487,6 +502,24 @@ export default {
       else if (part === "Юг") return "orange";
       else return "grey";
     },
+
+    getChipTextColor(status) {
+      switch (status) {
+        case "processing":
+          return "chipColorBlack";
+        case "waitmontazh":
+          return "chipColorWhite";
+        case "cancelled":
+          return "chipColorWhite";
+        case "individual":
+          return "chipColorWhite";
+        case "zamer":
+          return "chipColorWhite";
+        case "completed":
+          return "chipColorWhite";
+      }
+    },
+
     deleteItem(item) {
       this.dialogDelete = true;
       this.deliting = item;
@@ -620,5 +653,13 @@ table th {
   font-weight: 500;
   letter-spacing: 0.0892857143em;
   color: #1976d2;
+}
+
+.chipColorWhite {
+  color: white;
+}
+
+.chipColorBlack {
+  color: black;
 }
 </style>

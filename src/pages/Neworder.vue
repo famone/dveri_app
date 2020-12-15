@@ -164,84 +164,90 @@
             v-for="(dop, index) in dopolnServ"
             :key="index"
           >
-            <div class="col-lg-4">
-              <v-select
-                :items="dopServArray"
-                label="Доп услуга"
-                item-text="name"
-                item-value="price"
-                @change="atInput('dopolnServ', index, $event)"
-                return-object
-              ></v-select>
-            </div>
-            <div class="col-lg-2">
-              <v-text-field
-                type="number"
-                label="Количество"
-                v-model="dop.count"
-              ></v-text-field>
-            </div>
-            <div class="col-lg-3">
-              <v-text-field
-                label="Стоимость руб."
-                v-model="dop.price"
-              ></v-text-field>
-            </div>
-            <div class="col-lg-2">
-              <v-btn
-                depressed
-                color="error"
-                class="m-15"
-                @click="deliteDop('dopolnServ', index)"
-              >
-                <v-icon left>mdi-delete</v-icon>Удалить</v-btn
-              >
-            </div>
+            <div v-if="dop.type === 'Доп услуга'" class="col-lg-12">
+              <div class="col-lg-4">
+                <v-select
+                  :items="dopServArray"
+                  :label="dop.type"
+                  item-text="name"
+                  item-value="price"
+                  @change="atInput('dopolnServ', index, $event)"
+                  return-object
+                ></v-select>
+              </div>
+              <div class="col-lg-2">
+                <v-text-field
+                  type="number"
+                  label="Количество"
+                  v-model="dop.count"
+                ></v-text-field>
+              </div>
+              <div class="col-lg-3">
+                <v-text-field
+                  label="Стоимость руб."
+                  v-model="dop.price"
+                ></v-text-field>
+              </div>
+              <div class="col-lg-2">
+                <v-btn
+                  depressed
+                  color="error"
+                  class="m-15"
+                  @click="deliteDop('dopolnServ', index)"
+                >
+                  <v-icon left>mdi-delete</v-icon>Удалить</v-btn
+                >
+              </div>
 
-            <div class="col-lg-11 pa-0"></div>
+              <div class="col-lg-11 pa-0"></div>
+            </div>
+            <div v-else class="col-lg-12">
+              <div class="col-lg-4">
+                <v-text-field v-model="dop.additionalName" label="Услуга">
+                </v-text-field>
+              </div>
+              <div class="col-lg-2">
+                <v-text-field
+                  type="number"
+                  v-model="dop.additionalCount"
+                  label="Количество"
+                >
+                </v-text-field>
+              </div>
+              <div class="col-lg-3">
+                <v-text-field
+                  v-model="dop.additionalPrice"
+                  label="Стоимость руб."
+                >
+                </v-text-field>
+              </div>
+              <div class="col-lg-2">
+                <v-btn
+                  depressed
+                  color="error"
+                  class="m-15"
+                  @click="deliteDop('dopolnServ', index)"
+                >
+                  <v-icon left>mdi-delete</v-icon>Удалить</v-btn
+                >
+              </div>
+            </div>
           </div>
         </div>
-        <div
-          class="col-lg-12"
-          v-for="(item, addDopIndex) in additionalInfo"
-          :key="item.name"
-        >
-          <div class="col-lg-4">
-            <v-text-field v-model="item.additionalName" label="Услуга">
-            </v-text-field>
-          </div>
-          <div class="col-lg-2">
-            <v-text-field
-              type="number"
-              v-model="item.additionalCount"
-              label="Количество"
-            >
-            </v-text-field>
-          </div>
-          <div class="col-lg-3">
-            <v-text-field v-model="item.additionalPrice" label="Стоимость руб.">
-            </v-text-field>
-          </div>
-          <div class="col-lg-2">
-            <v-btn
-              depressed
-              color="error"
-              class="m-15"
-              @click="deliteDop('additionalInfo', addDopIndex)"
-            >
-              <v-icon left>mdi-delete</v-icon>Удалить</v-btn
-            >
-          </div>
-        </div>
+
         <v-btn
           depressed
           color="primary"
-          @click="addDop('dopolnServ')"
+          @click="addDop('dopolnServ', 'Доп услуга')"
           class="mr-4"
         >
           <v-icon left>mdi-cart-plus</v-icon>Добавить
         </v-btn>
-        <v-btn depressed color="secondary" @click="addDop('additionalInfo')">
+        <v-btn
+          depressed
+          color="secondary"
+          @click="addDop('dopolnServ', 'Услуга')"
+        >
           <v-icon left>mdi-plus</v-icon>Добавить другое
         </v-btn>
       </div>
@@ -264,7 +270,7 @@
             <div class="col-lg-4">
               <v-select
                 :items="dopServArray"
-                label="Доп услуга"
+                :label="bossDop.type"
                 item-text="name"
                 item-value="price"
                 @change="atInput('bossDopolnServ', index, $event)"
@@ -298,7 +304,7 @@
           <v-btn
             depressed
             color="primary"
-            @click="addDop('bossDopolnServ')"
+            @click="addDop('bossDopolnServ', 'Доп услуга')"
             class="mt-7"
           >
             <v-icon left>mdi-cart-plus</v-icon>Добавить
@@ -677,18 +683,20 @@ export default {
       });
   },
   methods: {
-    addDop(type) {
-      if (type === "additionalInfo") {
+    addDop(type, category) {
+      if (category === "Услуга") {
         this[type].push({
           additionalName: "",
           additionalCount: 0,
           additionalPrice: 0,
+          type: category,
         });
       } else {
         this[type].push({
           name: "",
           count: 1,
           price: 0,
+          type: category,
         });
       }
     },

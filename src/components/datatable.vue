@@ -489,7 +489,7 @@ export default {
         case "completed":
           return "green";
         case "pending":
-          return "light-blue";
+          return "#5E35B1";
       }
     },
     getTippyTittle(status) {

@@ -494,7 +494,11 @@ export default {
     },
     getTippyTittle(status) {
       if (status === "pending") return "Ожидает";
-      else if (status === "processing") return "В процессе";
+      else if (status === "waitmontazh") return "Ожидает монтаж";
+      else if (status === "cancelled") return "Отменен";
+      else if (status === "zamer") return "Замер";
+      else if (status === "individual") return "Индивидуальная";
+      else if (status === "completed") return "Выполнен";
       else return "В работе";
     },
     getPart(part) {

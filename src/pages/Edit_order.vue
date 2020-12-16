@@ -101,38 +101,51 @@
               <span class="mdi mdi-cart-outline"></span> Информация о товаре:
             </h3>
           </div>
-          <!-- <div class="col-lg-3">
-					<v-select :items="doorsCategory" 
-					item-text="name" 
-					label="Группа двери продавца"
-					v-model="doorGroup"
-					@change="changeModel($event)"
-					return-object></v-select>
-				</div>
-				<div class="col-lg-3">
-					<v-select :items="doorsModels" 
-					item-text="name"
-					v-model="doorModel"
-					@change="changeSize($event)"
-					return-object
-					label="Модель двери продавца"></v-select>
-				</div>
-				<div class="col-lg-3">
-					<v-select :items="items" label="Группа двери руководителя" v-model="groopRuk"></v-select>
-				</div>
-				<div class="col-lg-3">
-					<v-select :items="items" label="Модель двери руководителя" v-model="modelRuk"></v-select>
-				</div> -->
+          <div class="col-lg-3">
+            <v-select
+              :items="doorsCategory"
+              item-text="name"
+              label="Группа двери продавца"
+              v-model="doorGroup"
+              @change="changeModel($event)"
+              return-object
+            ></v-select>
+          </div>
+          <div class="col-lg-3">
+            <v-select
+              :items="doorsModels"
+              item-text="name"
+              v-model="doorModel"
+              @change="changeSize($event)"
+              return-object
+              label="Модель двери продавца"
+            ></v-select>
+          </div>
+          <div class="col-lg-3">
+            <v-select
+              :items="items"
+              label="Группа двери руководителя"
+              v-model="groopRuk"
+            ></v-select>
+          </div>
+          <div class="col-lg-3">
+            <v-select
+              :items="items"
+              label="Модель двери руководителя"
+              v-model="modelRuk"
+            ></v-select>
+          </div>
 
           <!--  -->
 
-          <!-- <div class="col-lg-3">
-					<v-select :items="EditingOrder.door_size" 
-					label="Размер двери"
-					@change="showPrice($event)"
-					return-object
-					></v-select>
-				</div> -->
+          <div class="col-lg-3">
+            <v-select
+              :items="EditingOrder.door_size"
+              label="Размер двери"
+              @change="showPrice($event)"
+              return-object
+            ></v-select>
+          </div>
           <div class="col-lg-3">
             <p>Сторона открывания:</p>
             <v-radio-group v-model="EditingOrder.door_direction" row>
@@ -362,7 +375,15 @@
       </div>
       <div class="row">
         <div class="row">
-          <v-btn depressed x-large dark color="grey" class="m-15" @click="$router.go(-1)">НАЗАД</v-btn>
+          <v-btn
+            depressed
+            x-large
+            dark
+            color="grey"
+            class="m-15"
+            @click="$router.go(-1)"
+            >НАЗАД</v-btn
+          >
           <v-btn
             depressed
             x-large
@@ -419,6 +440,11 @@ export default {
   computed: {},
   created() {
     this.routeId = this.$route.params.id;
+    axios
+      .get("https://door.webink.site/wp-json/door/v1/get/categorys")
+      .then((response) => {
+        this.doorsCategory = response.data;
+      });
 
     axios
       .get("https://door.webink.site/wp-json/door/v1/get/sales")

@@ -108,7 +108,7 @@
               :items="zamershiki"
               v-model="zamershik"
               return-object
-              item-text="name"
+              item-text="fname"
               label="установить замерщика"
             ></v-select>
           </div>

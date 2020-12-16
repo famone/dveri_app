@@ -573,6 +573,8 @@ import axios from "axios";
 import { mapState } from "vuex";
 
 export default {
+  name: "EditOrder",
+
   data() {
     return {
       loadBtn: false,
@@ -588,7 +590,13 @@ export default {
       menu3: false,
       time2: null,
       menu4: false,
-      statuses: ["В обработке", "Замер", "Индивидуальный", "Ожидает монтаж", "Отменен"],
+      statuses: [
+        "В обработке",
+        "Замер",
+        "Индивидуальный",
+        "Ожидает монтаж",
+        "Отменен",
+      ],
       payments_metod: [
         "Наличными",
         "Терминал",

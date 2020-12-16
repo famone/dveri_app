@@ -106,8 +106,7 @@
               :items="doorsCategory"
               item-text="name"
               label="Группа двери продавца"
-              v-model="doorGroup"
-              @change="changeModel($event)"
+              @change="changeModel"
               return-object
             ></v-select>
           </div>
@@ -116,21 +115,26 @@
               :items="doorsModels"
               item-text="name"
               v-model="doorModel"
-              @change="changeSize($event)"
+              @change="changeSize"
               return-object
               label="Модель двери продавца"
             ></v-select>
           </div>
           <div class="col-lg-3">
             <v-select
-              :items="items"
+              :items="doorsCategory"
+              item-text="name"
               label="Группа двери руководителя"
               v-model="groopRuk"
+              @change="changeModelRuk"
+              return-object
             ></v-select>
           </div>
           <div class="col-lg-3">
             <v-select
-              :items="items"
+              :items="modelsRuk"
+              item-text="name"
+              item-value="id"
               label="Модель двери руководителя"
               v-model="modelRuk"
             ></v-select>
@@ -140,9 +144,9 @@
 
           <div class="col-lg-3">
             <v-select
-              :items="EditingOrder.door_size"
+              :items="doorSize"
               label="Размер двери"
-              @change="showPrice($event)"
+              @change="showPrice"
               return-object
             ></v-select>
           </div>
@@ -365,7 +369,7 @@
             </div>
             <div class="col-lg-4">
               <v-select
-                :items="items"
+                :items="status_premii"
                 label="Статус премии"
                 v-model="status_premii"
               ></v-select>
@@ -403,16 +407,27 @@
 import { mapState, mapGetters } from "vuex";
 import axios from "axios";
 
+// Для селектов надо предварительно проитись помассиву и подставить в :value (в data добавить свойство) то что у нас есть уже в заказе, но при изменении добавлять в данные новое значение
+
 export default {
+  name: "EditOrder",
+
   data() {
     return {
+      loadBtn: false,
       loading: true,
       routeId: "",
       menu: false,
       menu2: false,
       zamershiks: [],
       brigadi: [],
-      statuses: ["В обработке", "Замер", "Индивидуальный", "Ожидает монтаж", "Отменен"],
+      statuses: [
+        "В обработке",
+        "Замер",
+        "Индивидуальный",
+        "Ожидает монтаж",
+        "Отменен",
+      ],
       payments_metod: [
         "Наличными",
         "Терминал",
@@ -434,10 +449,30 @@ export default {
         // prim_rukvod: '',
         // date_mont: ''
         brigada_mont: "",
+        groopRuk: "",
       },
+      doorGroup: "",
+      doorsModels: [],
+      selectedModel: {},
+      doorSizes: [],
+      doorSize: "",
+      modelsRuk: [],
+      modelRuk: "",
+      doorModel: "",
+      groopRuk: "",
+      spayments_metod: "",
+      ruk_cena: "",
+      delivery: "",
+      predoplata: "",
+      doorPrice: "",
+      sale: "",
+      status_zayavka: "",
+      sum_premii: "",
+      status_premii: "",
+      doorsCategory: [],
     };
   },
-  computed: {},
+
   created() {
     this.routeId = this.$route.params.id;
     axios
@@ -471,8 +506,102 @@ export default {
       });
   },
   methods: {
+    changeModel(param) {
+      this.doorGroup = param.term_id;
+
+      this.doorModel = "";
+      //получение доп услуг по производителю двери
+      axios
+        .get(
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
+        )
+        .then((response) => {
+          this.doorsModels = response.data;
+          console.log(this.doorsModels);
+        });
+
+      axios
+        .get(
+          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param.term_id}`
+        )
+        .then((response) => {
+          this.dopServArray = response.data;
+        });
+    },
+    changeModelRuk(param) {
+      this.modelRuk = "";
+
+      axios
+        .get(
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
+        )
+        .then((response) => {
+          this.modelsRuk = response.data;
+        });
+    },
+
+    changeSize(sizes) {
+      console.log(arguments);
+      this.selectedModel = sizes;
+      this.doorSizes = Object.keys(sizes.price);
+    },
+
+    showPrice(num) {
+      this.doorPrice = this.selectedModel.price[num];
+      this.doorSize = num;
+    },
+
     updateOrder() {
-      console.log("UPDATE_ORDER API");
+      let newOrder = {
+        fio: this.fio,
+        phone: this.phone,
+        dop_phone: this.dop_phone,
+        street: this.street,
+        house: this.house,
+        flat: this.flat,
+        floor: this.floor,
+        part_city: this.part_city,
+        doorGroup: this.doorGroup,
+        doorModel: this.doorModel.id,
+        doorSize: this.doorSize,
+        groopRuk: this.groopRuk.term_id,
+        modelRuk: this.modelRuk,
+        sideOpen: this.sideOpen,
+        proemSize: this.proemSize,
+        doorNumber: this.doorNumber,
+        primecProd: this.primecProd,
+        primecRuk: this.primecRuk,
+        dopolnServ: this.dopolnServ,
+        dateZamer: this.dateZamer,
+        zamershik: this.zamershik,
+        dateMont: this.dateMont,
+        team: this.team,
+        status_zayavka: this.status_zayavka,
+        prod_sale: this.prod_sale,
+        ruk_cena: this.ruk_cena,
+        delivery: this.delivery,
+        predoplata: this.predoplata,
+        sale: this.sale,
+        payments_metod: this.spayments_metod,
+        sum_premii: this.sum_premii,
+        status_premii: this.status_premii,
+        doorPrice: this.doorPrice,
+        user_id: this.user.id,
+        vremya_zamera: this.time,
+        vremya_montaja: this.time2,
+      };
+
+      this.loadBtn = true;
+      //отправить новый заказ
+      axios
+        .post("https://door.webink.site/wp-json/door/v1/add/sales", {
+          ...newOrder,
+        })
+        .then((response) => {
+          console.log(response);
+          this.loadBtn = false;
+          this.$router.push("/");
+        });
     },
   },
 };

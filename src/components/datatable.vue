@@ -136,7 +136,8 @@
       :loading="loadDoors"
       sort-by="id"
       single-line
-      class="elevation-1 rounded-lg"ч
+      class="elevation-1 rounded-lg"
+      ч
       @click:row="selectOrderRow"
     >
       <template #body.prepend="{ headers }">
@@ -167,7 +168,7 @@
         {{ item.door_size }} / {{ item.door_direction }}
       </template>
 
-      <template v-slot:item.date_mont="{ item }">
+      <template v-slot:item.date_mont="{ item }" v-if="getUser.id !== 6">
         <v-chip v-if="item.date_mont">
           <span>{{ item.date_mont }}</span>
           <span v-if="item.time_mont">, {{ item.time_mont }}</span>
@@ -182,7 +183,7 @@
         </div>
       </template>
 
-      <template #item.data_zamera="{ item }">
+      <template #item.data_zamera="{ item }" v-if="getUser.id !== 6">
         <v-chip v-if="item.data_zamera">
           <span>{{ item.data_zamera }}</span>
           <span v-if="item.vremya_zamera">, {{ item.vremya_zamera }}</span>
@@ -196,7 +197,7 @@
         </div>
       </template>
 
-      <template #item.brigada_mont.name="{ item }">
+      <template #item.brigada_mont.name="{ item }" v-if="getUser.id !== 6">
         <span v-if="item.brigada_mont.name">
           {{ item.brigada_mont.name }}
         </span>
@@ -205,7 +206,7 @@
         </div>
       </template>
 
-      <template #item.zamershik.name="{ item }">
+      <template #item.zamershik.name="{ item }" v-if="getUser.id !== 6">
         <span v-if="item.zamershik.name">{{ item.zamershik.name }}</span>
         <div
           v-else
@@ -382,7 +383,7 @@ export default {
     ...mapState("zakaz", ["doors", "loadDoors"]),
 
     ...mapGetters({
-      getUser:"auth/getUser",
+      getUser: "auth/getUser",
       teams: "zakaz/GET_TEAMS",
       zamershiki: "zakaz/GET_ZAMERSHIKI",
       GET_CHOSEN_ZAKAZ: "zakaz/GET_CHOSEN_ZAKAZ",

@@ -128,6 +128,7 @@ export default {
     loadServ: true,
     dialog: false,
     dialogDelete: false,
+    deliting: '',
     brand: "",
     load: true,
     categorys: [],
@@ -193,30 +194,23 @@ export default {
     },
 
     deleteItem(item) {
-      this.editedIndex = this.dopServices.indexOf(item);
-      this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
+      this.deliting = item.id
+      console.log(this.deliting)
     },
 
     deleteItemConfirm() {
-      this.dopServices.splice(this.editedIndex, 1);
+
       this.closeDelete();
     },
 
     close() {
       this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
     },
 
     closeDelete() {
       this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+      
     },
 
     save() {

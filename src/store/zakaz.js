@@ -10,7 +10,8 @@ const zakaz = {
     teams: [],
     zamershiki: [],
     chosenZakaz: null,
-    chosenModel: null
+    chosenModel: null,
+    loadTeams: true
   },
 
   getters: {
@@ -59,6 +60,7 @@ const zakaz = {
 
     SET_TEAMS(state, teams) {
       state.teams = teams
+      state.loadTeams = false
     },
 
     SET_ZAMERSHIKI(state, zamershiki) {
@@ -121,11 +123,70 @@ const zakaz = {
         });
     },
 
+    deliteModel({ commit, state }, id) {
+      state.loadModels = true
+      axios
+        .get("https://door.webink.site/wp-json/door/v1/delete/models?id=" + id)
+        .then((response) => {
+
+          
+          if (response.data.status == 200) {
+            axios
+             .get('https://door.webink.site/wp-json/door/v1/get/models')
+              .then(response => {
+                commit("SET_MODELS", response.data)
+              })
+          }
+        });
+    },
+
     UPDATE_TEAMS({ commit }) {
       axios.get("https://door.webink.site/wp-json/door/v1/get/teams")
         .then(({ data }) => {
           commit("SET_TEAMS", data)
         })
+    },
+
+    deliteTeam({ commit, state }, id) {
+      state.loadTeams = true
+      axios
+        .get("https://door.webink.site/wp-json/door/v1/delete/teams?id=" + id)
+        .then((response) => {
+
+          
+          if (response.data.status == 200) {
+            axios
+             .get('https://door.webink.site/wp-json/door/v1/get/teams')
+              .then(response => {
+                commit("SET_TEAMS", response.data)
+              })
+          }
+        });
+    },
+
+    addTeam({commit, state}, name){
+      state.loadTeams = true
+
+      let team = {
+        name: name.title
+      }
+
+      axios
+      .post('https://door.webink.site/wp-json/door/v1/create/teams', team)
+      .then((response) => {
+
+          if (response.data.status == 200){
+              axios
+             .get('https://door.webink.site/wp-json/door/v1/get/teams')
+              .then(response => {
+                commit("SET_TEAMS", response.data)
+              })
+          
+          }
+
+
+      })
+
     },
 
     UPDATE_ZAMERSHIKI({ commit }) {

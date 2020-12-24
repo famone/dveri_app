@@ -33,17 +33,29 @@
                   </v-row></v-container
                 >
 
-                <!-- <v-dialog v-model="dialogDelete" max-width="500px">
-          <v-card>
-            <v-card-title class="headline">Вы уверены?</v-card-title>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeDelete">Отмена</v-btn>
-              <v-btn color="blue darken-1" text @click="deleteItemConfirm">Ок</v-btn>
-              <v-spacer></v-spacer>
-            </v-card-actions>
-          </v-card>
-        </v-dialog> -->
+
+        <v-dialog v-model="dialogModel" max-width="500px">
+            <v-card>
+              <v-card-title class="headline"
+                >Вы точно хотите удалить модель?</v-card-title
+              >
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="closeDelete"
+                  >Отмена</v-btn
+                >
+                <v-btn
+                  color="blue darken-1"
+                  text
+                  @click="deleteModelConfirm(delitingModel)"
+                  >Удалить</v-btn
+                >
+                <v-spacer></v-spacer>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+
+
               </v-toolbar>
             </template>
 
@@ -52,7 +64,9 @@
                 >mdi-pencil</v-icon
               >
 
-              <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
+              <v-icon small @click="deleteModel(item)">mdi-delete</v-icon>
+
+            
             </template>
           </v-data-table>
         </div>
@@ -70,7 +84,8 @@ export default {
     brand: "",
     load: true,
     categorys: [],
-    dialogDelete: false,
+    dialogModel: false,
+    delitingModel: null,
     headers: [
       {
         text: "Производитель двери",
@@ -116,9 +131,24 @@ export default {
     }),
 
     editItem(item) {
-      console.log(item);
+      // console.log(item);
       this.SET_CHOSEN_MODEL(item);
       this.$router.push("/edit_model/" + item.id);
+    },
+    deleteModel(item){
+      this.dialogModel = true;
+      this.delitingModel = item.id;
+      console.log(this.delitingModel)
+    },
+    closeDelete() {
+      this.dialogModel = false;
+      this.delitingModel = null;
+      console.log(this.delitingModel)
+    },
+    deleteModelConfirm(item) {
+      this.$store.dispatch("zakaz/deliteModel", item);
+      this.dialogModel = false;
+      this.delitingModel = "";
     },
   },
 };

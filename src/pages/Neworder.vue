@@ -37,16 +37,19 @@
           ></v-text-field>
         </div>
         <div class="col-lg-3">
-          <v-text-field label="Улица" v-model="street"></v-text-field>
+          <v-text-field label="Улица" v-model="street" id="suggest"></v-text-field>
         </div>
         <div class="col-lg-2">
           <v-text-field label="Номер дома" v-model="house"></v-text-field>
+        </div>
+        <div class="col-lg-1">
+          <v-text-field label="Корпус" v-model="korpus"></v-text-field>
         </div>
         <div class="col-lg-2">
           <v-text-field label="Квартира" v-model="flat"></v-text-field>
         </div>
         <!--  -->
-        <div class="col-lg-2">
+        <div class="col-lg-1">
           <v-text-field label="Этаж" v-model="floor"></v-text-field>
         </div>
 
@@ -619,6 +622,7 @@ export default {
       dop_phone: "",
       street: "",
       house: "",
+      korpus: "",
       flat: "",
       floor: "",
       part_city: "",
@@ -689,8 +693,40 @@ export default {
       .then((response) => {
         this.brigadi = response.data;
       });
+
+    //инициализируем и подключаем карты
+
+    const script = document.createElement('script')
+
+      script.onload = () => {
+        ymaps.ready(() => this.yaMapInit2());
+      };
+
+      script.id = 'ymaps'
+      script.src = "https://api-maps.yandex.ru/2.1/?apikey=8c4059db-3b8d-4535-a15e-569ee80fc827&lang=ru_RU"
+      document.head.append(script);
+
+      //инициализируем и подключаем карты
+
   },
   methods: {
+    yaMapInit2(){
+         var suggestView1 = new ymaps.SuggestView('suggest', {
+            provider: {
+              suggest: (function(request, options) {
+
+                return ymaps.suggest('Россия' + ", " + request)
+                
+               })
+              }
+            });
+
+         suggestView1.events.add('select', (e) => { // select event
+          this.street = e.get('item').value
+
+          console.log(e.get('item'))
+          })
+    },
     addDop(type, category) {
       if (category === "Услуга") {
         this[type].push({
@@ -785,6 +821,7 @@ export default {
         dop_phone: this.dop_phone,
         street: this.street,
         house: this.house,
+        korpus: this.korpus,
         flat: this.flat,
         floor: this.floor,
         part_city: this.part_city,

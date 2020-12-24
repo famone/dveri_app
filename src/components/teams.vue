@@ -10,7 +10,7 @@
             :headers="headers"
             :items="teams"
             sort-by="calories"
-            :loading="load"
+            :loading="loadTeams"
             class="elevation-1"
           >
             <template v-slot:top>
@@ -76,7 +76,7 @@
                       <v-btn
                         color="blue darken-1"
                         text
-                        @click="deleteItemConfirm"
+                        @click="deleteItemConfirm(deliting)"
                         >Да</v-btn
                       >
                       <v-spacer></v-spacer>
@@ -99,11 +99,12 @@
 </template>
 
 <script>
+import {mapState} from 'vuex'
 import axios from "axios";
 export default {
   data: () => ({
     dialog: false,
-    teams: [],
+    deliting: '',
     load: true,
     dialogDelete: false,
     headers: [
@@ -138,6 +139,8 @@ export default {
         ? "Создать бригаду"
         : "Редактировать бригаду";
     },
+
+    ...mapState("zakaz", ["teams", "loadTeams"]),
   },
 
   watch: {
@@ -150,16 +153,8 @@ export default {
   },
   created() {
     // бригады
-    axios
-      .get("https://door.webink.site/wp-json/door/v1/get/teams")
-      .then((response) => {
-        console.log(response.data);
-        this.teams = response.data.map((el) => {
-          el.kolZakazov = el.id;
-          return el;
-        });
-        this.load = false;
-      });
+    this.$store.dispatch("zakaz/UPDATE_TEAMS");
+    
   },
   methods: {
     editItem(item) {
@@ -169,13 +164,13 @@ export default {
     },
 
     deleteItem(item) {
-      this.editedIndex = this.teams.indexOf(item);
-      this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
+      this.deliting = item.id
+      console.log( this.deliting)
     },
 
-    deleteItemConfirm() {
-      this.teams.splice(this.editedIndex, 1);
+    deleteItemConfirm(item) {
+      this.$store.dispatch("zakaz/deliteTeam", item);
       this.closeDelete();
     },
 
@@ -189,17 +184,14 @@ export default {
 
     closeDelete() {
       this.dialogDelete = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
+      this.deliting = ""
     },
 
     save() {
       if (this.editedIndex > -1) {
         Object.assign(this.teams[this.editedIndex], this.editedItem);
       } else {
-        this.teams.push(this.editedItem);
+        this.$store.dispatch("zakaz/addTeam", this.editedItem);
       }
       this.close();
     },

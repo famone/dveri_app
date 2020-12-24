@@ -104,6 +104,7 @@
           <div class="col-lg-3">
             <v-select
               :items="doorsCategory"
+              v-model="EditingOrder.category_saler"
               item-text="name"
               label="Группа двери продавца"
               @change="changeModel"
@@ -113,8 +114,8 @@
           <div class="col-lg-3">
             <v-select
               :items="doorsModels"
+              v-model="EditingOrder.model_saler"
               item-text="name"
-              v-model="doorModel"
               @change="changeSize"
               return-object
               label="Модель двери продавца"
@@ -123,9 +124,9 @@
           <div class="col-lg-3">
             <v-select
               :items="doorsCategory"
+              v-model="EditingOrder.category_ruk"
               item-text="name"
               label="Группа двери руководителя"
-              v-model="groopRuk"
               @change="changeModelRuk"
               return-object
             ></v-select>
@@ -136,15 +137,15 @@
               item-text="name"
               item-value="id"
               label="Модель двери руководителя"
-              v-model="modelRuk"
+              v-model="EditingOrder.model_ruk"
             ></v-select>
           </div>
 
-          <!--  -->
-
           <div class="col-lg-3">
             <v-select
-              :items="doorSize"
+              :items="doorSizes"
+              v-model="EditingOrder.door_size"
+              item-text="size"
               label="Размер двери"
               @change="showPrice"
               return-object
@@ -433,24 +434,64 @@ export default {
         "Терминал",
         "Оплата по безналичному расчету",
       ],
-      EditingOrder: {
-        // fio: '',
-        // phone: '',
-        // dop_phone: '',
-        // street: '',
-        // house: '',
-        // flat: '',
-        // floor: '',
-        // part_city: '',
 
-        // door_direction: '',
-        // proem_size: '',
-        // prim_saler: '',
-        // prim_rukvod: '',
-        // date_mont: ''
-        brigada_mont: "",
-        groopRuk: "",
+      // EditingOrder: {
+      //   // fio: '',
+      //   // phone: '',
+      //   // dop_phone: '',
+      //   // street: '',
+      //   // house: '',
+      //   // flat: '',
+      //   // floor: '',
+      //   // part_city: '',
+
+      //   // door_direction: '',
+      //   // proem_size: '',
+      //   // prim_saler: '',
+      //   // prim_rukvod: '',
+      //   // date_mont: ''
+      //   brigada_mont: "",
+      //   groopRuk: "",
+      // },
+      //  -----------------------------------------------------------------------
+      EditingOrder: {
+        dateMont: "",
+        dateZamer: "",
+        delivery: "",
+        doorGroup: "",
+        doorNumber: "",
+        doorPrice: "",
+        doorSize: "",
+        dop_phone: "",
+        dopolnServ: [],
+        fio: "",
+        flat: "",
+        floor: "",
+        house: "",
+        modelRuk: "",
+        part_city: "",
+        payments_metod: "",
+        phone: "",
+        predoplata: "",
+        primecProd: "",
+        primecRuk: "",
+        prod_sale: "",
+        proemSize: "",
+        ruk_cena: "",
+        sale: "",
+        sideOpen: "",
+        status_premii: "",
+        status_zayavka: "",
+        street: "",
+        sum_premii: "",
+        team: "",
+        user_id: "",
+        vremya_montaja: null,
+        vremya_zamera: null,
+        zamershik: "",
       },
+      // ----------------------------------------------------------------------------
+
       doorGroup: "",
       doorsModels: [],
       selectedModel: {},
@@ -473,33 +514,40 @@ export default {
     };
   },
 
-  created() {
+  async created() {
     this.routeId = this.$route.params.id;
-    axios
-      .get("https://door.webink.site/wp-json/door/v1/get/categorys")
-      .then((response) => {
-        this.doorsCategory = response.data;
-      });
-
-    axios
+    await axios
       .get("https://door.webink.site/wp-json/door/v1/get/sales")
       .then((response) => {
         this.EditingOrder = response.data.find(
           (item) => item.id == this.routeId
         );
+
+        this.EditingOrder = {
+          ...this.EditingOrder,
+          data_zamera: this.EditingOrder.data_zamera + "T00:00:00",
+        };
         console.log(this.EditingOrder);
         this.loading = false;
       });
 
+    await axios
+      .get("https://door.webink.site/wp-json/door/v1/get/categorys")
+      .then((response) => {
+        this.doorsCategory = response.data;
+        this.changeModel(this.EditingOrder.category_saler.id);
+        this.changeModelRuk(this.EditingOrder.category_ruk.id);
+      });
+
     // замерщики
-    axios
+    await axios
       .get("https://door.webink.site/wp-json/door/v1/get/users?type=zamershik")
       .then((response) => {
         this.zamershiks = response.data;
       });
 
     // ,бригады
-    axios
+    await axios
       .get("https://door.webink.site/wp-json/door/v1/get/teams")
       .then((response) => {
         this.brigadi = response.data;
@@ -507,22 +555,34 @@ export default {
   },
   methods: {
     changeModel(param) {
+      console.log(param);
       this.doorGroup = param.term_id;
 
       this.doorModel = "";
       //получение доп услуг по производителю двери
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param}`
         )
         .then((response) => {
           this.doorsModels = response.data;
-          console.log(this.doorsModels);
+          const chosenDoor = this.doorsModels.find((door) => {
+            return door.name === this.EditingOrder.model_saler.name;
+          });
+
+          const chosenDoorSizes = chosenDoor.price;
+
+          for (const key in chosenDoorSizes) {
+            console.log(this.doorSizes.size != key);
+            this.doorSizes.push({ size: key, price: chosenDoorSizes[key] });
+          }
+          console.log("this.doorSizes");
+          console.log(this.doorSizes);
         });
 
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param.term_id}`
+          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param}`
         )
         .then((response) => {
           this.dopServArray = response.data;
@@ -533,7 +593,7 @@ export default {
 
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param}`
         )
         .then((response) => {
           this.modelsRuk = response.data;
@@ -541,55 +601,100 @@ export default {
     },
 
     changeSize(sizes) {
-      console.log(arguments);
       this.selectedModel = sizes;
       this.doorSizes = Object.keys(sizes.price);
     },
 
     showPrice(num) {
-      this.doorPrice = this.selectedModel.price[num];
-      this.doorSize = num;
+      // this.doorPrice = this.selectedModel.price[num];
+      // this.doorSize = num;
+      this.EditingOrder.door_size = num.size;
     },
 
     updateOrder() {
       let newOrder = {
-        fio: this.fio,
-        phone: this.phone,
-        dop_phone: this.dop_phone,
-        street: this.street,
-        house: this.house,
-        flat: this.flat,
-        floor: this.floor,
-        part_city: this.part_city,
-        doorGroup: this.doorGroup,
-        doorModel: this.doorModel.id,
-        doorSize: this.doorSize,
-        groopRuk: this.groopRuk.term_id,
-        modelRuk: this.modelRuk,
-        sideOpen: this.sideOpen,
-        proemSize: this.proemSize,
-        doorNumber: this.doorNumber,
-        primecProd: this.primecProd,
-        primecRuk: this.primecRuk,
-        dopolnServ: this.dopolnServ,
-        dateZamer: this.dateZamer,
-        zamershik: this.zamershik,
-        dateMont: this.dateMont,
-        team: this.team,
-        status_zayavka: this.status_zayavka,
-        prod_sale: this.prod_sale,
-        ruk_cena: this.ruk_cena,
-        delivery: this.delivery,
-        predoplata: this.predoplata,
-        sale: this.sale,
-        payments_metod: this.spayments_metod,
-        sum_premii: this.sum_premii,
-        status_premii: this.status_premii,
-        doorPrice: this.doorPrice,
-        user_id: this.user.id,
-        vremya_zamera: this.time,
-        vremya_montaja: this.time2,
+        ...this.EditingOrder,
+        // fio: this.fio,
+        // phone: this.phone,
+        // dop_phone: this.dop_phone,
+        // street: this.street,
+        // house: this.house,
+        // flat: this.flat,
+        // floor: this.floor,
+        // part_city: this.part_city,
+        // doorGroup: this.doorGroup,
+        // doorModel: this.doorModel.id,
+        // doorSize: this.doorSize,
+        // groopRuk: this.groopRuk.term_id,
+        // modelRuk: this.modelRuk,
+        // sideOpen: this.sideOpen,
+        // proemSize: this.proemSize,
+        // doorNumber: this.doorNumber,
+        // primecProd: this.primecProd,
+        // primecRuk: this.primecRuk,
+        // dopolnServ: this.dopolnServ,
+        // dateZamer: this.dateZamer,
+        // zamershik: this.zamershik,
+        // dateMont: this.dateMont,
+        // team: this.team,
+        // status_zayavka: this.status_zayavka,
+        // prod_sale: this.prod_sale,
+        // ruk_cena: this.ruk_cena,
+        // delivery: this.delivery,
+        // predoplata: this.predoplata,
+        // sale: this.sale,
+        // payments_metod: this.spayments_metod,
+        // sum_premii: this.sum_premii,
+        // status_premii: this.status_premii,
+        // doorPrice: this.doorPrice,
+        // user_id: this.user.id,
+        // vremya_zamera: this.time,
+        // vremya_montaja: this.time2,
       };
+      // ==========================================================================
+      // dop_phone: (...),
+      // fio: (...),
+      // phone: (...),
+      // adress: (...),
+      // flat: (...),
+      // floor: (...),
+      // house: (...),
+      // part_city: (...),
+      // category_saler: (...),
+      // model_saler: (...),
+      // category_ruk: (...),
+      // model_ruk: (...),
+      // door_size: (...),
+      // door_direction: (...),
+      // door_number: (...),
+      // prim_rukvod: (...),
+      // prim_saler: (...),
+      // proem_size: (...),
+
+      // avans: (...),
+      // brigada_mont: (...),
+      // city: (...),
+      // cost_diler: (...),
+      // cost_saler: (...),
+      // cost_zdi: (...),
+      // data_zamera: (...),
+      // date: (...),
+      // date_mont: (...),
+      // discount: (...),
+      // dopServ: (...),
+      // id: (...),
+      // payments_metod: (...),
+      // saler: (...),
+      // status: (...),
+      // status_premia: (...),
+      // sum_premia: (...),
+      // time_mont: (...),
+      // total: (...),
+      // vdz_premia: (...),
+      // vremya_zamera: (...),
+      // zamershik: (...),
+
+      // ==========================================================================
 
       this.loadBtn = true;
       //отправить новый заказ
@@ -604,5 +709,11 @@ export default {
         });
     },
   },
+
+  // watch: {
+  //   doorsCategory() {
+
+  //   },
+  // },
 };
 </script>

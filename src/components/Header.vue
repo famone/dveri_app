@@ -29,7 +29,7 @@
 
     <div class="log-box" @click="accpuntMenu = !accpuntMenu">
       <div class="text-right" v-if="user !== null">
-        <p>{{ user.roles[0] }}</p>
+        <p>{{ mainRole }}</p>
         <p>
           <strong>{{ user.user_display_name }}</strong>
         </p>
@@ -67,6 +67,15 @@ export default {
   },
   computed: {
     ...mapGetters({ user: "auth/getUser" }),
+    mainRole(){
+      if(this.user.roles[0] === 'administrator'){
+        return 'Администратор'
+      }else if(this.user.roles[0] === 'shop_manager'){
+        return 'Продавец'
+      }else{
+        return 'Замерщик'
+      }
+    }
   },
 
   methods: {

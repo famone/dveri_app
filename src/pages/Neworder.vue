@@ -573,7 +573,7 @@ import axios from "axios";
 import { mapState } from "vuex";
 
 export default {
-  name: "EditOrder",
+  name: "NewOrder",
 
   data() {
     return {
@@ -581,7 +581,7 @@ export default {
       doorsCategory: [],
       doorsModels: [],
       items: ["Тест 1", "Тест 2", "Тест 3", "Тест 4"],
-      dateZamer: new Date().toISOString().substr(0, 10),
+      dateZamer: null,
       dateMont: "",
       sideCity: "",
       menu: false,

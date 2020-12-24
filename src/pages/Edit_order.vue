@@ -243,7 +243,8 @@
             <v-select
               label="Замерщик"
               :items="zamershiks"
-              item-text="fname"
+              v-model="EditingOrder.zamershik.name"
+              item-text="name"
               item-value="id"
             ></v-select>
           </div>
@@ -260,7 +261,7 @@
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
-                  v-model="EditingOrder.date"
+                  v-model="EditingOrder.date_mont"
                   label="Желаемая дата монтажа"
                   prepend-icon="mdi-calendar"
                   readonly
@@ -306,7 +307,7 @@
           <div class="col-lg-3">
             <v-select
               :items="payments_metod"
-              v-model="spayments_metod"
+              v-model="EditingOrder.payments_metod"
               label="Тип расчета"
             ></v-select>
           </div>
@@ -337,10 +338,16 @@
           </div>
 
           <div class="col-lg-2">
-            <v-text-field label="Скидка" v-model="sale"></v-text-field>
+            <v-text-field
+              label="Скидка"
+              v-model="EditingOrder.discount"
+            ></v-text-field>
           </div>
           <div class="col-lg-2">
-            <v-text-field label="Итого" v-model="doorPrice"></v-text-field>
+            <v-text-field
+              label="Итого"
+              v-model="EditingOrder.total"
+            ></v-text-field>
           </div>
         </div>
 
@@ -352,7 +359,7 @@
             <div class="col-lg-12">
               <v-select
                 :items="statuses"
-                v-model="status_zayavka"
+                v-model="EditingOrder.status"
                 label="Статус заявки"
               ></v-select>
             </div>
@@ -365,14 +372,14 @@
             <div class="col-lg-4">
               <v-text-field
                 label="Сумма премии"
-                v-model="sum_premii"
+                v-model="EditingOrder.sum_premia"
               ></v-text-field>
             </div>
             <div class="col-lg-4">
               <v-select
                 :items="status_premii"
                 label="Статус премии"
-                v-model="status_premii"
+                v-model="EditingOrder.status_premia"
               ></v-select>
             </div>
           </div>
@@ -407,6 +414,7 @@
 <script>
 import { mapState, mapGetters } from "vuex";
 import axios from "axios";
+import moment from "moment";
 
 // Для селектов надо предварительно проитись помассиву и подставить в :value (в data добавить свойство) то что у нас есть уже в заказе, но при изменении добавлять в данные новое значение
 
@@ -435,25 +443,6 @@ export default {
         "Оплата по безналичному расчету",
       ],
 
-      // EditingOrder: {
-      //   // fio: '',
-      //   // phone: '',
-      //   // dop_phone: '',
-      //   // street: '',
-      //   // house: '',
-      //   // flat: '',
-      //   // floor: '',
-      //   // part_city: '',
-
-      //   // door_direction: '',
-      //   // proem_size: '',
-      //   // prim_saler: '',
-      //   // prim_rukvod: '',
-      //   // date_mont: ''
-      //   brigada_mont: "",
-      //   groopRuk: "",
-      // },
-      //  -----------------------------------------------------------------------
       EditingOrder: {
         dateMont: "",
         dateZamer: "",
@@ -523,11 +512,15 @@ export default {
           (item) => item.id == this.routeId
         );
 
-        this.EditingOrder = {
-          ...this.EditingOrder,
-          data_zamera: this.EditingOrder.data_zamera + "T00:00:00",
-        };
-        console.log(this.EditingOrder);
+        if (this.EditingOrder.date_mont && this.EditingOrder.data_zamera) {
+          const splitedDate_mont = this.EditingOrder.date_mont.split("/");
+          const splitedData_zamera = this.EditingOrder.data_zamera.split("/");
+          const date_mont = `${splitedDate_mont[2]}-${splitedDate_mont[1]}-${splitedDate_mont[0]}`;
+          const data_zamera = `${splitedData_zamera[2]}-${splitedData_zamera[1]}-${splitedData_zamera[0]}`;
+
+          this.EditingOrder = { ...this.EditingOrder, date_mont, data_zamera };
+        }
+
         this.loading = false;
       });
 
@@ -555,7 +548,6 @@ export default {
   },
   methods: {
     changeModel(param) {
-      console.log(param);
       this.doorGroup = param.term_id;
 
       this.doorModel = "";
@@ -573,11 +565,8 @@ export default {
           const chosenDoorSizes = chosenDoor.price;
 
           for (const key in chosenDoorSizes) {
-            console.log(this.doorSizes.size != key);
             this.doorSizes.push({ size: key, price: chosenDoorSizes[key] });
           }
-          console.log("this.doorSizes");
-          console.log(this.doorSizes);
         });
 
       axios
@@ -612,45 +601,6 @@ export default {
     },
 
     updateOrder() {
-      let newOrder = {
-        ...this.EditingOrder,
-        // fio: this.fio,
-        // phone: this.phone,
-        // dop_phone: this.dop_phone,
-        // street: this.street,
-        // house: this.house,
-        // flat: this.flat,
-        // floor: this.floor,
-        // part_city: this.part_city,
-        // doorGroup: this.doorGroup,
-        // doorModel: this.doorModel.id,
-        // doorSize: this.doorSize,
-        // groopRuk: this.groopRuk.term_id,
-        // modelRuk: this.modelRuk,
-        // sideOpen: this.sideOpen,
-        // proemSize: this.proemSize,
-        // doorNumber: this.doorNumber,
-        // primecProd: this.primecProd,
-        // primecRuk: this.primecRuk,
-        // dopolnServ: this.dopolnServ,
-        // dateZamer: this.dateZamer,
-        // zamershik: this.zamershik,
-        // dateMont: this.dateMont,
-        // team: this.team,
-        // status_zayavka: this.status_zayavka,
-        // prod_sale: this.prod_sale,
-        // ruk_cena: this.ruk_cena,
-        // delivery: this.delivery,
-        // predoplata: this.predoplata,
-        // sale: this.sale,
-        // payments_metod: this.spayments_metod,
-        // sum_premii: this.sum_premii,
-        // status_premii: this.status_premii,
-        // doorPrice: this.doorPrice,
-        // user_id: this.user.id,
-        // vremya_zamera: this.time,
-        // vremya_montaja: this.time2,
-      };
       // ==========================================================================
       // dop_phone: (...),
       // fio: (...),
@@ -670,6 +620,9 @@ export default {
       // prim_rukvod: (...),
       // prim_saler: (...),
       // proem_size: (...),
+      // data_zamera: (...),
+      // date_mont: (...),
+      // zamershik: (...),
 
       // avans: (...),
       // brigada_mont: (...),
@@ -677,9 +630,7 @@ export default {
       // cost_diler: (...),
       // cost_saler: (...),
       // cost_zdi: (...),
-      // data_zamera: (...),
       // date: (...),
-      // date_mont: (...),
       // discount: (...),
       // dopServ: (...),
       // id: (...),
@@ -692,28 +643,31 @@ export default {
       // total: (...),
       // vdz_premia: (...),
       // vremya_zamera: (...),
-      // zamershik: (...),
 
       // ==========================================================================
 
       this.loadBtn = true;
       //отправить новый заказ
+
       axios
-        .post("https://door.webink.site/wp-json/door/v1/add/sales", {
-          ...newOrder,
-        })
+        .post(
+          "https://door.webink.site/wp-json/door/v1/edit/sales?order_id=" +
+            this.EditingOrder.id,
+          { ...this.EditingOrder }
+        )
         .then((response) => {
-          console.log(response);
           this.loadBtn = false;
           this.$router.push("/");
         });
+      // axios
+      //   .post("https://door.webink.site/wp-json/door/v1/add/sales", {
+      //     ...this.EditingOrder,
+      //   })
+      //   .then((response) => {
+      //     this.loadBtn = false;
+      //     this.$router.push("/");
+      //   });
     },
   },
-
-  // watch: {
-  //   doorsCategory() {
-
-  //   },
-  // },
 };
 </script>

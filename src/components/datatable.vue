@@ -262,11 +262,7 @@
                 <v-btn color="blue darken-1" text @click="closeDelete"
                   >Отмена</v-btn
                 >
-                <v-btn
-                  color="blue darken-1"
-                  v-model="deliting"
-                  text
-                  @click="deleteItemConfirm(deliting)"
+                <v-btn color="blue darken-1" text @click="deleteItemConfirm"
                   >Удалить</v-btn
                 >
                 <v-spacer></v-spacer>
@@ -524,17 +520,17 @@ export default {
       }
     },
 
-    deleteItem(item) {
+    deleteItem(id) {
       this.dialogDelete = true;
-      this.deliting = item;
+      this.deliting = id;
     },
     closeDelete() {
       this.dialogDelete = false;
       this.deliting = "";
     },
-    deleteItemConfirm(item) {
+    deleteItemConfirm() {
       this.$store.dispatch("zakaz/startLoader");
-      this.$store.dispatch("zakaz/deliteZakaz", item);
+      this.$store.dispatch("zakaz/deliteZakaz", this.deliting);
       this.dialogDelete = false;
       this.deliting = "";
     },

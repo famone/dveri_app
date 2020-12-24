@@ -240,6 +240,12 @@
 
           <v-spacer></v-spacer>
 
+          <router-link tag="a" to="/neworder">
+            <v-btn depressed color="primary"
+              ><v-icon>mdi-calendar</v-icon> График монтажа</v-btn
+            >
+          </router-link>
+
           <downloadExcel :data="excelJsonData">
             <v-btn depressed color="primary ma-4"
               ><v-icon>mdi-download</v-icon> Выгрузить EXСEL</v-btn

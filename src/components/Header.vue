@@ -10,9 +10,9 @@
             ><span class="mdi mdi-bookmark-outline"></span
             >Справочники</router-link
           >
-          <router-link tag="li" to="/analitics"
+          <!-- <router-link tag="li" to="/analitics"
             ><span class="mdi mdi-chart-line"></span>Аналитика</router-link
-          >
+          > -->
           <router-link tag="li" to="/users"
             ><span class="mdi mdi-account-multiple-outline"></span
             >Пользователи</router-link

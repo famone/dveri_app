@@ -505,9 +505,9 @@
           <v-text-field label="Предоплата" v-model="predoplata"></v-text-field>
         </div>
 
-        <div class="col-lg-2">
+        <!-- <div class="col-lg-2">
           <v-text-field label="Скидка" v-model="sale"></v-text-field>
-        </div>
+        </div> -->
         <div class="col-lg-2">
           <v-text-field label="Итого" v-model="doorPrice"></v-text-field>
         </div>

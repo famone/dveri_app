@@ -136,7 +136,7 @@
       :loading="loadDoors"
       sort-by="id"
       single-line
-      class="elevation-1 rounded-lg"
+      class="elevation-1 rounded-lg"ч
       @click:row="selectOrderRow"
     >
       <template #body.prepend="{ headers }">
@@ -382,6 +382,7 @@ export default {
     ...mapState("zakaz", ["doors", "loadDoors"]),
 
     ...mapGetters({
+      getUser:"auth/getUser",
       teams: "zakaz/GET_TEAMS",
       zamershiki: "zakaz/GET_ZAMERSHIKI",
       GET_CHOSEN_ZAKAZ: "zakaz/GET_CHOSEN_ZAKAZ",

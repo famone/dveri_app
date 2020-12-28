@@ -5,17 +5,29 @@ body{
 .v-application--wrap{
 	background-color: #f2f2f2!important;
 }
-th{
+/*th{
 	white-space: nowrap;	
 }
 td{
 	white-space: nowrap;	
-}
-
+}*/
 
 .v-data-table__wrapper{
 	padding-bottom: 15px;
 }
+.v-data-table__wrapper td:nth-child(1){
+	white-space: nowrap;	
+}
+.v-data-table__wrapper td:nth-child(3){
+	white-space: nowrap;	
+}
+.v-data-table__wrapper td:nth-child(4){
+	white-space: nowrap;	
+}
+.v-data-table__wrapper td:nth-child(17){
+	white-space: nowrap;	
+}
+
 
 .v-data-table__wrapper::-webkit-scrollbar {
 	height: 8px;

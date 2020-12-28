@@ -653,11 +653,13 @@ export default {
 
 <style>
 table td {
-  font-size: 14px !important;
+  font-size: 12px !important;
+  line-height: 16px;
   font-weight: 500;
 }
 table th {
-  font-size: 14px !important;
+  font-size: 12px !important;
+  line-height: 16px;
 }
 .popupBtn {
   cursor: pointer;

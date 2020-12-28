@@ -11,6 +11,7 @@
         </div>
       </div>
 
+
       <div class="row shad-box">
         <div class="col-lg-12">
           <h3>
@@ -87,7 +88,7 @@
             label="Модель двери продавца"
           ></v-select>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-3" v-if="getUser.roles[0] !== 'shop_manager'">
           <v-select
             :items="doorsCategory"
             item-text="name"
@@ -97,7 +98,7 @@
             return-object
           ></v-select>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-3" v-if="getUser.roles[0] !== 'shop_manager'">
           <v-select
             :items="modelsRuk"
             item-text="name"
@@ -142,7 +143,7 @@
           >
           </v-textarea>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-6" v-if="getUser.roles[0] !== 'shop_manager'">
           <v-textarea
             label="Примечание руководителя:"
             rows="1"
@@ -154,7 +155,14 @@
       </div>
       <!--  -->
 
-      <div class="row shad-box">
+
+      <v-checkbox
+      v-model="noZamer"
+      label="Без замера"
+      v-if="getUser.roles[0] === 'shop_manager'"
+    ></v-checkbox>
+
+      <div class="row shad-box" v-if="noZamer">
         <div class="col-lg-12">
           <h2>
             <span class="mdi mdi-bookmark-plus-outline"></span> Дополнительные
@@ -317,7 +325,7 @@
 
       <!--  -->
 
-      <div class="row shad-box">
+      <div class="row shad-box" v-if="getUser.roles[0] !== 'shop_manager'">
         <div class="col-lg-12">
           <h2>
             <span class="mdi mdi-bookmark-plus-outline"></span> Замер и монтаж:
@@ -470,7 +478,7 @@
         </div>
       </div>
 
-      <div class="row shad-box">
+      <div class="row shad-box" v-if="getUser.roles[0] !== 'shop_manager'">
         <div class="col-lg-12">
           <h2><span class="mdi mdi-sale"></span> Итого:</h2>
         </div>
@@ -513,7 +521,7 @@
         </div>
       </div>
 
-      <div class="row shad-box">
+      <div class="row shad-box" v-if="getUser.roles[0] !== 'shop_manager'">
         <div class="col-lg-3">
           <div class="col-lg-12">
             <h2><span class="mdi mdi-bookmark-outline"></span> Заявка:</h2>
@@ -573,13 +581,14 @@
 
 <script>
 import axios from "axios";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "NewOrder",
 
   data() {
     return {
+      noZamer: false,
       loadBtn: false,
       doorsCategory: [],
       doorsModels: [],
@@ -650,7 +659,9 @@ export default {
   },
   computed: {
     ...mapState("auth", ["user"]),
-
+    ...mapGetters({
+      getUser: "auth/getUser"
+    }),
     bossAdditionalWorksCard() {
       if (this.groopRuk.term_id && this.doorGroup) {
         if (this.groopRuk.term_id !== this.doorGroup) {
@@ -724,7 +735,19 @@ export default {
          suggestView1.events.add('select', (e) => { // select event
           this.street = e.get('item').value
 
-          console.log(e.get('item'))
+          let porez1 = this.street.replace('Россия,', '')
+          this.street = porez1
+
+          if(this.street.includes('Санкт-Петербург,')){
+            let porez2 = this.street.replace('Санкт-Петербург,', '')
+            this.street = porez2
+          }else{
+            let porez3 = this.street.replace('Москва,', '')
+           this.street = porez3
+          }
+           
+
+          console.log(this.street)
           })
     },
     addDop(type, category) {

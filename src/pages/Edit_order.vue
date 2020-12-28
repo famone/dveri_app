@@ -62,6 +62,7 @@
             <v-text-field
               label="Улица"
               v-model="EditingOrder.adress"
+              id="suggest"
             ></v-text-field>
           </div>
           <div class="col-lg-2">
@@ -70,6 +71,16 @@
               v-model="EditingOrder.house"
             ></v-text-field>
           </div>
+
+          <!--  -->
+          <div class="col-lg-1">
+            <v-text-field
+              label="Корпус"
+              v-model="EditingOrder.korpusr"
+            ></v-text-field>
+          </div>
+          <!--  -->
+
           <div class="col-lg-2">
             <v-text-field
               label="Квартира"
@@ -457,6 +468,7 @@ export default {
         flat: "",
         floor: "",
         house: "",
+        korpus: "",
         modelRuk: "",
         part_city: "",
         payments_metod: "",
@@ -552,7 +564,51 @@ export default {
       getUser: "auth/getUser",
     }),
   },
+  mounted(){
+    //инициализируем и подключаем карты
+
+    const script = document.createElement('script')
+
+      script.onload = () => {
+        ymaps.ready(() => this.yaMapInit2());
+      };
+
+      script.id = 'ymaps'
+      script.src = "https://api-maps.yandex.ru/2.1/?apikey=8c4059db-3b8d-4535-a15e-569ee80fc827&lang=ru_RU"
+      document.head.append(script);
+
+      //инициализируем и подключаем карты
+  },
   methods: {
+    yaMapInit2(){
+         var suggestView1 = new ymaps.SuggestView('suggest', {
+            provider: {
+              suggest: (function(request, options) {
+
+                return ymaps.suggest('Россия' + ", " + request)
+                
+               })
+              }
+            });
+
+         suggestView1.events.add('select', (e) => { // select event
+          this.EditingOrder.adress = e.get('item').value
+
+          let porez1 = this.EditingOrder.adress.replace('Россия,', '')
+          this.EditingOrder.adress = porez1
+
+          if(this.EditingOrder.adress.includes('Санкт-Петербург,')){
+            let porez2 = this.EditingOrder.adress.replace('Санкт-Петербург,', '')
+            this.EditingOrder.adress = porez2
+          }else{
+            let porez3 = this.EditingOrder.adress.replace('Москва,', '')
+           this.EditingOrder.adress = porez3
+          }
+           
+
+          console.log(this.EditingOrder.street)
+          })
+    },
     changeModel(param) {
       this.doorGroup = param.term_id;
 

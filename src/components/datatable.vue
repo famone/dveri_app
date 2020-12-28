@@ -136,12 +136,17 @@
       :loading="loadDoors"
       sort-by="id"
       single-line
+      must-sort
       class="elevation-1 rounded-lg"
       ч
       @click:row="selectOrderRow"
     >
       <template #body.prepend="{ headers }">
-        <td class="px-4 hidden-xs" v-for="header in headers" :key="header.value">
+        <td
+          class="px-4 hidden-xs"
+          v-for="header in headers"
+          :key="header.value"
+        >
           <v-text-field
             dense
             @input="searchByColumn(header.value)"
@@ -218,7 +223,7 @@
       </template>
 
       <template #item.phone="{ item }">
-        <a :href=" 'tel:' + item.phone">{{item.phone}}</a >
+        <a :href="'tel:' + item.phone">{{ item.phone }}</a>
       </template>
 
       <template v-slot:item.adress="{ item }">
@@ -235,7 +240,8 @@
           >
           <v-divider class="mx-4" inset vertical></v-divider>
 
-          <v-select v-if="getUser.roles[0] !== 'shop_manager'"
+          <v-select
+            v-if="getUser.roles[0] !== 'shop_manager'"
             label="Выберите город"
             style="margin-bottom: -15px"
             :items="cities"
@@ -245,13 +251,20 @@
 
           <v-spacer></v-spacer>
 
-          <router-link tag="a" to="/neworder" v-if="getUser.roles[0] !== 'shop_manager'" >
+          <router-link
+            tag="a"
+            to="/neworder"
+            v-if="getUser.roles[0] !== 'shop_manager'"
+          >
             <v-btn depressed color="primary ma-2"
               ><v-icon>mdi-calendar</v-icon> График монтажа</v-btn
             >
           </router-link>
 
-          <downloadExcel :data="excelJsonData" v-if="getUser.roles[0] !== 'shop_manager'">
+          <downloadExcel
+            :data="excelJsonData"
+            v-if="getUser.roles[0] !== 'shop_manager'"
+          >
             <v-btn depressed color="primary ma-2"
               ><v-icon>mdi-download</v-icon> Выгрузить EXСEL</v-btn
             >
@@ -283,7 +296,10 @@
         </v-toolbar>
       </template>
 
-      <template v-slot:item.actions="{ item }" v-if="getUser.roles[0] !== 'shop_manager'">
+      <template
+        v-slot:item.actions="{ item }"
+        v-if="getUser.roles[0] !== 'shop_manager'"
+      >
         <router-link tag="a" :to="'/edit_order/' + item.id">
           <v-icon small class="mr-2"> mdi-pencil </v-icon>
         </router-link>
@@ -382,12 +398,12 @@ export default {
       vdz_premia: "",
     },
     statuses: [
-        "В обработке",
-        "Замер",
-        "Индивидуальный",
-        "Ожидает монтаж",
-        "Отменен",
-      ],
+      "В обработке",
+      "Замер",
+      "Индивидуальный",
+      "Ожидает монтаж",
+      "Отменен",
+    ],
   }),
 
   computed: {
@@ -561,7 +577,8 @@ export default {
 
     submitChosenEdition(type) {
       if (type === "date_mont" || type === "date_zamera") {
-        this[type] = this[type].toISOString();
+        // this[type] = this[type].toISOString();
+        this[type] = moment(this[type]).format();
       }
 
       this.EDIT_ZAKAZ({ ...this.GET_CHOSEN_ZAKAZ, [type]: this[type] }).then(

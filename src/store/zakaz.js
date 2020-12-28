@@ -100,7 +100,12 @@ const zakaz = {
 
     async EDIT_ZAKAZ({ commit }, zakaz) {
 
+      console.log(zakaz);
+
       await axios.post("https://door.webink.site/wp-json/door/v1/edit/sales?order_id=" + zakaz.id, zakaz)
+        .then(({ data }) => {
+          console.log(data)
+        })
         .catch((err) => {
           console.log(err);
         })

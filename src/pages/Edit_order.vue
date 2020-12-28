@@ -194,7 +194,7 @@
 
         <!--  -->
 
-        <div class="row shad-box">
+        <div class="row shad-box" v-if="getUser.id !== 6">
           <div class="col-lg-12">
             <h2>
               <span class="mdi mdi-bookmark-plus-outline"></span> Замер и
@@ -299,7 +299,7 @@
           </div>
         </div>
 
-        <div class="row shad-box">
+        <div class="row shad-box" v-if="getUser.id !== 6">
           <div class="col-lg-12">
             <h2><span class="mdi mdi-sale"></span> Итого:</h2>
           </div>
@@ -351,7 +351,7 @@
           </div>
         </div>
 
-        <div class="row shad-box">
+        <div class="row shad-box" v-if="getUser.id !== 6">
           <div class="col-lg-3">
             <div class="col-lg-12">
               <h2><span class="mdi mdi-bookmark-outline"></span> Заявка:</h2>
@@ -545,6 +545,12 @@ export default {
       .then((response) => {
         this.brigadi = response.data;
       });
+  },
+
+  computed: {
+    ...mapGetters({
+      getUser: "auth/getUser",
+    }),
   },
   methods: {
     changeModel(param) {

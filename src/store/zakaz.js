@@ -77,9 +77,12 @@ const zakaz = {
   },
 
   actions: {
-    getDoors({ commit }) {
+    getDoors({ commit, rootGetters }) {
+
+      const userRoleId = rootGetters["auth/getUser"].id;
+
       axios
-        .get("https://door.webink.site/wp-json/door/v1/get/sales")
+        .get("https://door.webink.site/wp-json/door/v1/get/sales?user_id=" + userRoleId)
         .then((response) => {
           commit("SET_DOORS", response.data)
         });
@@ -107,14 +110,16 @@ const zakaz = {
       axios.post("https://door.webink.site/wp-json/door/v1/edit/models?door_id=" + model.id, model)
     },
 
-    deliteZakaz({ commit }, payload) {
+    deliteZakaz({ commit, rootGetters }, payload) {
+      const userRoleId = rootGetters["auth/getUser"].id;
+
 
       axios
         .get("https://door.webink.site/wp-json/door/v1/delete/sales?order_id=" + payload)
         .then((response) => {
           if (response.data.status === 'OK') {
             axios
-              .get("https://door.webink.site/wp-json/door/v1/get/sales")
+              .get("https://door.webink.site/wp-json/door/v1/get/sales?user_id=" + userRoleId)
               .then((response) => {
                 commit("SET_DOORS", response.data)
 
@@ -129,10 +134,10 @@ const zakaz = {
         .get("https://door.webink.site/wp-json/door/v1/delete/models?id=" + id)
         .then((response) => {
 
-          
+
           if (response.data.status == 200) {
             axios
-             .get('https://door.webink.site/wp-json/door/v1/get/models')
+              .get('https://door.webink.site/wp-json/door/v1/get/models')
               .then(response => {
                 commit("SET_MODELS", response.data)
               })
@@ -153,10 +158,10 @@ const zakaz = {
         .get("https://door.webink.site/wp-json/door/v1/delete/teams?id=" + id)
         .then((response) => {
 
-          
+
           if (response.data.status == 200) {
             axios
-             .get('https://door.webink.site/wp-json/door/v1/get/teams')
+              .get('https://door.webink.site/wp-json/door/v1/get/teams')
               .then(response => {
                 commit("SET_TEAMS", response.data)
               })
@@ -164,7 +169,7 @@ const zakaz = {
         });
     },
 
-    addTeam({commit, state}, name){
+    addTeam({ commit, state }, name) {
       state.loadTeams = true
 
       let team = {
@@ -172,20 +177,20 @@ const zakaz = {
       }
 
       axios
-      .post('https://door.webink.site/wp-json/door/v1/create/teams', team)
-      .then((response) => {
+        .post('https://door.webink.site/wp-json/door/v1/create/teams', team)
+        .then((response) => {
 
-          if (response.data.status == 200){
-              axios
-             .get('https://door.webink.site/wp-json/door/v1/get/teams')
+          if (response.data.status == 200) {
+            axios
+              .get('https://door.webink.site/wp-json/door/v1/get/teams')
               .then(response => {
                 commit("SET_TEAMS", response.data)
               })
-          
+
           }
 
 
-      })
+        })
 
     },
 

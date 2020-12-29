@@ -18,7 +18,8 @@
 </template>
 
 <script>
-import datatable from "../components/datatable.vue";
+// TODO edit 
+import datatable from "../components/datatable2.vue";
 
 export default {
   components: { datatable },

@@ -11,7 +11,6 @@
         </div>
       </div>
 
-
       <div class="row shad-box">
         <div class="col-lg-12">
           <h3>
@@ -38,7 +37,11 @@
           ></v-text-field>
         </div>
         <div class="col-lg-3">
-          <v-text-field label="Улица" v-model="street" id="suggest"></v-text-field>
+          <v-text-field
+            label="Улица"
+            v-model="street"
+            id="suggest"
+          ></v-text-field>
         </div>
         <div class="col-lg-2">
           <v-text-field label="Номер дома" v-model="house"></v-text-field>
@@ -155,12 +158,11 @@
       </div>
       <!--  -->
 
-
       <v-checkbox
-      v-model="noZamer"
-      label="Без замера"
-      v-if="getUser.roles[0] === 'shop_manager'"
-    ></v-checkbox>
+        v-model="noZamer"
+        label="Без замера"
+        v-if="getUser.roles[0] === 'shop_manager'"
+      ></v-checkbox>
 
       <div class="row shad-box" v-if="noZamer">
         <div class="col-lg-12">
@@ -660,7 +662,7 @@ export default {
   computed: {
     ...mapState("auth", ["user"]),
     ...mapGetters({
-      getUser: "auth/getUser"
+      getUser: "auth/getUser",
     }),
     bossAdditionalWorksCard() {
       if (this.groopRuk.term_id && this.doorGroup) {
@@ -707,48 +709,46 @@ export default {
 
     //инициализируем и подключаем карты
 
-    const script = document.createElement('script')
+    const script = document.createElement("script");
 
-      script.onload = () => {
-        ymaps.ready(() => this.yaMapInit2());
-      };
+    script.onload = () => {
+      ymaps.ready(() => this.yaMapInit2());
+    };
 
-      script.id = 'ymaps'
-      script.src = "https://api-maps.yandex.ru/2.1/?apikey=8c4059db-3b8d-4535-a15e-569ee80fc827&lang=ru_RU"
-      document.head.append(script);
+    script.id = "ymaps";
+    script.src =
+      "https://api-maps.yandex.ru/2.1/?apikey=8c4059db-3b8d-4535-a15e-569ee80fc827&lang=ru_RU";
+    document.head.append(script);
 
-      //инициализируем и подключаем карты
-
+    //инициализируем и подключаем карты
   },
   methods: {
-    yaMapInit2(){
-         var suggestView1 = new ymaps.SuggestView('suggest', {
-            provider: {
-              suggest: (function(request, options) {
+    yaMapInit2() {
+      var suggestView1 = new ymaps.SuggestView("suggest", {
+        provider: {
+          suggest: function (request, options) {
+            return ymaps.suggest("Россия" + ", " + request);
+          },
+        },
+      });
 
-                return ymaps.suggest('Россия' + ", " + request)
-                
-               })
-              }
-            });
+      suggestView1.events.add("select", (e) => {
+        // select event
+        this.street = e.get("item").value;
 
-         suggestView1.events.add('select', (e) => { // select event
-          this.street = e.get('item').value
+        let porez1 = this.street.replace("Россия,", "");
+        this.street = porez1;
 
-          let porez1 = this.street.replace('Россия,', '')
-          this.street = porez1
+        if (this.street.includes("Санкт-Петербург,")) {
+          let porez2 = this.street.replace("Санкт-Петербург,", "");
+          this.street = porez2;
+        } else {
+          let porez3 = this.street.replace("Москва,", "");
+          this.street = porez3;
+        }
 
-          if(this.street.includes('Санкт-Петербург,')){
-            let porez2 = this.street.replace('Санкт-Петербург,', '')
-            this.street = porez2
-          }else{
-            let porez3 = this.street.replace('Москва,', '')
-           this.street = porez3
-          }
-           
-
-          console.log(this.street)
-          })
+        console.log(this.street);
+      });
     },
     addDop(type, category) {
       if (category === "Услуга") {
@@ -875,10 +875,11 @@ export default {
         doorPrice: this.doorPrice,
         user_id: this.user.id,
         vremya_zamera: this.time,
-        vremya_montaja: this.time2,
+        time_mont: this.time2,
       };
 
       this.loadBtn = true;
+
       //отправить новый заказ
       axios
         .post("https://door.webink.site/wp-json/door/v1/add/sales", {

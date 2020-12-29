@@ -39,9 +39,8 @@
             v-model="date_mont"
             clearText="отмена"
             okText="выбрать"
-            :timePickerProps="{
-              format: '24hr',
-            }"
+            dateFormat="yyyy/MM/dd"
+            timeFormat="HH:mm"
           >
             <template #dateIcon>
               <v-icon> mdi-calendar </v-icon>
@@ -200,7 +199,7 @@
         {{ item.door_size }} / {{ item.door_direction }}
       </template>
 
-      <template v-slot:item.date_mont="{ item }" v-if="getUser.id !== 6">
+      <template #item.date_mont="{ item }" v-if="getUser.id !== 6">
         <v-chip v-if="item.date_mont">
           <span>{{ item.date_mont }}</span>
           <span v-if="item.time_mont">, {{ item.time_mont }}</span>
@@ -216,7 +215,10 @@
       </template>
 
       <template #item.data_zamera="{ item }" v-if="getUser.id !== 6">
-        <v-chip v-if="item.data_zamera" @click="changeAddServiceDialog('date_zamera')">
+        <v-chip
+          v-if="item.data_zamera"
+          @click="changeAddServiceDialog('date_zamera')"
+        >
           <span>{{ item.data_zamera }}</span>
           <span v-if="item.vremya_zamera">, {{ item.vremya_zamera }}</span>
         </v-chip>
@@ -603,16 +605,26 @@ export default {
 
     submitChosenEdition(type) {
       if (type === "date_mont" || type === "date_zamera") {
-        // this[type] = this[type].toISOString();
-        this[type] = moment(this[type]).format();
-      }
+        // this[type] = moment(this[type]).format("YYYY-MM-DDTHH:mm:ss");
+        const dateZamer = moment(this[type]).format("YYYY/MM/DD");
+        const vremya_zamera = moment(this[type]).format("HH:mm");
 
-      this.EDIT_ZAKAZ({ ...this.GET_CHOSEN_ZAKAZ, [type]: this[type] }).then(
-        () => {
+        this.EDIT_ZAKAZ({
+          ...this.GET_CHOSEN_ZAKAZ,
+          dateZamer,
+          vremya_zamera,
+        }).then(() => {
           this[type] = null;
           this.fetchDoors();
-        }
-      );
+        });
+      }
+
+      // this.EDIT_ZAKAZ({ ...this.GET_CHOSEN_ZAKAZ, [type]: this[type] }).then(
+      //   () => {
+      //     this[type] = null;
+      //     this.fetchDoors();
+      //   }
+      // );
 
       this.addServiceDialog = false;
     },

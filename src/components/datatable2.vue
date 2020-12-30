@@ -1,6 +1,6 @@
 <template>
   <div>
-    <AddServiceDetailModal
+    <!-- <AddServiceDetailModal
       :addServiceDialog="addServiceDialog"
       :changeAddServiceDialog="changeAddServiceDialog"
       :addServiceSlotName="addServiceSlotName"
@@ -152,7 +152,7 @@
           </div>
         </v-card>
       </template>
-    </AddServiceDetailModal>
+    </AddServiceDetailModal> -->
 
     <v-data-table
       v-if="items"
@@ -166,7 +166,7 @@
       ч
       @click:row="selectOrderRow"
     >
-      <template #body.prepend="{ headers }">
+      <!-- <template #body.prepend="{ headers }">
         <td
           class="px-4 hidden-xs"
           v-for="header in headers"
@@ -181,7 +181,7 @@
         </td>
       </template>
 
-      <template v-slot:item.id="{ item }">
+      <template #item.id="{ item }">
         <v-chip
           :color="getColor(item.status)"
           dark
@@ -209,7 +209,6 @@
           class="popupBtn px-1"
           @click="changeAddServiceDialog('date_mont')"
         >
-          <!-- <v-icon small class="mr-2">mdi-pencil</v-icon> -->
           назначить монтаж
         </div>
       </template>
@@ -255,12 +254,12 @@
         <a :href="'tel:' + item.phone">{{ item.phone }}</a>
       </template>
 
-      <template v-slot:item.adress="{ item }">
+      <template #item.adress="{ item }">
         <v-avatar :color="getPart(item.part_city)" size="15"></v-avatar>
         {{ item.adress }} {{ item.house }} {{ item.flat }}
       </template>
 
-      <template v-slot:top>
+      <template #top>
         <v-toolbar flat>
           <v-toolbar-title>Заказы</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
@@ -326,7 +325,7 @@
       </template>
 
       <template
-        v-slot:item.actions="{ item }"
+        #item.actions="{ item }"
         v-if="getUser.roles[0] !== 'shop_manager'"
       >
         <router-link tag="a" :to="'/edit_order/' + item.id">
@@ -335,8 +334,114 @@
 
         <v-icon small @click="deleteItem(item.id)"> mdi-delete </v-icon>
       </template>
-      <template v-slot:no-data>
+      <template #no-data>
         <v-btn color="primary" @click="searchByColumn('reset')"> Reset </v-btn>
+      </template> -->
+
+       <template #top>
+        <v-toolbar flat>
+          <v-toolbar-title>Заказы</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider>
+          <v-toolbar-title
+            >Сегодня: {{ now | moment("DD.MM.YY") }}</v-toolbar-title
+          >
+          <v-divider class="mx-4" inset vertical></v-divider>
+
+          <v-select
+            v-if="getUser.roles[0] !== 'shop_manager'"
+            label="Выберите город"
+            style="margin-bottom: -15px"
+            :items="cities"
+            v-model="city"
+            @change="filterByCity"
+          ></v-select>
+
+          <v-spacer></v-spacer>
+
+          <router-link
+            tag="a"
+            to="/neworder"
+            v-if="getUser.roles[0] !== 'shop_manager'"
+          >
+            <v-btn depressed color="primary ma-2"
+              ><v-icon>mdi-calendar</v-icon> График монтажа</v-btn
+            >
+          </router-link>
+
+          <downloadExcel
+            :data="excelJsonData"
+            v-if="getUser.roles[0] !== 'shop_manager'"
+          >
+            <v-btn depressed color="primary ma-2"
+              ><v-icon>mdi-download</v-icon> Выгрузить EXСEL</v-btn
+            >
+          </downloadExcel>
+
+          <router-link tag="a" to="/neworder">
+            <v-btn depressed color="primary ma-2"
+              ><v-icon>mdi-playlist-plus</v-icon> Новый заказ</v-btn
+            >
+          </router-link>
+
+          <v-dialog v-model="dialogDelete" max-width="500px">
+            <v-card>
+              <v-card-title class="headline"
+                >Вы точно хотите удалить этот заказ?</v-card-title
+              >
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="closeDelete"
+                  >Отмена</v-btn
+                >
+                <v-btn color="blue darken-1" text @click="deleteItemConfirm"
+                  >Удалить</v-btn
+                >
+                <v-spacer></v-spacer>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+        </v-toolbar>
+      </template>
+
+      <template #item.data_zamera="{ item }" v-if="getUser.id !== 6">
+        <v-edit-dialog
+          :return-value.sync="item.data_zamera"
+          @save="saveDataZamera"
+          @cancel="cancel"
+          @open="open"
+          @close="close"
+          save-text=" Выбрать"
+          cancel-text="Закрыть"
+          large
+          persistent
+        >
+          <v-chip
+            v-if="item.data_zamera"
+            @click="changeAddServiceDialog('date_zamera')"
+          >
+            <span>{{ item.data_zamera }}</span>
+            <span v-if="item.vremya_zamera">, {{ item.vremya_zamera }}</span>
+          </v-chip>
+          <div v-else>Назначить дату</div>
+          <template #input>
+            <v-datetime-picker
+              label="Выберите дату замера"
+              v-model="date_zamera"
+              clearText="отмена"
+              okText="выбрать"
+              :timePickerProps="{
+                format: '24hr',
+              }"
+            >
+              <template #dateIcon>
+                <v-icon> mdi-calendar </v-icon>
+              </template>
+              <template #timeIcon>
+                <v-icon> mdi-clock </v-icon>
+              </template>
+            </v-datetime-picker>
+          </template>
+        </v-edit-dialog>
       </template>
     </v-data-table>
   </div>
@@ -463,6 +568,22 @@ export default {
       fetchDoors: "zakaz/getDoors",
       EDIT_ZAKAZ: "zakaz/EDIT_ZAKAZ",
     }),
+
+    saveDataZamera() {
+      const dateZamer = moment(this.date_zamera).format("YYYY/MM/DD");
+      const vremya_zamera = moment(this.date_zamera).format("HH:mm");
+
+      this.EDIT_ZAKAZ({
+        ...this.GET_CHOSEN_ZAKAZ,
+        dateZamer,
+        vremya_zamera,
+      }).then(() => {
+        this.date_zamera = null;
+        this.fetchDoors();
+      });
+
+      this.addServiceDialog = false;
+    },
 
     filterByCity() {
       if (this.city === "Все") {
@@ -632,6 +753,7 @@ export default {
 
   mounted() {
     // api
+    // TODO no need to fetch data every time component rerender / call one time in App.vue and then make request only for the part that had been changed
     this.fetchTeams();
     this.fetchZamershiki();
     this.fetchDoors();

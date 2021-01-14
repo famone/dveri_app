@@ -1,139 +1,9 @@
 <template>
   <div>
-    <AddServiceDetailModal
-      :addServiceDialog="addServiceDialog"
-      :changeAddServiceDialog="changeAddServiceDialog"
-      :addServiceSlotName="addServiceSlotName"
-    >
-      <template #brigada>
-        <v-card class="pa-4">
-          <div>
-            <v-select
-              :items="teams"
-              v-model="team"
-              return-object
-              item-text="title"
-              label="Выберите бригаду"
-            ></v-select>
-          </div>
-          <div class="d-flex justify-end mt-4">
-            <v-btn
-              @click="submitChosenEdition('team')"
-              :disabled="!team"
-              color="primary"
-              small
-              class="mr-2"
-              >Выбрать</v-btn
-            >
-            <v-btn @click="changeAddServiceDialog" color="error" dark small
-              >Закрыть</v-btn
-            >
-          </div>
-        </v-card>
-      </template>
-
-      <template #date_mont>
-        <v-card class="pa-4">
-          <v-datetime-picker
-            label="Выберите дату монтажа"
-            v-model="date_mont"
-            clearText="отмена"
-            okText="выбрать"
-            :timePickerProps="{
-              format: '24hr',
-            }"
-          >
-            <template #dateIcon>
-              <v-icon> mdi-calendar </v-icon>
-            </template>
-            <template #timeIcon>
-              <v-icon> mdi-clock </v-icon>
-            </template>
-          </v-datetime-picker>
-          <div class="d-flex justify-end">
-            <v-btn
-              @click="submitChosenEdition('date_mont')"
-              color="primary"
-              small
-              class="mr-2"
-              :disabled="!date_mont"
-              >Выбрать</v-btn
-            >
-            <v-btn @click="changeAddServiceDialog" color="error" dark small
-              >Закрыть</v-btn
-            >
-          </div>
-        </v-card>
-      </template>
-
-      <template #date_zamera>
-        <v-card class="pa-4">
-          <v-datetime-picker
-            label="Выберите дату замера"
-            v-model="date_zamera"
-            clearText="отмена"
-            okText="выбрать"
-            :timePickerProps="{
-              format: '24hr',
-            }"
-          >
-            <template #dateIcon>
-              <v-icon> mdi-calendar </v-icon>
-            </template>
-            <template #timeIcon>
-              <v-icon> mdi-clock </v-icon>
-            </template>
-          </v-datetime-picker>
-          <div class="d-flex justify-end">
-            <v-btn
-              @click="submitChosenEdition('date_zamera')"
-              color="primary"
-              small
-              class="mr-2"
-              :disabled="!date_zamera"
-              >Выбрать</v-btn
-            >
-            <v-btn @click="changeAddServiceDialog" color="error" dark small
-              >Закрыть</v-btn
-            >
-          </div>
-        </v-card>
-      </template>
-
-      <template #zamershiki>
-        <v-card class="pa-4">
-          <!-- <v-card-title class="pa-0">Выберите бригаду</v-card-title> -->
-          <div>
-            <v-select
-              :items="zamershiki"
-              v-model="zamershik"
-              return-object
-              item-text="fname"
-              label="установить замерщика"
-            ></v-select>
-          </div>
-          <div class="d-flex justify-end">
-            <v-btn
-              @click="submitChosenEdition('zamershik')"
-              color="primary"
-              small
-              class="mr-2"
-              :disabled="!zamershik"
-              >Выбрать</v-btn
-            >
-            <v-btn @click="changeAddServiceDialog" color="error" dark small
-              >Закрыть</v-btn
-            >
-          </div>
-        </v-card>
-      </template>
-    </AddServiceDetailModal>
-
     <v-data-table
-      v-if="items"
       :headers="headers"
       :items="items"
-      :loading="loadDoors"
+      :loading="loading"
       sort-by="id"
       single-line
       must-sort
@@ -141,97 +11,7 @@
       ч
       @click:row="selectOrderRow"
     >
-      <template #body.prepend="{ headers }">
-        <td
-          class="px-4 hidden-xs"
-          v-for="header in headers"
-          :key="header.value"
-        >
-          <v-text-field
-            dense
-            @input="searchByColumn(header.value)"
-            :value="columnSearchQueries[header.value]"
-            clearable
-          ></v-text-field>
-        </td>
-      </template>
-
-      <template v-slot:item.id="{ item }">
-        <v-chip
-          :color="getColor(item.status)"
-          dark
-          :content="getTippyTittle(item.status)"
-          v-tippy="{ placement: 'right', arrow: true }"
-          :outlined="item.status === 'processing'"
-          :class="getChipTextColor(item.status)"
-        >
-          <span :class="getChipTextColor(item.status)">{{ item.id }}</span>
-        </v-chip>
-      </template>
-
-      <template #item.door_size="{ item }">
-        {{ item.door_size }} / {{ item.door_direction }}
-      </template>
-
-      <template v-slot:item.date_mont="{ item }" v-if="getUser.id !== 6">
-        <v-chip v-if="item.date_mont">
-          <span>{{ item.date_mont }}</span>
-          <span v-if="item.time_mont">, {{ item.time_mont }}</span>
-        </v-chip>
-        <div
-          v-else
-          class="popupBtn px-1"
-          @click="changeAddServiceDialog('date_mont')"
-        >
-          <!-- <v-icon small class="mr-2">mdi-pencil</v-icon> -->
-          назначить монтаж
-        </div>
-      </template>
-
-      <template #item.data_zamera="{ item }" v-if="getUser.id !== 6">
-        <v-chip v-if="item.data_zamera">
-          <span>{{ item.data_zamera }}</span>
-          <span v-if="item.vremya_zamera">, {{ item.vremya_zamera }}</span>
-        </v-chip>
-        <div
-          v-else
-          class="popupBtn px-1"
-          @click="changeAddServiceDialog('date_zamera')"
-        >
-          назначить дату замера
-        </div>
-      </template>
-
-      <template #item.brigada_mont.name="{ item }" v-if="getUser.id !== 6">
-        <span v-if="item.brigada_mont.name">
-          {{ item.brigada_mont.name }}
-        </span>
-        <div v-else class="popupBtn" @click="changeAddServiceDialog('brigada')">
-          назначить бригаду
-        </div>
-      </template>
-
-      <template #item.zamershik.name="{ item }" v-if="getUser.id !== 6">
-        <span v-if="item.zamershik.name">{{ item.zamershik.name }}</span>
-        <div
-          v-else
-          class="popupBtn"
-          @click="changeAddServiceDialog('zamershiki')"
-        >
-          установить замерщика
-        </div>
-      </template>
-
-      <template #item.phone="{ item }">
-        <a :href="'tel:' + item.phone">{{ item.phone }}</a>
-      </template>
-
-      <template v-slot:item.adress="{ item }">
-        <v-avatar :color="getPart(item.part_city)" size="15"></v-avatar>
-        {{ item.adress }} {{ item.house }} {{ item.flat }}
-      </template>
-
-      <template v-slot:top>
+      <template #top>
         <v-toolbar flat>
           <v-toolbar-title>Заказы</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
@@ -296,8 +76,213 @@
         </v-toolbar>
       </template>
 
+      <template #body.prepend="{ headers }">
+        <td
+          class="px-4 hidden-xs"
+          v-for="header in headers"
+          :key="header.value"
+        >
+          <v-text-field
+            dense
+            @input="searchByColumn(header.value)"
+            :value="columnSearchQueries[header.value]"
+            clearable
+          ></v-text-field>
+        </td>
+      </template>
+
+      <template #item.data_zamera="{ item }" v-if="getUser.id !== 6">
+        <v-edit-dialog
+          :return-value.sync="item.data_zamera"
+          @save="saveDataZamera(item)"
+          @cancel="cancel"
+          @open="open"
+          @close="close"
+          save-text=" Выбрать"
+          cancel-text="Закрыть"
+          large
+          persistent
+        >
+          <v-chip v-if="item.data_zamera">
+            <span>{{ item.data_zamera }}</span>
+            <span v-if="item.vremya_zamera">, {{ item.vremya_zamera }}</span>
+          </v-chip>
+          <div v-else class="popupBtn text-center">назначить дату</div>
+          <template #input>
+            <v-datetime-picker
+              label="Выберите дату замера"
+              v-model="date_zamera"
+              clearText="отмена"
+              okText="выбрать"
+              :timePickerProps="{
+                format: '24hr',
+              }"
+            >
+              <template #dateIcon>
+                <v-icon> mdi-calendar </v-icon>
+              </template>
+              <template #timeIcon>
+                <v-icon> mdi-clock </v-icon>
+              </template>
+            </v-datetime-picker>
+          </template>
+        </v-edit-dialog>
+      </template>
+
+      <template #item.date_mont="{ item }" v-if="getUser.id !== 6">
+        <v-edit-dialog
+          :return-value.sync="item.date_mont"
+          @save="saveDateMontaz(item)"
+          @cancel="cancel"
+          @open="open"
+          @close="close"
+          save-text=" Выбрать"
+          cancel-text="Закрыть"
+          large
+          persistent
+        >
+          <v-chip v-if="item.date_mont">
+            <span>{{ item.date_mont }}</span>
+            <span v-if="item.time_mont">, {{ item.time_mont }}</span>
+          </v-chip>
+          <div v-else class="popupBtn text-center">назначить монтаж</div>
+
+          <template #input>
+            <v-datetime-picker
+              label="Выберите дату монтажа"
+              v-model="date_mont"
+              clearText="отмена"
+              okText="выбрать"
+              :timePickerProps="{
+                format: '24hr',
+              }"
+            >
+              <template #dateIcon>
+                <v-icon> mdi-calendar </v-icon>
+              </template>
+              <template #timeIcon>
+                <v-icon> mdi-clock </v-icon>
+              </template>
+            </v-datetime-picker>
+          </template>
+        </v-edit-dialog>
+      </template>
+
+      <template #item.zamershik.name="{ item }" v-if="getUser.id !== 6">
+        <v-edit-dialog
+          :return-value.sync="item.zamershik"
+          @save="saveZamershik(item)"
+          @cancel="cancel"
+          @open="open"
+          @close="close"
+          save-text=" Выбрать"
+          cancel-text="Закрыть"
+          large
+          persistent
+        >
+          <span v-if="item.zamershik.name">{{ item.zamershik.name }}</span>
+          <div v-else class="popupBtn text-center">установить замерщика</div>
+
+          <template #input>
+            <v-select
+              :items="zamershiki"
+              v-model="zamershik"
+              return-object
+              item-text="fname"
+              label="установить замерщика"
+            ></v-select>
+          </template>
+        </v-edit-dialog>
+      </template>
+
+      <template #item.brigada_mont.name="{ item }" v-if="getUser.id !== 6">
+        <v-edit-dialog
+          :return-value.sync="item.brigada_mont"
+          @save="saveBrigadaMont(item)"
+          @cancel="cancel"
+          @open="open"
+          @close="close"
+          save-text=" Выбрать"
+          cancel-text="Закрыть"
+          large
+          persistent
+        >
+          <span v-if="item.brigada_mont.name">
+            {{ item.brigada_mont.name }}
+          </span>
+          <div v-else class="popupBtn text-center">назначить бригаду</div>
+
+          <template #input>
+            <v-select
+              :items="teams"
+              v-model="team"
+              return-object
+              item-text="title"
+              label="Выберите бригаду"
+            ></v-select>
+          </template>
+        </v-edit-dialog>
+      </template>
+
+      <template #item.id="{ item }">
+        <v-edit-dialog
+          :return-value.sync="item.status"
+          @save="saveZakazStatus(item)"
+          @cancel="cancel"
+          @open="open"
+          @close="close"
+          save-text=" Выбрать"
+          cancel-text="Закрыть"
+          large
+          persistent
+        >
+          <v-chip
+            :color="getColor(item.status)"
+            dark
+            :content="getTippyTittle(item.status)"
+            v-tippy="{ placement: 'right', arrow: true }"
+            :outlined="item.status === 'processing'"
+            :class="getChipTextColor(item.status)"
+          >
+            <span :class="getChipTextColor(item.status)">{{ item.id }}</span>
+          </v-chip>
+
+          <template #input>
+            <v-select
+              :items="statuses"
+              v-model="status"
+              return-object
+              item-text="title"
+              label="установить статуc"
+            ></v-select>
+          </template>
+        </v-edit-dialog>
+      </template>
+
+      <template #item.door_model="{ item }">
+        <span v-if="item.model_ruk.name" style="color: red">
+          {{ item.model_ruk.name }}
+        </span>
+        <span v-else>
+          {{ item.model_saler.name }}
+        </span>
+      </template>
+
+      <template #item.door_size="{ item }">
+        {{ item.door_size }} / {{ item.door_direction }}
+      </template>
+
+      <template #item.adress="{ item }">
+        <v-avatar :color="getPart(item.part_city)" size="15"></v-avatar>
+        {{ item.adress }} {{ item.house }} {{ item.flat }}
+      </template>
+
+      <template #item.phone="{ item }">
+        <a :href="'tel:' + item.phone">{{ item.phone }}</a>
+      </template>
+
       <template
-        v-slot:item.actions="{ item }"
+        #item.actions="{ item }"
         v-if="getUser.roles[0] !== 'shop_manager'"
       >
         <router-link tag="a" :to="'/edit_order/' + item.id">
@@ -306,7 +291,8 @@
 
         <v-icon small @click="deleteItem(item.id)"> mdi-delete </v-icon>
       </template>
-      <template v-slot:no-data>
+
+      <template #no-data>
         <v-btn color="primary" @click="searchByColumn('reset')"> Reset </v-btn>
       </template>
     </v-data-table>
@@ -354,8 +340,7 @@ export default {
       { text: "Адрес", value: "adress" },
       { text: "Телефон", value: "phone" },
       { text: "ФИО", value: "fio" },
-      { text: "Модель двери продавца", value: "model_saler.name" },
-      { text: "Модель двери рук", value: "" },
+      { text: "Модель двери", value: "door_model" },
       { text: "Размер / Сторона", value: "door_size" },
       { text: "Проем", value: "proem_size" },
       { text: "Дата замера", value: "data_zamera" },
@@ -375,7 +360,7 @@ export default {
     date_mont: null,
     date_zamera: null,
     zamershik: null,
-    items: "",
+    items: [],
     excelJsonData: "",
     columnSearchQueries: {
       id: "",
@@ -397,12 +382,14 @@ export default {
       sum_premia: "",
       vdz_premia: "",
     },
+    status: null,
     statuses: [
-      "В обработке",
-      "Замер",
-      "Индивидуальный",
-      "Ожидает монтаж",
-      "Отменен",
+      { title: "Ожидает", value: "pending" },
+      { title: "Ожидает монтаж", value: "waitmontazh" },
+      { title: "Отменен", value: "cancelled" },
+      { title: "Замер", value: "zamer" },
+      { title: "Индивидуальный", value: "individual" },
+      { title: "Выполнен", value: "completed" },
     ],
   }),
 
@@ -414,6 +401,7 @@ export default {
       teams: "zakaz/GET_TEAMS",
       zamershiki: "zakaz/GET_ZAMERSHIKI",
       GET_CHOSEN_ZAKAZ: "zakaz/GET_CHOSEN_ZAKAZ",
+      loading: "zakaz/GET_LOADING",
     }),
 
     formTitle() {
@@ -432,6 +420,64 @@ export default {
       fetchDoors: "zakaz/getDoors",
       EDIT_ZAKAZ: "zakaz/EDIT_ZAKAZ",
     }),
+
+    saveDataZamera(item) {
+      const dateZamer = moment(this.date_zamera).format("YYYY/MM/DD");
+      const vremya_zamera = moment(this.date_zamera).format("HH:mm");
+
+      this.EDIT_ZAKAZ({
+        ...item,
+        dateZamer,
+        vremya_zamera,
+      }).then(() => {
+        this.date_zamera = null;
+        this.fetchDoors();
+      });
+    },
+
+    saveDateMontaz(item) {
+      const date_mont = moment(this.date_mont).format("YYYY/MM/DD");
+      const time_mont = moment(this.date_mont).format("HH:mm");
+
+      this.EDIT_ZAKAZ({
+        ...item,
+        date_mont,
+        time_mont,
+      }).then(() => {
+        this.date_mont = null;
+        this.fetchDoors();
+      });
+    },
+
+    saveZamershik(item) {
+      this.EDIT_ZAKAZ({
+        ...item,
+        zamershik: this.zamershik,
+      }).then(() => {
+        this.zamershik = null;
+        this.fetchDoors();
+      });
+    },
+
+    saveBrigadaMont(item) {
+      this.EDIT_ZAKAZ({
+        ...item,
+        team: this.team,
+      }).then(() => {
+        this.team = null;
+        this.fetchDoors();
+      });
+    },
+
+    saveZakazStatus(item) {
+      this.EDIT_ZAKAZ({
+        ...item,
+        status: this.status,
+      }).then(() => {
+        this.status = null;
+        this.fetchDoors();
+      });
+    },
 
     filterByCity() {
       if (this.city === "Все") {
@@ -502,9 +548,6 @@ export default {
       this.SET_CHOSEN_ZAKAZ(item);
     },
 
-    setMont(n) {
-      alert("asdas");
-    },
     getColor(status) {
       switch (status) {
         case "processing":
@@ -523,6 +566,7 @@ export default {
           return "#5E35B1";
       }
     },
+
     getTippyTittle(status) {
       if (status === "pending") return "Ожидает";
       else if (status === "waitmontazh") return "Ожидает монтаж";
@@ -532,6 +576,7 @@ export default {
       else if (status === "completed") return "Выполнен";
       else return "В работе";
     },
+
     getPart(part) {
       if (part === "Север") return "primary";
       else if (part === "Юг") return "orange";
@@ -569,31 +614,11 @@ export default {
       this.dialogDelete = false;
       this.deliting = "";
     },
-
-    changeAddServiceDialog(slotName) {
-      this.addServiceSlotName = slotName;
-      this.addServiceDialog = !this.addServiceDialog;
-    },
-
-    submitChosenEdition(type) {
-      if (type === "date_mont" || type === "date_zamera") {
-        // this[type] = this[type].toISOString();
-        this[type] = moment(this[type]).format();
-      }
-
-      this.EDIT_ZAKAZ({ ...this.GET_CHOSEN_ZAKAZ, [type]: this[type] }).then(
-        () => {
-          this.fetchDoors();
-          this[type] = null;
-        }
-      );
-
-      this.addServiceDialog = false;
-    },
   },
 
   mounted() {
     // api
+    // TODO no need to fetch data every time component rerender / call one time in App.vue and then make request only for the part that had been changed
     this.fetchTeams();
     this.fetchZamershiki();
     this.fetchDoors();

@@ -11,7 +11,9 @@ const zakaz = {
     zamershiki: [],
     chosenZakaz: null,
     chosenModel: null,
-    loadTeams: true
+    loadTeams: true,
+    // ---------------
+    loading: false
   },
 
   getters: {
@@ -40,6 +42,10 @@ const zakaz = {
 
     GET_CHOSEN_MODEL(state) {
       return state.chosenModel
+    },
+
+    GET_LOADING(state) {
+      return state.loading
     }
   },
 
@@ -73,6 +79,10 @@ const zakaz = {
 
     SET_CHOSEN_MODEL(state, model) {
       state.chosenModel = model
+    },
+
+    SET_LOADING(state, bool) {
+      state.loading = bool
     }
   },
 
@@ -81,12 +91,19 @@ const zakaz = {
 
       const userRoleId = rootGetters["auth/getUser"].id;
 
+      commit("SET_LOADING", true);
+
       axios
         .get("https://door.webink.site/wp-json/door/v1/get/sales?user_id=" + userRoleId)
         .then((response) => {
           commit("SET_DOORS", response.data)
-        });
+          commit("SET_LOADING", false);
+          commit("SET_LOADING", false);
+        })
+        .catch(err => console.log(err))
+        .finally(() => commit("SET_LOADING", false))
     },
+
     loadModels({ commit }) {
       axios
         .get('https://door.webink.site/wp-json/door/v1/get/models')
@@ -99,8 +116,6 @@ const zakaz = {
     },
 
     async EDIT_ZAKAZ({ commit }, zakaz) {
-
-      console.log(zakaz);
 
       await axios.post("https://door.webink.site/wp-json/door/v1/edit/sales?order_id=" + zakaz.id, zakaz)
         .then(({ data }) => {

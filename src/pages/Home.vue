@@ -19,7 +19,7 @@
 
 <script>
 // TODO edit 
-import datatable from "../components/datatable2.vue";
+import datatable from "../components/datatable.vue";
 
 export default {
   components: { datatable },

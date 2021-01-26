@@ -17,6 +17,10 @@ const zakaz = {
   },
 
   getters: {
+    GET_SALES(state){
+      return state.doors
+    },
+
     GET_MODELS: state => brand => {
       return state.models.filter(item => {
         return item.category.name === brand.name

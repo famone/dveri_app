@@ -14,25 +14,30 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
+
 export default {
   name: "InstallationSchedule",
 
-    computed:{
-        headers(){
-            return [
-               {
-                    name: 'Honeycomb',
-            category: 'Toffee',
-            dairy: 'No'
-                } 
-            ]
-        }
-    }
+  computed: {
+    ...mapGetters({
+      sales: "zakaz/GET_SALES",
+    }),
+    headers() {
+      return [];
+    },
+  },
+
+  methods: {
+    ...mapActions({
+      fetchDoors: "zakaz/getDoors",
+    }),
+  },
+
+  async created() {
+    await this.fetchDoors();
+  },
 };
-
-created(){
-
-}
 </script>
 
 <style>

@@ -1,24 +1,58 @@
 <template>
   <v-data-table
     :headers="headers"
-    :items="items"
-    :loading="loading"
+    :items.sync="items"
     single-line
     must-sort
-    class="elevation-1 rounded-lg ma-4"
+    class="elevation-1 rounded-lg ma-4 px-4"
   >
+    <!-- :loading="loading" -->
     <template #top>
       <v-container fluid>
         <v-row>
-          <v-spacer></v-spacer>
-          <v-col cols="3">
+          <v-col cols="2">
             <v-select
               placeholder="Выберите бригаду"
+              :disabled="!teams.length"
               :items="teams"
-              v-model="title"
-              item-text="name"
+              v-model="team"
+              item-text="title"
               return-object
             ></v-select>
+          </v-col>
+          <v-col cols="2">
+            <v-menu
+              ref="menu"
+              v-model="menu"
+              :close-on-content-click="false"
+              :return-value.sync="date"
+              transition="scale-transition"
+              offset-y
+              min-width="auto"
+            >
+              <template v-slot:activator="{ on, attrs }">
+                <v-text-field
+                  :value="dateFormated"
+                  @click:clear="date = null"
+                  label="Выберите дату"
+                  prepend-inner-icon="mdi-calendar"
+                  readonly
+                  v-bind="attrs"
+                  v-on="on"
+                  clearable
+                  :disabled="datePickerDisabled"
+                ></v-text-field>
+              </template>
+              <v-date-picker v-model="date" no-title scrollable>
+                <v-spacer></v-spacer>
+                <v-btn text color="primary" @click="menu = false">
+                  Cancel
+                </v-btn>
+                <v-btn text color="primary" @click="$refs.menu.save(date)">
+                  OK
+                </v-btn>
+              </v-date-picker>
+            </v-menu>
           </v-col>
         </v-row>
       </v-container>
@@ -30,13 +64,18 @@
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 
+import moment from "moment";
+
 export default {
   name: "InstallationSchedule",
 
   data() {
     return {
+      menu: false,
+      // salesLocalCopy: null,
       teams: [],
-      team: null,
+      team: {},
+      date: null,
       headers: [
         { text: "Адрес", value: "adress" },
         { text: "Телефон", value: "phone" },
@@ -50,6 +89,54 @@ export default {
     ...mapGetters({
       sales: "zakaz/GET_SALES",
     }),
+
+    dateFormated() {
+      return this.date ? moment(this.date).format("DD/MM/YYYY") : null;
+    },
+
+    datePickerDisabled() {
+      if (this.sales.length) {
+        const chosenTeamSales = this.sales.filter((sale) => {
+          return sale.team.id === this.team.id;
+        });
+
+        if (!this.team || !chosenTeamSales.length) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return true;
+      }
+    },
+
+    items() {
+      if (!this.team) {
+        return [];
+      } else if (this.team && !this.date) {
+        return this.sales.filter((sale) => {
+          return sale.team.id === this.team.id;
+        });
+      } else {
+        const chosenTeamData = this.sales.map((sale) => {
+          if (sale.team.id === this.team.id) {
+            return sale;
+          } else {
+            return [];
+          }
+        });
+
+        return chosenTeamData.filter((sale) => {
+          if (
+            chosenTeamData.length &&
+            moment(sale.date_mont).format("DD.MM.YYYY") ===
+              moment(this.date).format("DD.MM.YYYY")
+          ) {
+            return sale;
+          }
+        });
+      }
+    },
   },
 
   methods: {
@@ -65,9 +152,16 @@ export default {
       .then((response) => {
         this.teams = response.data;
       });
-    // let teams;
+  },
 
-    this.sales.forEach((sale) => {});
+  watch: {
+    // sales(newVal) {
+    //   this.salesLocalCopy = newVal;
+    // },
+
+    team() {
+      this.date = null;
+    },
   },
 };
 </script>

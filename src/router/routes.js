@@ -9,6 +9,7 @@ import Directories from '../pages/Directories'
 import Edit_order from '../pages/Edit_order.vue'
 import Edit_model from '../pages/Edit_model.vue'
 import NewDoor from '../pages/NewDoor.vue'
+import InstallationSchedule from '../pages/InstallationSchedule';
 
 const routes = [
   {
@@ -58,6 +59,11 @@ const routes = [
   {
     path: '/new_door',
     component: NewDoor,
+  },
+
+  {
+    path: '/installation-shedule',
+    component: InstallationSchedule,
   },
 ]
 

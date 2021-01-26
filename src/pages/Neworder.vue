@@ -20,46 +20,46 @@
           </h3>
         </div>
         <div class="col-lg-6">
-          <v-text-field label="ФИО" v-model="fio"></v-text-field>
+          <v-text-field label="ФИО" v-model="zakaz.fio"></v-text-field>
         </div>
         <div class="col-lg-3">
           <v-text-field
             label="Телефон"
-            v-model="phone"
+            v-model="zakaz.phone"
             v-mask="'+7 (###) ###-##-##'"
           ></v-text-field>
         </div>
         <div class="col-lg-3">
           <v-text-field
             label="Дополнительный телефон"
-            v-model="dop_phone"
+            v-model="zakaz.dop_phone"
             v-mask="'+7 (###) ###-##-##'"
           ></v-text-field>
         </div>
         <div class="col-lg-3">
           <v-text-field
             label="Улица"
-            v-model="street"
+            v-model="zakaz.street"
             id="suggest"
           ></v-text-field>
         </div>
         <div class="col-lg-2">
-          <v-text-field label="Номер дома" v-model="house"></v-text-field>
+          <v-text-field label="Номер дома" v-model="zakaz.house"></v-text-field>
         </div>
         <div class="col-lg-1">
-          <v-text-field label="Корпус" v-model="korpus"></v-text-field>
+          <v-text-field label="Корпус" v-model="zakaz.korpus"></v-text-field>
         </div>
         <div class="col-lg-2">
-          <v-text-field label="Квартира" v-model="flat"></v-text-field>
+          <v-text-field label="Квартира" v-model="zakaz.flat"></v-text-field>
         </div>
         <!--  -->
         <div class="col-lg-1">
-          <v-text-field label="Этаж" v-model="floor"></v-text-field>
+          <v-text-field label="Этаж" v-model="zakaz.floor"></v-text-field>
         </div>
 
         <div class="col-lg-3">
           <p>Часть города:</p>
-          <v-radio-group v-model="part_city" row>
+          <v-radio-group v-model="zakaz.part_city" row>
             <v-radio label="Север" value="Север"></v-radio>
             <v-radio label="Юг" value="Юг"></v-radio>
           </v-radio-group>
@@ -85,7 +85,6 @@
           <v-select
             :items="doorsModels"
             item-text="name"
-            v-model="doorModel"
             @change="changeSize"
             return-object
             label="Модель двери продавца"
@@ -96,9 +95,8 @@
             :items="doorsCategory"
             item-text="name"
             label="Группа двери руководителя"
-            v-model="groopRuk"
-            @change="changeModelRuk"
             return-object
+            @change="changeModelRuk"
           ></v-select>
         </div>
         <div class="col-lg-3" v-if="getUser.roles[0] !== 'shop_manager'">
@@ -107,7 +105,7 @@
             item-text="name"
             item-value="id"
             label="Модель двери руководителя"
-            v-model="modelRuk"
+            v-model="zakaz.model_ruk"
           ></v-select>
         </div>
         <!--  -->
@@ -122,7 +120,7 @@
         </div>
         <div class="col-lg-3">
           <p>Сторона открывания:</p>
-          <v-radio-group v-model="sideOpen" row>
+          <v-radio-group v-model="zakaz.door_direction" row>
             <v-radio label="Лево" value="Лево"></v-radio>
             <v-radio label="Право" value="Право"></v-radio>
           </v-radio-group>
@@ -130,11 +128,14 @@
         <div class="col-lg-3">
           <v-text-field
             label="Размер проема"
-            v-model="proemSize"
+            v-model="zakaz.proem_size"
           ></v-text-field>
         </div>
         <div class="col-lg-3">
-          <v-text-field label="Номер двери" v-model="doorNumber"></v-text-field>
+          <v-text-field
+            label="Номер двери"
+            v-model="zakaz.door_number"
+          ></v-text-field>
         </div>
 
         <div class="col-lg-6">
@@ -142,7 +143,7 @@
             label="Примечание продавца:"
             rows="1"
             prepend-icon="mdi-comment"
-            v-model="primecProd"
+            v-model="zakaz.prim_saler"
           >
           </v-textarea>
         </div>
@@ -151,7 +152,7 @@
             label="Примечание руководителя:"
             rows="1"
             prepend-icon="mdi-comment"
-            v-model="primecRuk"
+            v-model="zakaz.prim_rukvod"
           >
           </v-textarea>
         </div>
@@ -159,7 +160,7 @@
       <!--  -->
 
       <v-checkbox
-        v-model="noZamer"
+        v-model="zakaz.noZamer"
         label="Без замера"
         v-if="getUser.roles[0] === 'shop_manager'"
       ></v-checkbox>
@@ -192,13 +193,13 @@
                 <v-text-field
                   type="number"
                   label="Количество"
-                  v-model="dop.count"
+                  v-model="zakaz.dop.count"
                 ></v-text-field>
               </div>
               <div class="col-lg-3">
                 <v-text-field
                   label="Стоимость руб."
-                  v-model="dop.price"
+                  v-model="zakaz.dop.price"
                 ></v-text-field>
               </div>
               <div class="col-lg-2">
@@ -216,20 +217,20 @@
             </div>
             <div v-else class="col-lg-12">
               <div class="col-lg-4">
-                <v-text-field v-model="dop.additionalName" label="Услуга">
+                <v-text-field v-model="zakaz.dop.additionalName" label="Услуга">
                 </v-text-field>
               </div>
               <div class="col-lg-2">
                 <v-text-field
                   type="number"
-                  v-model="dop.additionalCount"
+                  v-model="zakaz.dop.additionalCount"
                   label="Количество"
                 >
                 </v-text-field>
               </div>
               <div class="col-lg-3">
                 <v-text-field
-                  v-model="dop.additionalPrice"
+                  v-model="zakaz.dop.additionalPrice"
                   label="Стоимость руб."
                 >
                 </v-text-field>
@@ -294,13 +295,13 @@
               <v-text-field
                 type="number"
                 label="Количество"
-                v-model="bossDop.count"
+                v-model="zakaz.bossDop.count"
               ></v-text-field>
             </div>
             <div class="col-lg-3">
               <v-text-field
                 label="Стоимость руб."
-                v-model="bossDop.price"
+                v-model="zakaz.bossDop.price"
               ></v-text-field>
             </div>
             <div class="col-lg-2">
@@ -339,14 +340,14 @@
             ref="menu"
             v-model="menu"
             :close-on-content-click="false"
-            :return-value.sync="dateZamer"
+            :return-value.sync="zakaz.data_zamera"
             transition="scale-transition"
             offset-y
             min-width="290px"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="dateZamer"
+                v-model="zakaz.data_zamera"
                 label="Желаемая дата замера"
                 prepend-icon="mdi-calendar"
                 readonly
@@ -354,10 +355,13 @@
                 v-on="on"
               ></v-text-field>
             </template>
-            <v-date-picker v-model="dateZamer" no-title scrollable>
+            <v-date-picker v-model="zakaz.data_zamera" no-title scrollable>
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="menu = false">Отмена</v-btn>
-              <v-btn text color="primary" @click="$refs.menu.save(dateZamer)"
+              <v-btn
+                text
+                color="primary"
+                @click="$refs.menu.save(zakaz.data_zamera)"
                 >Ок</v-btn
               >
             </v-date-picker>
@@ -370,7 +374,7 @@
             v-model="menu3"
             :close-on-content-click="false"
             :nudge-right="40"
-            :return-value.sync="time"
+            :return-value.sync="zakaz.vremya_zamera"
             transition="scale-transition"
             offset-y
             max-width="290px"
@@ -378,7 +382,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="time"
+                v-model="zakaz.vremya_zamera"
                 label="Время замера"
                 prepend-icon="mdi-calendar-clock"
                 readonly
@@ -389,9 +393,9 @@
             <v-time-picker
               format="24hr"
               v-if="menu3"
-              v-model="time"
+              v-model="zakaz.vremya_zamera"
               full-width
-              @click:minute="$refs.menu3.save(time)"
+              @click:minute="$refs.menu3.save(zakaz.vremya_zamera)"
             ></v-time-picker>
           </v-menu>
         </div>
@@ -401,9 +405,8 @@
             label="Замерщик"
             :items="zamershiks"
             item-text="fname"
-            item-value="id"
-            @change="setZamer($event)"
             return-object
+            v-model="zakaz.zamershik"
           ></v-select>
         </div>
 
@@ -412,14 +415,14 @@
             ref="menu2"
             v-model="menu2"
             :close-on-content-click="false"
-            :return-value.sync="dateMont"
+            :return-value.sync="zakaz.date_mont"
             transition="scale-transition"
             offset-y
             min-width="290px"
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="dateMont"
+                v-model="zakaz.date_mont"
                 label="Желаемая дата монтажа"
                 prepend-icon="mdi-calendar"
                 readonly
@@ -427,10 +430,13 @@
                 v-on="on"
               ></v-text-field>
             </template>
-            <v-date-picker v-model="dateMont" no-title scrollable>
+            <v-date-picker v-model="zakaz.date_mont" no-title scrollable>
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="menu2 = false">Отмена</v-btn>
-              <v-btn text color="primary" @click="$refs.menu2.save(dateMont)"
+              <v-btn
+                text
+                color="primary"
+                @click="$refs.menu2.save(zakaz.date_mont)"
                 >Ок</v-btn
               >
             </v-date-picker>
@@ -443,7 +449,7 @@
             v-model="menu4"
             :close-on-content-click="false"
             :nudge-right="40"
-            :return-value.sync="time2"
+            :return-value.sync="zakaz.time_mont"
             transition="scale-transition"
             offset-y
             max-width="290px"
@@ -451,7 +457,7 @@
           >
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
-                v-model="time2"
+                v-model="zakaz.time_mont"
                 label="Время монтажа"
                 prepend-icon="mdi-calendar-clock"
                 readonly
@@ -462,9 +468,9 @@
             <v-time-picker
               format="24hr"
               v-if="menu4"
-              v-model="time2"
+              v-model="zakaz.time_mont"
               full-width
-              @click:minute="$refs.menu4.save(time2)"
+              @click:minute="$refs.menu4.save(zakaz.time_mont)"
             ></v-time-picker>
           </v-menu>
         </div>
@@ -474,8 +480,8 @@
             :items="brigadi"
             label="Бригада"
             item-text="title"
-            item-value="id"
-            @change="setTeam($event)"
+            return-object
+            v-model="zakaz.team"
           ></v-select>
         </div>
       </div>
@@ -487,39 +493,39 @@
 
         <div class="col-lg-3">
           <v-select
-            :items="payments_metod"
-            v-model="spayments_metod"
+            :items="payments_metod_list"
+            v-model="zakaz.payments_metod"
             label="Тип расчета"
           ></v-select>
         </div>
         <div class="col-lg-3">
           <v-text-field
             label="Цена продавца со скидкой"
-            v-model="prod_sale"
+            v-model="zakaz.prod_sale"
           ></v-text-field>
         </div>
         <div class="col-lg-3">
           <v-text-field
             label="Цена двери руководителя"
-            v-model="ruk_cena"
+            v-model="zakaz.ruk_cena"
           ></v-text-field>
         </div>
         <div class="col-lg-3">
           <v-text-field
             label="Стоимость замера, доставки и установки"
-            v-model="delivery"
+            v-model="zakaz.cost_zdi"
           ></v-text-field>
         </div>
 
         <div class="col-lg-2">
-          <v-text-field label="Предоплата" v-model="predoplata"></v-text-field>
+          <v-text-field label="Предоплата" v-model="zakaz.avans"></v-text-field>
         </div>
 
         <!-- <div class="col-lg-2">
           <v-text-field label="Скидка" v-model="sale"></v-text-field>
         </div> -->
         <div class="col-lg-2">
-          <v-text-field label="Итого" v-model="doorPrice"></v-text-field>
+          <v-text-field label="Итого" v-model="zakaz.doorPrice"></v-text-field>
         </div>
       </div>
 
@@ -531,7 +537,7 @@
           <div class="col-lg-12">
             <v-select
               :items="statuses"
-              v-model="status_zayavka"
+              v-model="zakaz.status"
               label="Статус заявки"
             ></v-select>
           </div>
@@ -544,14 +550,14 @@
           <div class="col-lg-4">
             <v-text-field
               label="Сумма премии"
-              v-model="sum_premii"
+              v-model="zakaz.sum_premii"
             ></v-text-field>
           </div>
           <div class="col-lg-4">
             <v-select
               :items="items"
               label="Статус премии"
-              v-model="status_premii"
+              v-model="zakaz.status_premii"
             ></v-select>
           </div>
         </div>
@@ -595,14 +601,10 @@ export default {
       doorsCategory: [],
       doorsModels: [],
       items: ["Тест 1", "Тест 2", "Тест 3", "Тест 4"],
-      dateZamer: null,
-      dateMont: "",
       sideCity: "",
       menu: false,
-      menu2: false,
-      time: null,
       menu3: false,
-      time2: null,
+      menu2: false,
       menu4: false,
       statuses: [
         "В обработке",
@@ -611,52 +613,67 @@ export default {
         "Ожидает монтаж",
         "Отменен",
       ],
-      payments_metod: [
+      payments_metod_list: [
         "Наличными",
         "Терминал",
         "Оплата по безналичному расчету",
       ],
-      spayments_metod: "",
       dopServArray: [],
-      dopolnServ: [],
-      additionalInfo: [],
       bossDopolnServ: [],
       selectedModel: {},
       doorSizes: [],
-      doorPrice: "",
       zamershiks: [],
       brigadi: [],
       modelsRuk: [],
-      //
-      fio: "",
-      phone: "",
-      dop_phone: "",
-      street: "",
-      house: "",
-      korpus: "",
-      flat: "",
-      floor: "",
-      part_city: "",
-      doorGroup: "",
-      doorModel: "",
-      doorSize: "",
-      groopRuk: "",
-      modelRuk: "",
-      sideOpen: "",
-      proemSize: "",
-      doorNumber: "",
-      primecProd: "",
-      primecRuk: "",
-      zamershik: "",
-      team: "",
-      status_zayavka: "",
-      prod_sale: "",
-      ruk_cena: "",
-      delivery: "",
-      predoplata: "",
-      sale: "",
-      sum_premii: "",
-      status_premii: "",
+      // заказ
+      zakaz: {
+        fio: "",
+        phone: "",
+        dop_phone: "",
+        street: "",
+        house: "",
+        korpus: "",
+        flat: "",
+        floor: "",
+        part_city: "",
+        category_saler: "",
+        model_saler: "",
+        door_size: "",
+        category_ruk: "",
+        model_ruk: "",
+        door_direction: null,
+        proem_size: null,
+        door_number: null,
+        prim_saler: "",
+        prim_rukvod: "",
+        data_zamera: null,
+        vremya_zamera: null,
+        date_mont: null,
+        time_mont: null,
+        dopolnServ: [],
+        zamershik: "",
+        team: "",
+        doorPrice: "",
+        status: "",
+        prod_sale: "",
+        ruk_cena: "",
+        cost_zdi: "",
+        avans: "",
+        sale: "",
+        sum_premii: "",
+        status_premii: "",
+        payments_metod: "",
+        dop: {
+          price: null,
+          additionalName: null,
+          additionalCount: null,
+          additionalPrice: null,
+        },
+        bossDop: {
+          count: null,
+          price: null,
+        },
+      },
     };
   },
   computed: {
@@ -665,13 +682,13 @@ export default {
       getUser: "auth/getUser",
     }),
     bossAdditionalWorksCard() {
-      if (this.groopRuk.term_id && this.doorGroup) {
-        if (this.groopRuk.term_id !== this.doorGroup) {
+      if (this.zakaz.category_ruk.term_id && this.zakaz.category_saler) {
+        if (this.zakaz.category_ruk.term_id !== this.zakaz.category_saler) {
           return true;
         } else {
           return false;
         }
-      } else if (!this.groopRuk.term_id) {
+      } else if (!this.zakaz.category_ruk.term_id) {
         return false;
       } else {
         return false;
@@ -791,9 +808,9 @@ export default {
     },
 
     changeModel(param) {
-      this.doorGroup = param.term_id;
+      this.zakaz.category_saler = param.term_id;
 
-      this.doorModel = "";
+      this.zakaz.model_saler = param.term_id;
       //получение доп услуг по производителю двери
       axios
         .get(
@@ -811,8 +828,9 @@ export default {
           this.dopServArray = response.data;
         });
     },
+
     changeModelRuk(param) {
-      this.modelRuk = "";
+      this.zakaz.model_ruk = param.term_id;
 
       axios
         .get(
@@ -822,69 +840,24 @@ export default {
           this.modelsRuk = response.data;
         });
     },
+
     changeSize(sizes) {
       console.log(arguments);
       this.selectedModel = sizes;
       this.doorSizes = Object.keys(sizes.price);
     },
-    showPrice(num) {
-      this.doorPrice = this.selectedModel.price[num];
-      this.doorSize = num;
-    },
-    setZamer(zam) {
-      this.zamershik = zam.id;
-    },
-    setTeam(tm) {
-      this.team = tm;
-    },
-    addNewOrder() {
-      let newOrder = {
-        fio: this.fio,
-        phone: this.phone,
-        dop_phone: this.dop_phone,
-        street: this.street,
-        house: this.house,
-        korpus: this.korpus,
-        flat: this.flat,
-        floor: this.floor,
-        part_city: this.part_city,
-        doorGroup: this.doorGroup,
-        doorModel: this.doorModel.id,
-        doorSize: this.doorSize,
-        groopRuk: this.groopRuk.term_id,
-        modelRuk: this.modelRuk,
-        sideOpen: this.sideOpen,
-        proemSize: this.proemSize,
-        doorNumber: this.doorNumber,
-        primecProd: this.primecProd,
-        primecRuk: this.primecRuk,
-        dopolnServ: this.dopolnServ,
-        dateZamer: this.dateZamer,
-        zamershik: this.zamershik,
-        dateMont: this.dateMont,
-        team: this.team,
-        status_zayavka: this.status_zayavka,
-        prod_sale: this.prod_sale,
-        ruk_cena: this.ruk_cena,
-        delivery: this.delivery,
-        predoplata: this.predoplata,
-        sale: this.sale,
-        payments_metod: this.spayments_metod,
-        sum_premii: this.sum_premii,
-        status_premii: this.status_premii,
-        doorPrice: this.doorPrice,
-        user_id: this.user.id,
-        vremya_zamera: this.time,
-        time_mont: this.time2,
-      };
 
+    showPrice(num) {
+      this.zakaz.doorPrice = this.selectedModel.price[num];
+      this.zakaz.door_size = num;
+    },
+
+    addNewOrder() {
       this.loadBtn = true;
 
       //отправить новый заказ
       axios
-        .post("https://door.webink.site/wp-json/door/v1/add/sales", {
-          ...newOrder,
-        })
+        .post("https://door.webink.site/wp-json/door/v1/add/sales", this.zakaz)
         .then((response) => {
           console.log(response);
           this.loadBtn = false;

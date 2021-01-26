@@ -8,7 +8,6 @@
       single-line
       must-sort
       class="elevation-1 rounded-lg"
-      ч
       @click:row="selectOrderRow"
     >
       <template #top>
@@ -33,7 +32,7 @@
 
           <router-link
             tag="a"
-            to="/neworder"
+            to="/installation-shedule"
             v-if="getUser.roles[0] !== 'shop_manager'"
           >
             <v-btn depressed color="primary ma-2"
@@ -307,13 +306,7 @@ import moment from "moment";
 
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 
-import AddServiceDetailModal from "../components/AddServiceDetailModal";
-
 export default {
-  components: {
-    AddServiceDetailModal,
-  },
-
   props: {
     filterTag: {
       type: String,

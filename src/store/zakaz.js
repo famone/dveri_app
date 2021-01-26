@@ -133,6 +133,7 @@ const zakaz = {
     deliteZakaz({ commit, rootGetters }, payload) {
       const userRoleId = rootGetters["auth/getUser"].id;
 
+      commit("SET_LOADING", true);
 
       axios
         .get("https://door.webink.site/wp-json/door/v1/delete/sales?order_id=" + payload)
@@ -145,7 +146,9 @@ const zakaz = {
 
               });
           }
-        });
+
+        })
+        .finally(() => commit("SET_LOADING", false))
     },
 
     deliteModel({ commit, state }, id) {
@@ -206,12 +209,8 @@ const zakaz = {
               .then(response => {
                 commit("SET_TEAMS", response.data)
               })
-
           }
-
-
         })
-
     },
 
     UPDATE_ZAMERSHIKI({ commit }) {

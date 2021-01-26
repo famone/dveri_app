@@ -303,7 +303,7 @@
             <v-select
               :items="brigadi"
               label="Бригада"
-              v-model="EditingOrder.brigada_mont"
+              v-model="EditingOrder.team"
               item-text="title"
               item-value="id"
             ></v-select>
@@ -337,7 +337,7 @@
           <div class="col-lg-3">
             <v-text-field
               label="Стоимость замера, доставки и установки"
-              v-model="delivery"
+              v-model="EditingOrder.cost_zdi"
             ></v-text-field>
           </div>
 
@@ -457,7 +457,7 @@ export default {
       EditingOrder: {
         dateMont: "",
         dateZamer: "",
-        delivery: "",
+        cost_zdi: "",
         doorGroup: "",
         doorNumber: "",
         doorPrice: "",
@@ -487,24 +487,20 @@ export default {
         sum_premii: "",
         team: "",
         user_id: "",
-        vremya_montaja: null,
-        vremya_zamera: null,
         zamershik: "",
       },
       // ----------------------------------------------------------------------------
 
-      doorGroup: "",
       doorsModels: [],
       selectedModel: {},
       doorSizes: [],
       doorSize: "",
       modelsRuk: [],
-      modelRuk: "",
       doorModel: "",
       groopRuk: "",
       spayments_metod: "",
       ruk_cena: "",
-      delivery: "",
+
       predoplata: "",
       doorPrice: "",
       sale: "",
@@ -520,9 +516,9 @@ export default {
     await axios
       .get("https://door.webink.site/wp-json/door/v1/get/sales")
       .then((response) => {
-        this.EditingOrder = response.data.find(
-          (item) => item.id == this.routeId
-        );
+        this.EditingOrder = response.data.find((item) => {
+          return item.id == this.routeId;
+        });
 
         if (this.EditingOrder.date_mont && this.EditingOrder.data_zamera) {
           const splitedDate_mont = this.EditingOrder.date_mont.split("/");
@@ -540,7 +536,7 @@ export default {
       .get("https://door.webink.site/wp-json/door/v1/get/categorys")
       .then((response) => {
         this.doorsCategory = response.data;
-        this.changeModel(this.EditingOrder.category_saler.id);
+        this.changeModel(this.EditingOrder.category_saler);
         this.changeModelRuk(this.EditingOrder.category_ruk.id);
       });
 
@@ -564,50 +560,49 @@ export default {
       getUser: "auth/getUser",
     }),
   },
-  mounted(){
+  mounted() {
     //инициализируем и подключаем карты
 
-    const script = document.createElement('script')
+    const script = document.createElement("script");
 
-      script.onload = () => {
-        ymaps.ready(() => this.yaMapInit2());
-      };
+    script.onload = () => {
+      ymaps.ready(() => this.yaMapInit2());
+    };
 
-      script.id = 'ymaps'
-      script.src = "https://api-maps.yandex.ru/2.1/?apikey=8c4059db-3b8d-4535-a15e-569ee80fc827&lang=ru_RU"
-      document.head.append(script);
+    script.id = "ymaps";
+    script.src =
+      "https://api-maps.yandex.ru/2.1/?apikey=8c4059db-3b8d-4535-a15e-569ee80fc827&lang=ru_RU";
+    document.head.append(script);
 
-      //инициализируем и подключаем карты
+    //инициализируем и подключаем карты
   },
   methods: {
-    yaMapInit2(){
-         var suggestView1 = new ymaps.SuggestView('suggest', {
-            provider: {
-              suggest: (function(request, options) {
+    yaMapInit2() {
+      var suggestView1 = new ymaps.SuggestView("suggest", {
+        provider: {
+          suggest: function (request, options) {
+            return ymaps.suggest("Россия" + ", " + request);
+          },
+        },
+      });
 
-                return ymaps.suggest('Россия' + ", " + request)
-                
-               })
-              }
-            });
+      suggestView1.events.add("select", (e) => {
+        // select event
+        this.EditingOrder.adress = e.get("item").value;
 
-         suggestView1.events.add('select', (e) => { // select event
-          this.EditingOrder.adress = e.get('item').value
+        let porez1 = this.EditingOrder.adress.replace("Россия,", "");
+        this.EditingOrder.adress = porez1;
 
-          let porez1 = this.EditingOrder.adress.replace('Россия,', '')
-          this.EditingOrder.adress = porez1
+        if (this.EditingOrder.adress.includes("Санкт-Петербург,")) {
+          let porez2 = this.EditingOrder.adress.replace("Санкт-Петербург,", "");
+          this.EditingOrder.adress = porez2;
+        } else {
+          let porez3 = this.EditingOrder.adress.replace("Москва,", "");
+          this.EditingOrder.adress = porez3;
+        }
 
-          if(this.EditingOrder.adress.includes('Санкт-Петербург,')){
-            let porez2 = this.EditingOrder.adress.replace('Санкт-Петербург,', '')
-            this.EditingOrder.adress = porez2
-          }else{
-            let porez3 = this.EditingOrder.adress.replace('Москва,', '')
-           this.EditingOrder.adress = porez3
-          }
-           
-
-          console.log(this.EditingOrder.street)
-          })
+        console.log(this.EditingOrder.street);
+      });
     },
     changeModel(param) {
       this.doorGroup = param.term_id;
@@ -663,51 +658,6 @@ export default {
     },
 
     updateOrder() {
-      // ==========================================================================
-      // dop_phone: (...),
-      // fio: (...),
-      // phone: (...),
-      // adress: (...),
-      // flat: (...),
-      // floor: (...),
-      // house: (...),
-      // part_city: (...),
-      // category_saler: (...),
-      // model_saler: (...),
-      // category_ruk: (...),
-      // model_ruk: (...),
-      // door_size: (...),
-      // door_direction: (...),
-      // door_number: (...),
-      // prim_rukvod: (...),
-      // prim_saler: (...),
-      // proem_size: (...),
-      // data_zamera: (...),
-      // date_mont: (...),
-      // zamershik: (...),
-
-      // avans: (...),
-      // brigada_mont: (...),
-      // city: (...),
-      // cost_diler: (...),
-      // cost_saler: (...),
-      // cost_zdi: (...),
-      // date: (...),
-      // discount: (...),
-      // dopServ: (...),
-      // id: (...),
-      // payments_metod: (...),
-      // saler: (...),
-      // status: (...),
-      // status_premia: (...),
-      // sum_premia: (...),
-      // time_mont: (...),
-      // total: (...),
-      // vdz_premia: (...),
-      // vremya_zamera: (...),
-
-      // ==========================================================================
-
       this.loadBtn = true;
       //отправить новый заказ
 

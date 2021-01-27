@@ -65,7 +65,7 @@
               id="suggest"
             ></v-text-field>
           </div>
-          <div class="col-lg-2">
+          <div class="col-lg-1">
             <v-text-field
               label="Номер дома"
               v-model="EditingOrder.house"
@@ -76,7 +76,7 @@
           <div class="col-lg-1">
             <v-text-field
               label="Корпус"
-              v-model="EditingOrder.korpusr"
+              v-model="EditingOrder.korpus"
             ></v-text-field>
           </div>
           <!--  -->
@@ -249,12 +249,12 @@
               </v-date-picker>
             </v-menu>
           </div>
-
+          <!-- TODO замерщик не отображается в склккте -->
           <div class="col-lg-3">
             <v-select
               label="Замерщик"
               :items="zamershiks"
-              v-model="EditingOrder.zamershik.name"
+              v-model="EditingOrder.zamershik"
               item-text="name"
               item-value="id"
             ></v-select>
@@ -325,26 +325,26 @@
           <div class="col-lg-3">
             <v-text-field
               label="Цена продавца со скидкой"
-              v-model="EditingOrder.prod_sale"
+              v-model="EditingOrder.cost_zdi"
             ></v-text-field>
           </div>
           <div class="col-lg-3">
             <v-text-field
               label="Цена двери руководителя"
-              v-model="ruk_cena"
+              v-model="EditingOrder.cost_diler"
             ></v-text-field>
           </div>
           <div class="col-lg-3">
             <v-text-field
               label="Стоимость замера, доставки и установки"
-              v-model="EditingOrder.cost_zdi"
+              v-model="EditingOrder.total"
             ></v-text-field>
           </div>
 
           <div class="col-lg-2">
             <v-text-field
               label="Предоплата"
-              v-model="predoplata"
+              v-model="EditingOrder.avans"
             ></v-text-field>
           </div>
 
@@ -354,12 +354,16 @@
               v-model="EditingOrder.discount"
             ></v-text-field>
           </div>
-          <div class="col-lg-2">
+          <!-- TODO поситать -->
+          <!-- <div class="col-lg-2">
+            <v-text-field label="Итого" v-model=""></v-text-field>
+          </div> -->
+          <!-- <div class="col-lg-2">
             <v-text-field
-              label="Итого"
-              v-model="EditingOrder.total"
+              label="Остаток"
+              v-model="EditingOrder."
             ></v-text-field>
-          </div>
+          </div> -->
         </div>
 
         <div class="row shad-box" v-if="getUser.id !== 6">
@@ -441,6 +445,7 @@ export default {
       menu2: false,
       zamershiks: [],
       brigadi: [],
+      // TODO создать обьект с name и value(то что приходит в данных)
       statuses: [
         "В обработке",
         "Замер",
@@ -481,13 +486,12 @@ export default {
         ruk_cena: "",
         sale: "",
         sideOpen: "",
-        status_premii: "",
         status_zayavka: "",
         street: "",
         sum_premii: "",
         team: "",
         user_id: "",
-        zamershik: "",
+        zamershik: {},
       },
       // ----------------------------------------------------------------------------
 
@@ -508,6 +512,7 @@ export default {
       sum_premii: "",
       status_premii: "",
       doorsCategory: [],
+      status_premii: ["Выплачена", "Ожидается", "Ожидается выплата", "Отмена"],
     };
   },
 

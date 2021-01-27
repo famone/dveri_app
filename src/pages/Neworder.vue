@@ -809,7 +809,7 @@ export default {
 
     changeModel(param) {
       this.zakaz.category_saler = param.term_id;
-
+      // TODO смотреть то что уходит в запросе id группы и модели двери отправл\яются одинаов
       this.zakaz.model_saler = param.term_id;
       //получение доп услуг по производителю двери
       axios

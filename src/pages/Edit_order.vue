@@ -118,7 +118,7 @@
               v-model="EditingOrder.category_saler"
               item-text="name"
               label="Группа двери продавца"
-              @change="changeModel"
+              @change="changeDoorCategory"
               return-object
             ></v-select>
           </div>
@@ -256,7 +256,6 @@
               :items="zamershiks"
               v-model="EditingOrder.zamershik"
               item-text="name"
-              item-value="id"
             ></v-select>
           </div>
 
@@ -463,9 +462,13 @@ export default {
         dateMont: "",
         dateZamer: "",
         cost_zdi: "",
-        doorGroup: "",
+        //
+        category_saler: "",
+        model_saler: "",
+        category_ruk: "",
+        model_ruk: "",
+        //
         doorNumber: "",
-        doorPrice: "",
         doorSize: "",
         dop_phone: "",
         dopolnServ: [],
@@ -474,7 +477,6 @@ export default {
         floor: "",
         house: "",
         korpus: "",
-        modelRuk: "",
         part_city: "",
         payments_metod: "",
         phone: "",
@@ -491,7 +493,7 @@ export default {
         sum_premii: "",
         team: "",
         user_id: "",
-        zamershik: {},
+        zamershik: "",
       },
       // ----------------------------------------------------------------------------
 
@@ -500,8 +502,6 @@ export default {
       doorSizes: [],
       doorSize: "",
       modelsRuk: [],
-      doorModel: "",
-      groopRuk: "",
       spayments_metod: "",
       ruk_cena: "",
 
@@ -516,7 +516,22 @@ export default {
     };
   },
 
-  async created() {
+  async mounted() {
+    //инициализируем и подключаем карты
+
+    const script = document.createElement("script");
+
+    script.onload = () => {
+      ymaps.ready(() => this.yaMapInit2());
+    };
+
+    script.id = "ymaps";
+    script.src =
+      "https://api-maps.yandex.ru/2.1/?apikey=8c4059db-3b8d-4535-a15e-569ee80fc827&lang=ru_RU";
+    document.head.append(script);
+
+    //инициализируем и подключаем карты
+
     this.routeId = this.$route.params.id;
     await axios
       .get("https://door.webink.site/wp-json/door/v1/get/sales")
@@ -541,15 +556,17 @@ export default {
       .get("https://door.webink.site/wp-json/door/v1/get/categorys")
       .then((response) => {
         this.doorsCategory = response.data;
-        this.changeModel(this.EditingOrder.category_saler);
-        this.changeModelRuk(this.EditingOrder.category_ruk.id);
+        this.changeDoorCategory(this.EditingOrder.category_saler);
+        this.changeModelRuk(this.EditingOrder.category_ruk);
       });
 
     // замерщики
     await axios
       .get("https://door.webink.site/wp-json/door/v1/get/users?type=zamershik")
       .then((response) => {
-        this.zamershiks = response.data;
+        this.zamershiks = response.data.map((el) => {
+          return { ...el, name: el.fname, fname: el.name };
+        });
       });
 
     // ,бригады
@@ -565,22 +582,7 @@ export default {
       getUser: "auth/getUser",
     }),
   },
-  mounted() {
-    //инициализируем и подключаем карты
 
-    const script = document.createElement("script");
-
-    script.onload = () => {
-      ymaps.ready(() => this.yaMapInit2());
-    };
-
-    script.id = "ymaps";
-    script.src =
-      "https://api-maps.yandex.ru/2.1/?apikey=8c4059db-3b8d-4535-a15e-569ee80fc827&lang=ru_RU";
-    document.head.append(script);
-
-    //инициализируем и подключаем карты
-  },
   methods: {
     yaMapInit2() {
       var suggestView1 = new ymaps.SuggestView("suggest", {
@@ -609,14 +611,13 @@ export default {
         console.log(this.EditingOrder.street);
       });
     },
-    changeModel(param) {
-      this.doorGroup = param.term_id;
+    changeDoorCategory(param) {
+      this.EditingOrder.category_saler = param;
 
-      this.doorModel = "";
       //получение доп услуг по производителю двери
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param}`
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
         )
         .then((response) => {
           this.doorsModels = response.data;
@@ -633,18 +634,19 @@ export default {
 
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param}`
+          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param.term_id}`
         )
         .then((response) => {
           this.dopServArray = response.data;
         });
     },
+
     changeModelRuk(param) {
-      this.modelRuk = "";
+      this.EditingOrder.category_ruk = param;
 
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param}`
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
         )
         .then((response) => {
           this.modelsRuk = response.data;
@@ -657,8 +659,8 @@ export default {
     },
 
     showPrice(num) {
-      // this.doorPrice = this.selectedModel.price[num];
-      // this.doorSize = num;
+      this.doorPrice = this.selectedModel.price[num];
+      this.doorSize = num;
       this.EditingOrder.door_size = num.size;
     },
 
@@ -670,20 +672,17 @@ export default {
         .post(
           "https://door.webink.site/wp-json/door/v1/edit/sales?order_id=" +
             this.EditingOrder.id,
-          { ...this.EditingOrder }
+          {
+            ...this.EditingOrder,
+            category_saler: this.EditingOrder.category_saler.term_id,
+            model_saler: this.EditingOrder.model_saler.id,
+            category_ruk: this.EditingOrder.category_ruk.term_id,
+          }
         )
-        .then((response) => {
+        .then(() => {
           this.loadBtn = false;
           this.$router.push("/");
         });
-      // axios
-      //   .post("https://door.webink.site/wp-json/door/v1/add/sales", {
-      //     ...this.EditingOrder,
-      //   })
-      //   .then((response) => {
-      //     this.loadBtn = false;
-      //     this.$router.push("/");
-      //   });
     },
   },
 };

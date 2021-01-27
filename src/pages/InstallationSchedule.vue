@@ -6,7 +6,6 @@
     must-sort
     class="elevation-1 rounded-lg ma-4 px-4"
   >
-    <!-- :loading="loading" -->
     <template #top>
       <v-container fluid>
         <v-row>
@@ -72,15 +71,19 @@ export default {
   data() {
     return {
       menu: false,
-      // salesLocalCopy: null,
       teams: [],
       team: {},
       date: null,
       headers: [
+        //  доп работы (массив в строку перегнать), остаток денег(посчитать), примечание
+
+        { text: "Время", value: "time_mont" },
+        { text: "№", value: "id" },
         { text: "Адрес", value: "adress" },
         { text: "Телефон", value: "phone" },
-        { text: "Модель двери", value: "door_model" },
-        { text: "Размер / Сторона", value: "door_size" },
+        { text: "Модель двери", value: "model_ruk.name" },
+        { text: "Размер", value: "door_size" },
+        { text: "Сторона открывания", value: "door_direction" },
       ],
     };
   },
@@ -155,16 +158,9 @@ export default {
   },
 
   watch: {
-    // sales(newVal) {
-    //   this.salesLocalCopy = newVal;
-    // },
-
     team() {
       this.date = null;
     },
   },
 };
 </script>
-
-<style>
-</style>

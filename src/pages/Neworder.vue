@@ -77,7 +77,7 @@
             :items="doorsCategory"
             item-text="name"
             label="Группа двери продавца"
-            @change="changeModel"
+            @change="changeDoorCategory"
             return-object
           ></v-select>
         </div>
@@ -85,7 +85,7 @@
           <v-select
             :items="doorsModels"
             item-text="name"
-            @change="changeSize"
+            @change="changeDoorModel"
             return-object
             label="Модель двери продавца"
           ></v-select>
@@ -114,7 +114,7 @@
           <v-select
             :items="doorSizes"
             label="Размер двери"
-            @change="showPrice($event)"
+            @change="showPrice"
             return-object
           ></v-select>
         </div>
@@ -807,14 +807,13 @@ export default {
       this[type][index].price = event.price;
     },
 
-    changeModel(param) {
-      this.zakaz.category_saler = param.term_id;
+    changeDoorCategory(category) {
+      this.zakaz.category_saler = category.term_id;
       // TODO смотреть то что уходит в запросе id группы и модели двери отправл\яются одинаов
-      this.zakaz.model_saler = param.term_id;
       //получение доп услуг по производителю двери
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${category.term_id}`
         )
         .then((response) => {
           this.doorsModels = response.data;
@@ -822,7 +821,7 @@ export default {
 
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param.term_id}`
+          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${category.term_id}`
         )
         .then((response) => {
           this.dopServArray = response.data;
@@ -841,10 +840,11 @@ export default {
         });
     },
 
-    changeSize(sizes) {
-      console.log(arguments);
-      this.selectedModel = sizes;
-      this.doorSizes = Object.keys(sizes.price);
+    changeDoorModel(model) {
+      console.log(model);
+      this.zakaz.model_saler = model.id;
+      this.selectedModel = model;
+      this.doorSizes = Object.keys(model.price);
     },
 
     showPrice(num) {

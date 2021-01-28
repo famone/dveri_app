@@ -159,11 +159,8 @@
       </div>
       <!--  -->
 
-      <v-checkbox
-        v-model="zakaz.noZamer"
-        label="Без замера"
-        v-if="getUser.roles[0] === 'shop_manager'"
-      ></v-checkbox>
+      <v-checkbox v-model="noZamer" label="Без замера"></v-checkbox>
+      <!-- v-if="getUser.roles[0] === 'shop_manager'" -->
 
       <div class="row shad-box" v-if="noZamer">
         <div class="col-lg-12">
@@ -175,7 +172,7 @@
         <div class="col-lg-12">
           <div
             class="row repeater"
-            v-for="(dop, index) in dopolnServ"
+            v-for="(dop, index) in zakaz.dopolnServ"
             :key="index"
           >
             <div v-if="dop.type === 'Доп услуга'" class="col-lg-12">
@@ -278,7 +275,7 @@
         <div class="col-lg-12">
           <div
             class="row repeater"
-            v-for="(bossDop, index) in bossDopolnServ"
+            v-for="(bossDop, index) in zakaz.bossDopolnServ"
             :key="index"
           >
             <div class="col-lg-4">
@@ -651,6 +648,7 @@ export default {
         date_mont: null,
         time_mont: null,
         dopolnServ: [],
+        bossDopolnServ: [],
         zamershik: "",
         team: "",
         doorPrice: "",
@@ -681,14 +679,15 @@ export default {
     ...mapGetters({
       getUser: "auth/getUser",
     }),
+
     bossAdditionalWorksCard() {
-      if (this.zakaz.category_ruk.term_id && this.zakaz.category_saler) {
-        if (this.zakaz.category_ruk.term_id !== this.zakaz.category_saler) {
+      if (this.zakaz.category_ruk && this.zakaz.category_saler) {
+        if (this.zakaz.category_ruk !== this.zakaz.category_saler) {
           return true;
         } else {
           return false;
         }
-      } else if (!this.zakaz.category_ruk.term_id) {
+      } else if (!this.zakaz.category_ruk) {
         return false;
       } else {
         return false;
@@ -763,20 +762,18 @@ export default {
           let porez3 = this.street.replace("Москва,", "");
           this.street = porez3;
         }
-
-        console.log(this.street);
       });
     },
     addDop(type, category) {
       if (category === "Услуга") {
-        this[type].push({
+        this.zakaz[type].push({
           additionalName: "",
           additionalCount: 0,
           additionalPrice: 0,
           type: category,
         });
       } else {
-        this[type].push({
+        this.zakaz[type].push({
           name: "",
           count: 1,
           price: 0,
@@ -794,7 +791,7 @@ export default {
     // },
 
     deliteDop(type, index) {
-      this[type].splice(index, 1);
+      this.zakaz[type].splice(index, 1);
     },
 
     // deliteAddDop(index) {
@@ -802,14 +799,14 @@ export default {
     // },
 
     atInput(type, index, event) {
-      this[type][index].name = event.name;
-      this[type][index].count = event.count;
-      this[type][index].price = event.price;
+      this.zakaz[type][index].name = event.name;
+      this.zakaz[type][index].count = event.count;
+      this.zakaz[type][index].price = event.price;
     },
 
     changeDoorCategory(category) {
       this.zakaz.category_saler = category.term_id;
-      // TODO смотреть то что уходит в запросе id группы и модели двери отправл\яются одинаов
+
       //получение доп услуг по производителю двери
       axios
         .get(
@@ -829,7 +826,8 @@ export default {
     },
 
     changeModelRuk(param) {
-      this.zakaz.model_ruk = param.term_id;
+      console.log(param);
+      this.zakaz.category_ruk = param.term_id;
 
       axios
         .get(

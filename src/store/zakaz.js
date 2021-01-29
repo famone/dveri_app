@@ -17,7 +17,7 @@ const zakaz = {
   },
 
   getters: {
-    GET_SALES(state){
+    GET_SALES(state) {
       return state.doors
     },
 
@@ -121,7 +121,15 @@ const zakaz = {
 
     async EDIT_ZAKAZ({ commit }, zakaz) {
 
-      await axios.post("https://door.webink.site/wp-json/door/v1/edit/sales?order_id=" + zakaz.id, zakaz)
+      const requestPayload = {
+        ...zakaz,
+        category_saler: zakaz.category_saler.id,
+        model_saler: zakaz.model_saler.id,
+        category_ruk: zakaz.category_ruk.id,
+        model_ruk: zakaz.model_ruk.id,
+      };
+
+      await axios.post("https://door.webink.site/wp-json/door/v1/edit/sales?order_id=" + zakaz.id, requestPayload)
         .then(({ data }) => {
           console.log(data)
         })

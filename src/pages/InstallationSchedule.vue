@@ -56,6 +56,9 @@
         </v-row>
       </v-container>
     </template>
+    <template #item.door_size="{ item }">
+      {{ item.door_size }} / {{ item.door_direction }}
+    </template>
   </v-data-table>
 </template>
 
@@ -82,8 +85,8 @@ export default {
         { text: "Адрес", value: "adress" },
         { text: "Телефон", value: "phone" },
         { text: "Модель двери", value: "model_ruk.name" },
-        { text: "Размер", value: "door_size" },
-        { text: "Сторона открывания", value: "door_direction" },
+        { text: "Размер / Сторона", value: "door_size" },
+        { text: "Примечание Руководителя", value: "prim_rukvod" },
       ],
     };
   },
@@ -114,27 +117,18 @@ export default {
     },
 
     items() {
+      const chosenTeamData = this.sales.filter((sale) => {
+        return sale.team.id === this.team.id;
+      });
+
       if (!this.team) {
         return [];
       } else if (this.team && !this.date) {
-        return this.sales.filter((sale) => {
-          return sale.team.id === this.team.id;
-        });
-      } else {
-        const chosenTeamData = this.sales.map((sale) => {
-          if (sale.team.id === this.team.id) {
-            return sale;
-          } else {
-            return [];
-          }
-        });
-
+        return chosenTeamData;
+      } else if (this.team && this.date) {
         return chosenTeamData.filter((sale) => {
-          if (
-            chosenTeamData.length &&
-            moment(sale.date_mont).format("DD.MM.YYYY") ===
-              moment(this.date).format("DD.MM.YYYY")
-          ) {
+          const date_mont = moment(sale.date_mont).format("DD/MM/YYYY");
+          if (date_mont === this.dateFormated) {
             return sale;
           }
         });

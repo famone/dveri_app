@@ -110,7 +110,7 @@
           <template #input>
             <v-datetime-picker
               label="Выберите дату замера"
-              v-model="date_zamera"
+              v-model="data_zamera"
               clearText="отмена"
               okText="выбрать"
               :timePickerProps="{
@@ -250,7 +250,6 @@
             <v-select
               :items="statuses"
               v-model="status"
-              return-object
               item-text="title"
               label="установить статуc"
             ></v-select>
@@ -353,7 +352,7 @@ export default {
       editedIndex: -1,
       team: "",
       date_mont: null,
-      date_zamera: null,
+      data_zamera: null,
       zamershik: null,
       items: [],
       excelJsonData: "",
@@ -418,15 +417,15 @@ export default {
     }),
 
     saveDataZamera(item) {
-      const dateZamer = moment(this.date_zamera).format("YYYY/MM/DD");
-      const vremya_zamera = moment(this.date_zamera).format("HH:mm");
+      const data_zamera = moment(this.data_zamera).format("YYYY/MM/DD");
+      const vremya_zamera = moment(this.data_zamera).format("HH:mm");
 
       this.EDIT_ZAKAZ({
         ...item,
-        dateZamer,
+        data_zamera,
         vremya_zamera,
       }).then(() => {
-        this.date_zamera = null;
+        this.data_zamera = null;
         this.fetchDoors();
       });
     },

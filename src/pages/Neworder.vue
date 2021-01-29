@@ -534,6 +534,7 @@
           <div class="col-lg-12">
             <v-select
               :items="statuses"
+              item-text="title"
               v-model="zakaz.status"
               label="Статус заявки"
             ></v-select>
@@ -604,11 +605,12 @@ export default {
       menu2: false,
       menu4: false,
       statuses: [
-        "В обработке",
-        "Замер",
-        "Индивидуальный",
-        "Ожидает монтаж",
-        "Отменен",
+        { title: "Ожидает", value: "pending" },
+        { title: "Ожидает монтаж", value: "waitmontazh" },
+        { title: "Отменен", value: "cancelled" },
+        { title: "Замер", value: "zamer" },
+        { title: "Индивидуальный", value: "individual" },
+        { title: "Выполнен", value: "completed" },
       ],
       payments_metod_list: [
         "Наличными",

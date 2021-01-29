@@ -138,7 +138,7 @@
               v-model="EditingOrder.category_ruk"
               item-text="name"
               label="Группа двери руководителя"
-              @change="changeModelRuk"
+              @change="changeCategoryRuk"
               return-object
             ></v-select>
           </div>
@@ -203,7 +203,103 @@
           </div>
         </div>
 
-        <!--  -->
+        <div class="row shad-box">
+          <div class="col-lg-12">
+            <h2>
+              <span class="mdi mdi-bookmark-plus-outline"></span> Дополнительные
+              работы:
+            </h2>
+          </div>
+          <div class="col-lg-12">
+            <div
+              class="row repeater"
+              v-for="(dop, index) in EditingOrder.dopServ"
+              :key="index"
+            >
+              <!-- <div v-if="dop.type === 'Доп услуга'" class="col-lg-12">
+                <div class="col-lg-4">
+                  <v-select
+                    :items="dopServArray"
+                    :label="dop.type"
+                    item-text="tekst"
+                    item-value="stoimost"
+                    @change="atInput('dopServ', index, $event)"
+                    return-object
+                  ></v-select>
+                </div>
+                <div class="col-lg-2">
+                  <v-text-field
+                    type="number"
+                    label="Количество"
+                    v-model="EditingOrder.dop.count"
+                  ></v-text-field>
+                </div>
+                <div class="col-lg-3">
+                  <v-text-field
+                    label="Стоимость руб."
+                    v-model="EditingOrder.dop.price"
+                  ></v-text-field>
+                </div>
+                <div class="col-lg-2">
+                  <v-btn
+                    depressed
+                    color="error"
+                    class="m-15"
+                    @click="deliteDop('dopServ', index)"
+                  >
+                    <v-icon left>mdi-delete</v-icon>Удалить</v-btn
+                  >
+                </div>
+
+                <div class="col-lg-11 pa-0"></div>
+              </div> -->
+              <div class="col-lg-12">
+                <div class="col-lg-4">
+                  <v-text-field v-model="dop.tekst" label="Услуга">
+                  </v-text-field>
+                </div>
+                <!-- <div class="col-lg-2">
+                  <v-text-field
+                    type="number"
+                    v-model="dop.additionalCount"
+                    label="Количество"
+                  >
+                  </v-text-field>
+                </div> -->
+                <div class="col-lg-3">
+                  <v-text-field v-model="dop.stoimost" label="Стоимость руб.">
+                  </v-text-field>
+                </div>
+                <div class="col-lg-2">
+                  <v-btn
+                    depressed
+                    color="error"
+                    class="m-15"
+                    @click="deliteDop('dopServ', index)"
+                  >
+                    <v-icon left>mdi-delete</v-icon>Удалить</v-btn
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <v-btn
+            depressed
+            color="primary"
+            @click="addDop('dopServ', 'Услуга')"
+            class="mr-4"
+          >
+            <v-icon left>mdi-cart-plus</v-icon>Добавить
+          </v-btn>
+          <!-- <v-btn
+            depressed
+            color="secondary"
+            @click="addDop('dopServ', 'Доп услуга')"
+          >
+            <v-icon left>mdi-plus</v-icon>Добавить другое
+          </v-btn> -->
+        </div>
 
         <div class="row shad-box" v-if="getUser.id !== 6">
           <div class="col-lg-12">
@@ -249,7 +345,6 @@
               </v-date-picker>
             </v-menu>
           </div>
-          <!-- TODO замерщик не отображается в склккте -->
           <div class="col-lg-3">
             <v-select
               label="Замерщик"
@@ -374,6 +469,8 @@
               <v-select
                 :items="statuses"
                 v-model="EditingOrder.status"
+                item-text="title"
+                item-value="value"
                 label="Статус заявки"
               ></v-select>
             </div>
@@ -408,8 +505,9 @@
             color="grey"
             class="m-15"
             @click="$router.go(-1)"
-            >НАЗАД</v-btn
           >
+            НАЗАД
+          </v-btn>
           <v-btn
             depressed
             x-large
@@ -417,8 +515,9 @@
             class="m-15"
             :loading="loadBtn"
             @click="updateOrder"
-            >Обновить ЗАКАЗ</v-btn
           >
+            Обновить ЗАКАЗ
+          </v-btn>
         </div>
       </div>
     </div>
@@ -444,13 +543,13 @@ export default {
       menu2: false,
       zamershiks: [],
       brigadi: [],
-      // TODO создать обьект с name и value(то что приходит в данных)
       statuses: [
-        "В обработке",
-        "Замер",
-        "Индивидуальный",
-        "Ожидает монтаж",
-        "Отменен",
+        { title: "Ожидает", value: "pending" },
+        { title: "Ожидает монтаж", value: "waitmontazh" },
+        { title: "Отменен", value: "cancelled" },
+        { title: "Замер", value: "zamer" },
+        { title: "Индивидуальный", value: "individual" },
+        { title: "Выполнен", value: "completed" },
       ],
       payments_metod: [
         "Наличными",
@@ -459,19 +558,15 @@ export default {
       ],
 
       EditingOrder: {
-        dateMont: "",
-        dateZamer: "",
         cost_zdi: "",
-        //
         category_saler: "",
         model_saler: "",
         category_ruk: "",
         model_ruk: "",
-        //
         doorNumber: "",
         doorSize: "",
         dop_phone: "",
-        dopolnServ: [],
+        dopServ: [],
         fio: "",
         flat: "",
         floor: "",
@@ -557,7 +652,7 @@ export default {
       .then((response) => {
         this.doorsCategory = response.data;
         this.changeDoorCategory(this.EditingOrder.category_saler);
-        this.changeModelRuk(this.EditingOrder.category_ruk);
+        this.changeCategoryRuk(this.EditingOrder.category_ruk);
       });
 
     // замерщики
@@ -611,13 +706,40 @@ export default {
         console.log(this.EditingOrder.street);
       });
     },
+
+    addDop(type, category) {
+      if (category === "Услуга") {
+        this.EditingOrder[type].push({
+          tekst: "",
+          stoimost: 0,
+        });
+      } else {
+        this.EditingOrder[type].push({
+          name: "",
+          count: 1,
+          price: 0,
+          type: category,
+        });
+      }
+    },
+
+    deliteDop(type, index) {
+      this.EditingOrder[type].splice(index, 1);
+    },
+
+    atInput(type, index, event) {
+      this.EditingOrder[type][index].name = event.name;
+      // this.zakaz[type][index].count = event.count;
+      this.EditingOrder[type][index].price = event.price;
+    },
+
     changeDoorCategory(param) {
       this.EditingOrder.category_saler = param;
 
       //получение доп услуг по производителю двери
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.id}`
         )
         .then((response) => {
           this.doorsModels = response.data;
@@ -634,19 +756,19 @@ export default {
 
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param.term_id}`
+          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param.id}`
         )
         .then((response) => {
           this.dopServArray = response.data;
         });
     },
 
-    changeModelRuk(param) {
+    changeCategoryRuk(param) {
       this.EditingOrder.category_ruk = param;
 
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.id}`
         )
         .then((response) => {
           this.modelsRuk = response.data;
@@ -674,9 +796,10 @@ export default {
             this.EditingOrder.id,
           {
             ...this.EditingOrder,
-            category_saler: this.EditingOrder.category_saler.term_id,
+            category_saler: this.EditingOrder.category_saler.id,
             model_saler: this.EditingOrder.model_saler.id,
-            category_ruk: this.EditingOrder.category_ruk.term_id,
+            category_ruk: this.EditingOrder.category_ruk.id,
+            model_ruk: this.EditingOrder.model_ruk.id,
           }
         )
         .then(() => {

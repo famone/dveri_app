@@ -1,5 +1,18 @@
 <template>
   <div>
+    <v-dialog v-model="dialogDopServ" width="500px">
+      <v-card class="pa-4">
+        <v-container fluid>
+          <v-row v-for="item in chosenItem.dopServ" :key="item.tekst">
+            {{ item.tekst }}
+          </v-row>
+        </v-container>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn @click="dialogDopServ = false" color="primary">Закрыть</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <v-data-table
       :headers="headers"
       :items="items"
@@ -279,6 +292,13 @@
         <a :href="'tel:' + item.phone">{{ item.phone }}</a>
       </template>
 
+      <template #item.dopServ="{ item }">
+        <v-icon v-if="item.dopServ" @click="openDopServDialog(item)">
+          mdi-file
+        </v-icon>
+        <span v-else>Не заявлено доп.услуг</span>
+      </template>
+
       <template
         #item.actions="{ item }"
         v-if="getUser.roles[0] !== 'shop_manager'"
@@ -319,6 +339,8 @@ export default {
     return {
       now: new Date(),
       dialog: false,
+      dialogDopServ: false,
+      chosenItem: {},
       dialogDelete: false,
       addServiceDialog: false,
       addBrigadaDialog: false,
@@ -345,6 +367,7 @@ export default {
         { text: "Примечание Руководителя", value: "prim_rukvod" },
         { text: "Дата продажи", value: "date" },
         { text: "Продавец", sortable: true, value: "saler.name" },
+        { text: "Дополнительные услуги", value: "dopServ" },
         { text: "Сумма премии", value: "sum_premia" },
         { text: "Премия ВДЗ", value: "vdz_premia" },
         { text: "Доп. работы", value: "dop_work" },
@@ -415,6 +438,11 @@ export default {
       fetchDoors: "zakaz/getDoors",
       EDIT_ZAKAZ: "zakaz/EDIT_ZAKAZ",
     }),
+
+    openDopServDialog(item) {
+      this.dialogDopServ = true;
+      this.chosenItem = item;
+    },
 
     saveDataZamera(item) {
       const data_zamera = moment(this.data_zamera).format("YYYY/MM/DD");

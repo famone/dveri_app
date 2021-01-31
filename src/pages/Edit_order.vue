@@ -451,7 +451,7 @@
           </div>
           <!-- TODO поситать -->
           <div class="col-lg-2">
-            <v-text-field label="Итого" v-model="asdf"></v-text-field>
+            <v-text-field label="Итого" v-model="totalSum"></v-text-field>
           </div>
           <!-- <div class="col-lg-2">
             <v-text-field
@@ -599,7 +599,6 @@ export default {
       doorSize: "",
       modelsRuk: [],
       spayments_metod: "",
-    
 
       predoplata: "",
       doorPrice: "",
@@ -677,6 +676,11 @@ export default {
     ...mapGetters({
       getUser: "auth/getUser",
     }),
+
+    totalSum() {
+      const { cost_saler, cost_zdi, discount, avans } = this.EditingOrder;
+      return ((cost_saler + cost_zdi) / 100) * discount - avans;
+    },
   },
 
   methods: {

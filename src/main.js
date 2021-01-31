@@ -32,6 +32,8 @@ Vue.component("tippy", TippyComponent);
 Vue.component("downloadExcel", JsonExcel);
 
 
+
+
 const user = JSON.parse(localStorage.getItem("user"))
 store.dispatch("auth/VALIDATE", user);
 

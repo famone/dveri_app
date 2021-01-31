@@ -477,6 +477,56 @@ export default {
     open() {},
     close() {},
 
+    filterCategory(category) {
+      switch (category) {
+        case "Все":
+          this.items = [...this.doors];
+          break;
+        case "Заявки за сегодня":
+          this.items = this.doors.filter((el) => {
+            return el.data_zamera === moment().format("DD/MM/YYYY");
+          });
+          break;
+        case "Необработанные заявки":
+          console.log("Необработанные заявки");
+          break;
+        case "Передано замерщику":
+          this.items = this.doors.filter((el) => {
+            return el.zamershik.name;
+          });
+          break;
+        case "Монтаж завтра":
+          this.items = this.doors.filter(
+            (el) => el.date_mont === moment().add(1, "d").format("DD/MM/YYYY")
+          );
+          break;
+        case "Монтаж сегодня":
+          this.items = this.doors.filter(
+            (el) => el.date_mont === moment().format("DD/MM/YYYY")
+          );
+          break;
+        case "Ожидают монтаж":
+          this.items = this.doors.filter((el) => !el.date_mont);
+          break;
+        case "Возврат дилеру":
+          console.log("Возврат дилеру");
+          break;
+        case "В исполнении":
+          console.log("В исполнении");
+          break;
+        case "Купоны":
+          console.log("Купоны");
+          break;
+        case "Изменения продавцов":
+          console.log("Изменения продавцов");
+          break;
+
+        default:
+          this.items = [...this.doors];
+          break;
+      }
+    },
+
     openDopServDialog(item) {
       this.dialogDopServ = true;
       this.chosenItem = item;
@@ -687,7 +737,11 @@ export default {
 
   watch: {
     doors(newVal) {
-      this.items = newVal;
+      if (this.filterTag) {
+        this.filterCategory(this.filterTag);
+      } else {
+        this.items = newVal;
+      }
       this.excelJsonData = newVal.map((el) => {
         return {
           ...el,
@@ -704,53 +758,7 @@ export default {
 
     filterTag: {
       handler(newVal) {
-        switch (newVal) {
-          case "Все":
-            this.items = [...this.doors];
-            break;
-          case "Заявки за сегодня":
-            this.items = this.doors.filter((el) => {
-              return el.data_zamera === moment().format("DD/MM/YYYY");
-            });
-            break;
-          case "Необработанные заявки":
-            console.log("Необработанные заявки");
-            break;
-          case "Передано замерщику":
-            this.items = this.doors.filter((el) => {
-              return el.zamershik.name;
-            });
-            break;
-          case "Монтаж завтра":
-            this.items = this.doors.filter(
-              (el) => el.date_mont === moment().add(1, "d").format("DD/MM/YYYY")
-            );
-            break;
-          case "Монтаж сегодня":
-            this.items = this.doors.filter(
-              (el) => el.date_mont === moment().format("DD/MM/YYYY")
-            );
-            break;
-          case "Ожидают монтаж":
-            this.items = this.doors.filter((el) => !el.date_mont);
-            break;
-          case "Возврат дилеру":
-            console.log("Возврат дилеру");
-            break;
-          case "В исполнении":
-            console.log("В исполнении");
-            break;
-          case "Купоны":
-            console.log("Купоны");
-            break;
-          case "Изменения продавцов":
-            console.log("Изменения продавцов");
-            break;
-
-          default:
-            this.items = [...this.doors];
-            break;
-        }
+        this.filterCategory(newVal);
       },
     },
   },

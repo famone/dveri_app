@@ -53,11 +53,26 @@
               </v-date-picker>
             </v-menu>
           </v-col>
+          <v-spacer></v-spacer>
+          <v-col offset="6">
+            <downloadExcel
+              :data="excelJsonData"
+              v-if="getUser.roles[0] !== 'shop_manager'"
+            >
+              <v-btn depressed color="primary ma-2">
+                <v-icon>mdi-download</v-icon>
+                Выгрузить EXСEL
+              </v-btn>
+            </downloadExcel>
+          </v-col>
         </v-row>
       </v-container>
     </template>
     <template #item.door_size="{ item }">
       {{ item.door_size }} / {{ item.door_direction }}
+    </template>
+    <template #item.payment_rest="{ item }">
+      {{ item.total - item.avans }}
     </template>
   </v-data-table>
 </template>
@@ -75,6 +90,7 @@ export default {
     return {
       menu: false,
       teams: [],
+      excelJsonData: "",
       team: {},
       date: null,
       headers: [
@@ -86,7 +102,11 @@ export default {
         { text: "Телефон", value: "phone" },
         { text: "Модель двери", value: "model_ruk.name" },
         { text: "Размер / Сторона", value: "door_size" },
+        { text: "Размер проема", value: "proem_size" },
         { text: "Примечание Руководителя", value: "prim_rukvod" },
+        { text: "Доп. работы", value: "dop_work" },
+        { text: "Тип оплаты", value: "payments_metod" },
+        { text: "Остаток платежа", value: "payment_rest" },
       ],
     };
   },
@@ -94,6 +114,7 @@ export default {
   computed: {
     ...mapGetters({
       sales: "zakaz/GET_SALES",
+      getUser: "auth/getUser",
     }),
 
     dateFormated() {
@@ -127,10 +148,7 @@ export default {
         return chosenTeamData;
       } else if (this.team && this.date) {
         return chosenTeamData.filter((sale) => {
-          const date_mont = moment(sale.date_mont).format("DD/MM/YYYY");
-          if (date_mont === this.dateFormated) {
-            return sale;
-          }
+          return sale.date_mont === this.dateFormated;
         });
       }
     },
@@ -154,6 +172,22 @@ export default {
   watch: {
     team() {
       this.date = null;
+    },
+
+    sales(newVal) {
+      this.items = newVal;
+      this.excelJsonData = newVal.map((el) => {
+        return {
+          ...el,
+          saler: el.saler.name,
+          brigada_mont: el.brigada_mont.name,
+          category_ruk: el.category_ruk.name,
+          category_saler: el.category_saler.name,
+          model_ruk: el.model_ruk.name,
+          model_saler: el.model_saler.name,
+          zamershik: el.zamershik.name,
+        };
+      });
     },
   },
 };

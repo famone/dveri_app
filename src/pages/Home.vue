@@ -18,7 +18,7 @@
 </template>
 
 <script>
-// TODO edit 
+// TODO edit
 import datatable from "../components/datatable.vue";
 
 export default {
@@ -33,9 +33,7 @@ export default {
         "Монтаж завтра",
         "Монтаж сегодня",
         "Ожидают монтаж",
-        "Ожидают прибытия",
         "В исполнении",
-        
       ],
       filterTag: "",
     };

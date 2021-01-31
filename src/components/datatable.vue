@@ -103,6 +103,20 @@
         </td>
       </template>
 
+      <template #item.fio="{ item }">
+        <v-tooltip top v-if="item.fio.length > 8" color="#212121">
+          <template v-slot:activator="{ on }">
+            <span v-on="on">
+              {{ item.fio.substring(0, 8) + "..." }}
+            </span>
+          </template>
+          <div style="max-width: 270px">{{ item.fio }}</div>
+        </v-tooltip>
+        <span v-else>
+          {{ item.fio }}
+        </span>
+      </template>
+
       <template #item.data_zamera="{ item }" v-if="getUser.id !== 6">
         <v-edit-dialog
           :return-value.sync="item.data_zamera"
@@ -116,7 +130,7 @@
           persistent
         >
           <v-chip v-if="item.data_zamera">
-            <span>{{ item.data_zamera }}</span>
+            <span>{{ item.data_zamera | dateWithoutYear }}</span>
             <span v-if="item.vremya_zamera">, {{ item.vremya_zamera }}</span>
           </v-chip>
           <div v-else class="popupBtn text-center">назначить дату</div>
@@ -154,7 +168,7 @@
           persistent
         >
           <v-chip v-if="item.date_mont">
-            <span>{{ item.date_mont }}</span>
+            <span>{{ item.date_mont | dateWithoutYear }}</span>
             <span v-if="item.time_mont">, {{ item.time_mont }}</span>
           </v-chip>
           <div v-else class="popupBtn text-center">назначить монтаж</div>
@@ -178,6 +192,10 @@
             </v-datetime-picker>
           </template>
         </v-edit-dialog>
+      </template>
+
+      <template #item.date="{ item }">
+        {{ item.date | dateWithoutYear }}
       </template>
 
       <template #item.zamershik.name="{ item }" v-if="getUser.id !== 6">
@@ -299,6 +317,10 @@
         <span v-else>Не заявлено доп.услуг</span>
       </template>
 
+      <template #item.payment_rest="{ item }">
+        {{ item.total - item.avans }}
+      </template>
+
       <template
         #item.actions="{ item }"
         v-if="getUser.roles[0] !== 'shop_manager'"
@@ -311,7 +333,7 @@
       </template>
 
       <template #no-data>
-        <v-btn color="primary" @click="searchByColumn('reset')"> Reset </v-btn>
+        <v-btn color="primary" @click="searchByColumn('reset')"> сбросить </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -368,9 +390,9 @@ export default {
         { text: "Дата продажи", value: "date" },
         { text: "Продавец", sortable: true, value: "saler.name" },
         { text: "Дополнительные услуги", value: "dopServ" },
+        { text: "Остаток платежа", value: "payment_rest" },
         { text: "Сумма премии", value: "sum_premia" },
         { text: "Премия ВДЗ", value: "vdz_premia" },
-        { text: "Доп. работы", value: "dop_work" },
       ],
       editedIndex: -1,
       team: "",
@@ -427,6 +449,12 @@ export default {
     },
   },
 
+  filters: {
+    dateWithoutYear(date) {
+      return date.split("/").slice(0, 2).join("/");
+    },
+  },
+
   methods: {
     ...mapMutations({
       SET_CHOSEN_ZAKAZ: "zakaz/SET_CHOSEN_ZAKAZ",
@@ -439,13 +467,17 @@ export default {
       EDIT_ZAKAZ: "zakaz/EDIT_ZAKAZ",
     }),
 
+    cancel() {},
+    open() {},
+    close() {},
+
     openDopServDialog(item) {
       this.dialogDopServ = true;
       this.chosenItem = item;
     },
 
     saveDataZamera(item) {
-      const data_zamera = moment(this.data_zamera).format("YYYY/MM/DD");
+      const data_zamera = moment(this.data_zamera).format("DD/MM/YYYY");
       const vremya_zamera = moment(this.data_zamera).format("HH:mm");
 
       this.EDIT_ZAKAZ({
@@ -698,9 +730,6 @@ export default {
             break;
           case "Возврат дилеру":
             console.log("Возврат дилеру");
-            break;
-          case "Ожидают прибытия":
-            console.log("Ожидают прибытия");
             break;
           case "В исполнении":
             console.log("В исполнении");

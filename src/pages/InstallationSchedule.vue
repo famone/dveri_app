@@ -54,17 +54,16 @@
             </v-menu>
           </v-col>
           <v-spacer></v-spacer>
-          <v-col offset="6">
-            <downloadExcel
-              :data="excelJsonData"
-              v-if="getUser.roles[0] !== 'shop_manager'"
-            >
-              <v-btn depressed color="primary ma-2">
-                <v-icon>mdi-download</v-icon>
-                Выгрузить EXСEL
-              </v-btn>
-            </downloadExcel>
-          </v-col>
+
+          <downloadExcel
+            :data="excelJsonData"
+            v-if="getUser.roles[0] !== 'shop_manager'"
+          >
+            <v-btn depressed color="primary ma-2">
+              <v-icon>mdi-download</v-icon>
+              Выгрузить EXСEL
+            </v-btn>
+          </downloadExcel>
         </v-row>
       </v-container>
     </template>
@@ -174,18 +173,19 @@ export default {
       this.date = null;
     },
 
-    sales(newVal) {
-      this.items = newVal;
+    items(newVal) {
       this.excelJsonData = newVal.map((el) => {
         return {
-          ...el,
-          saler: el.saler.name,
-          brigada_mont: el.brigada_mont.name,
-          category_ruk: el.category_ruk.name,
-          category_saler: el.category_saler.name,
-          model_ruk: el.model_ruk.name,
-          model_saler: el.model_saler.name,
-          zamershik: el.zamershik.name,
+          "Номер заказа": el.id,
+          Адрес: el.adress,
+          "Номер телефона": el.phone,
+          "Модель двери": el.model_ruk.name,
+          "Размер двери": el.door_size,
+          "Размер проема": el.proem_size,
+          Примечание: el.prim_rukvod,
+          "Доп. работы": el.dop_work,
+          "Способ оплаты": el.payments_metod,
+          Остаток: el.payment_rest,
         };
       });
     },

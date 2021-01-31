@@ -504,7 +504,7 @@
         <div class="col-lg-3">
           <v-text-field
             label="Цена двери руководителя"
-            v-model="zakaz.ruk_cena"
+            v-model="zakaz.cost_diler"
           ></v-text-field>
         </div>
         <div class="col-lg-3">
@@ -656,7 +656,7 @@ export default {
         doorPrice: "",
         status: "",
         prod_sale: "",
-        ruk_cena: "",
+        cost_diler: "",
         cost_zdi: "",
         avans: "",
         sale: "",
@@ -857,7 +857,10 @@ export default {
 
       //отправить новый заказ
       axios
-        .post("https://door.webink.site/wp-json/door/v1/add/sales", this.zakaz)
+        .post("https://door.webink.site/wp-json/door/v1/add/sales", {
+          ...this.zakaz,
+          user_id: this.getUser.id,
+        })
         .then((response) => {
           console.log(response);
           this.loadBtn = false;

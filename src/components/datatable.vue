@@ -195,7 +195,7 @@
       </template>
 
       <template #item.date="{ item }">
-        {{ item.date | dateWithoutYear }}
+        {{ item.date | dateSale }}
       </template>
 
       <template #item.zamershik.name="{ item }" v-if="getUser.id !== 6">
@@ -333,7 +333,9 @@
       </template>
 
       <template #no-data>
-        <v-btn color="primary" @click="searchByColumn('reset')"> сбросить </v-btn>
+        <v-btn color="primary" @click="searchByColumn('reset')">
+          сбросить
+        </v-btn>
       </template>
     </v-data-table>
   </div>
@@ -452,6 +454,10 @@ export default {
   filters: {
     dateWithoutYear(date) {
       return date.split("/").slice(0, 2).join("/");
+    },
+
+    dateSale(date) {
+      return moment(date).format("DD/MM/YYYY").split("/").slice(0, 2).join("/");
     },
   },
 

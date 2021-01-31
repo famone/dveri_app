@@ -290,7 +290,8 @@
             @click="addDop('dopServ', 'Услуга')"
             class="mr-4"
           >
-            <v-icon left>mdi-cart-plus</v-icon>Добавить
+            <v-icon left>mdi-cart-plus</v-icon>
+            Добавить
           </v-btn>
           <!-- <v-btn
             depressed
@@ -431,7 +432,7 @@
           <div class="col-lg-3">
             <v-text-field
               label="Стоимость замера, доставки и установки"
-              v-model="EditingOrder.total"
+              v-model="EditingOrder.cost_zdi"
             ></v-text-field>
           </div>
 
@@ -449,9 +450,9 @@
             ></v-text-field>
           </div>
           <!-- TODO поситать -->
-          <!-- <div class="col-lg-2">
-            <v-text-field label="Итого" v-model=""></v-text-field>
-          </div> -->
+          <div class="col-lg-2">
+            <v-text-field label="Итого" v-model="asdf"></v-text-field>
+          </div>
           <!-- <div class="col-lg-2">
             <v-text-field
               label="Остаток"
@@ -580,7 +581,7 @@ export default {
         primecRuk: "",
         prod_sale: "",
         proemSize: "",
-        ruk_cena: "",
+        cost_diler: "",
         sale: "",
         sideOpen: "",
         status_zayavka: "",
@@ -598,7 +599,7 @@ export default {
       doorSize: "",
       modelsRuk: [],
       spayments_metod: "",
-      ruk_cena: "",
+    
 
       predoplata: "",
       doorPrice: "",
@@ -708,6 +709,9 @@ export default {
     },
 
     addDop(type, category) {
+      console.log(this.EditingOrder);
+      console.log(this.EditingOrder[type]);
+
       if (category === "Услуга") {
         this.EditingOrder[type].push({
           tekst: "",

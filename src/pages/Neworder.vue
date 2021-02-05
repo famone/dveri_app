@@ -179,14 +179,14 @@
           >
             <div v-if="dop.type === 'Услуга'" class="col-lg-12">
               <div class="col-lg-4">
-                <v-autocomplete
+                <v-combobox
                   :items="dopServArray"
                   :label="dop.type"
                   item-text="name"
                   item-value="name"
                   @change="atInput('dopServ', index, 'name', $event)"
                 >
-                </v-autocomplete>
+                </v-combobox>
               </div>
               <div class="col-lg-2">
                 <v-text-field
@@ -282,14 +282,14 @@
             :key="index"
           >
             <div class="col-lg-4">
-              <v-autocomplete
+              <v-combobox
                 :items="dopServArray"
                 :label="bossDop.type"
                 item-text="name"
                 item-value="name"
                 @change="atInput('bossDop', index, 'name', $event)"
               >
-              </v-autocomplete>
+              </v-combobox>
             </div>
             <div class="col-lg-2">
               <v-text-field

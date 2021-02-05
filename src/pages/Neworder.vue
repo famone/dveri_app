@@ -159,44 +159,46 @@
       </div>
       <!--  -->
 
-      <v-checkbox v-model="noZamer" label="Без замера"></v-checkbox>
       <!-- v-if="getUser.roles[0] === 'shop_manager'" -->
 
-      <div class="row shad-box" v-if="noZamer">
-        <div class="col-lg-12">
+      <div class="row shad-box">
+        <div class="col-lg-10">
           <h2>
-            <span class="mdi mdi-bookmark-plus-outline"></span> Дополнительные
-            работы:
+            <span class="mdi mdi-bookmark-plus-outline"></span>
+            Дополнительные работы:
           </h2>
+        </div>
+        <div class="col-lg-2">
+          <v-checkbox v-model="noZamer" label="Без замера"></v-checkbox>
         </div>
         <div class="col-lg-12">
           <div
             class="row repeater"
-            v-for="(dop, index) in zakaz.dopolnServ"
+            v-for="(dop, index) in zakaz.dopServ"
             :key="index"
           >
-            <div v-if="dop.type === 'Доп услуга'" class="col-lg-12">
+            <div v-if="dop.type === 'Услуга'" class="col-lg-12">
               <div class="col-lg-4">
-                <v-select
+                <v-autocomplete
                   :items="dopServArray"
                   :label="dop.type"
                   item-text="name"
-                  item-value="price"
-                  @change="atInput('dopolnServ', index, $event)"
-                  return-object
-                ></v-select>
+                  item-value="name"
+                  @change="atInput('dopServ', index, 'name', $event)"
+                >
+                </v-autocomplete>
               </div>
               <div class="col-lg-2">
                 <v-text-field
                   type="number"
                   label="Количество"
-                  v-model="zakaz.dop.count"
+                  @change="atInput('dopServ', index, 'count', $event)"
                 ></v-text-field>
               </div>
               <div class="col-lg-3">
                 <v-text-field
                   label="Стоимость руб."
-                  v-model="zakaz.dop.price"
+                  @change="atInput('dopServ', index, 'price', $event)"
                 ></v-text-field>
               </div>
               <div class="col-lg-2">
@@ -204,7 +206,7 @@
                   depressed
                   color="error"
                   class="m-15"
-                  @click="deliteDop('dopolnServ', index)"
+                  @click="deliteDop('dopServ', index)"
                 >
                   <v-icon left>mdi-delete</v-icon>Удалить</v-btn
                 >
@@ -212,7 +214,7 @@
 
               <div class="col-lg-11 pa-0"></div>
             </div>
-            <div v-else class="col-lg-12">
+            <!-- <div v-else class="col-lg-12">
               <div class="col-lg-4">
                 <v-text-field v-model="zakaz.dop.additionalName" label="Услуга">
                 </v-text-field>
@@ -242,25 +244,26 @@
                   <v-icon left>mdi-delete</v-icon>Удалить</v-btn
                 >
               </div>
-            </div>
+            </div> -->
           </div>
         </div>
 
         <v-btn
+          v-if="noZamer"
           depressed
           color="primary"
-          @click="addDop('dopolnServ', 'Доп услуга')"
+          @click="addDop('dopServ', 'Услуга')"
           class="mr-4"
         >
           <v-icon left>mdi-cart-plus</v-icon>Добавить
         </v-btn>
-        <v-btn
+        <!-- <v-btn
           depressed
           color="secondary"
           @click="addDop('dopolnServ', 'Услуга')"
         >
           <v-icon left>mdi-plus</v-icon>Добавить другое
-        </v-btn>
+        </v-btn> -->
       </div>
 
       <!--  -->
@@ -275,30 +278,30 @@
         <div class="col-lg-12">
           <div
             class="row repeater"
-            v-for="(bossDop, index) in zakaz.bossDopolnServ"
+            v-for="(bossDop, index) in zakaz.bossDop"
             :key="index"
           >
             <div class="col-lg-4">
-              <v-select
+              <v-autocomplete
                 :items="dopServArray"
                 :label="bossDop.type"
                 item-text="name"
-                item-value="price"
-                @change="atInput('bossDopolnServ', index, $event)"
-                return-object
-              ></v-select>
+                item-value="name"
+                @change="atInput('bossDop', index, 'name', $event)"
+              >
+              </v-autocomplete>
             </div>
             <div class="col-lg-2">
               <v-text-field
                 type="number"
                 label="Количество"
-                v-model="zakaz.bossDop.count"
+                @change="atInput('bossDop', index, 'count', $event)"
               ></v-text-field>
             </div>
             <div class="col-lg-3">
               <v-text-field
                 label="Стоимость руб."
-                v-model="zakaz.bossDop.price"
+                @change="atInput('bossDop', index, 'price', $event)"
               ></v-text-field>
             </div>
             <div class="col-lg-2">
@@ -306,7 +309,7 @@
                 depressed
                 color="error"
                 class="m-15"
-                @click="deliteDop('bossDopolnServ', index)"
+                @click="deliteDop('bossDop', index)"
               >
                 <v-icon left>mdi-delete</v-icon>Удалить</v-btn
               >
@@ -315,7 +318,7 @@
           <v-btn
             depressed
             color="primary"
-            @click="addDop('bossDopolnServ', 'Доп услуга')"
+            @click="addDop('bossDop', 'Доп услуга')"
             class="mt-7"
           >
             <v-icon left>mdi-cart-plus</v-icon>Добавить
@@ -649,8 +652,8 @@ export default {
         vremya_zamera: null,
         date_mont: null,
         time_mont: null,
-        dopolnServ: [],
-        bossDopolnServ: [],
+        // dopolnServ: [],
+        // bossDopolnServ: [],
         zamershik: "",
         team: "",
         doorPrice: "",
@@ -663,16 +666,8 @@ export default {
         sum_premii: "",
         status_premii: "",
         payments_metod: "",
-        dop: {
-          price: null,
-          additionalName: null,
-          additionalCount: null,
-          additionalPrice: null,
-        },
-        bossDop: {
-          count: null,
-          price: null,
-        },
+        dopServ: [],
+        bossDop: [],
       },
     };
   },
@@ -769,9 +764,9 @@ export default {
     addDop(type, category) {
       if (category === "Услуга") {
         this.zakaz[type].push({
-          additionalName: "",
-          additionalCount: 0,
-          additionalPrice: 0,
+          name: "",
+          count: 1,
+          price: 0,
           type: category,
         });
       } else {
@@ -800,10 +795,11 @@ export default {
     //   this.additionalInfo.splice(index, 1);
     // },
 
-    atInput(type, index, event) {
-      this.zakaz[type][index].name = event.name;
-      this.zakaz[type][index].count = event.count;
-      this.zakaz[type][index].price = event.price;
+    atInput(type, index, fieldName, event) {
+      console.log(event);
+      this.zakaz[type][index][fieldName] = event;
+      // this.zakaz[type][index].count = event.count;
+      // this.zakaz[type][index].price = event.price;
     },
 
     changeDoorCategory(category) {

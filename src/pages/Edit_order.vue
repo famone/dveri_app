@@ -61,8 +61,8 @@
           <div class="col-lg-3">
             <v-text-field
               label="Улица"
-              v-model="EditingOrder.adress"
-              id="suggest"
+              :value="EditingOrder.adress"
+              id="suggest1"
             ></v-text-field>
           </div>
           <div class="col-lg-1">
@@ -255,20 +255,29 @@
               </div> -->
               <div class="col-lg-12">
                 <div class="col-lg-4">
-                  <v-text-field v-model="dop.name" label="Услуга">
-                  </v-text-field>
+                  <v-combobox
+                    :items="dopServArray"
+                    :label="dop.type"
+                    item-text="name"
+                    item-value="name"
+                    :value="dop.name"
+                    @change="atInput('dopServ', index, 'name', $event)"
+                  ></v-combobox>
                 </div>
                 <div class="col-lg-2">
                   <v-text-field
                     type="number"
-                    v-model="dop.count"
                     label="Количество"
-                  >
-                  </v-text-field>
+                    :value="dop.count"
+                    @change="atInput('dopServ', index, 'count', $event)"
+                  ></v-text-field>
                 </div>
                 <div class="col-lg-3">
-                  <v-text-field v-model="dop.price" label="Стоимость руб.">
-                  </v-text-field>
+                  <v-text-field
+                    label="Стоимость руб."
+                    :value="dop.price"
+                    @change="atInput('dopServ', index, 'price', $event)"
+                  ></v-text-field>
                 </div>
                 <div class="col-lg-2">
                   <v-btn
@@ -611,7 +620,7 @@ export default {
     };
   },
 
-  async mounted() {
+  created() {
     //инициализируем и подключаем карты
 
     const script = document.createElement("script");
@@ -626,7 +635,9 @@ export default {
     document.head.append(script);
 
     //инициализируем и подключаем карты
+  },
 
+  async mounted() {
     this.routeId = this.$route.params.id;
     await axios
       .get("https://door.webink.site/wp-json/door/v1/get/sales")
@@ -685,7 +696,7 @@ export default {
 
   methods: {
     yaMapInit2() {
-      var suggestView1 = new ymaps.SuggestView("suggest", {
+      var suggestView1 = new ymaps.SuggestView("suggest1", {
         provider: {
           suggest: function (request, options) {
             return ymaps.suggest("Россия" + ", " + request);
@@ -726,7 +737,7 @@ export default {
     },
 
     atInput(type, index, fieldName, event) {
-      this.zakaz[type][index][fieldName] = event;
+      this.EditingOrder[type][index][fieldName] = event;
     },
 
     changeDoorCategory(param) {

@@ -747,17 +747,17 @@ export default {
 
       suggestView1.events.add("select", (e) => {
         // select event
-        this.street = e.get("item").value;
+        this.zakaz.street = e.get("item").value;
 
-        let porez1 = this.street.replace("Россия,", "");
-        this.street = porez1;
+        let porez1 = this.zakaz.street.replace("Россия,", "");
+        this.zakaz.street = porez1;
 
-        if (this.street.includes("Санкт-Петербург,")) {
-          let porez2 = this.street.replace("Санкт-Петербург,", "");
-          this.street = porez2;
+        if (this.zakaz.street.includes("Санкт-Петербург,")) {
+          let porez2 = this.zakaz.street.replace("Санкт-Петербург,", "");
+          this.zakaz.street = porez2;
         } else {
-          let porez3 = this.street.replace("Москва,", "");
-          this.street = porez3;
+          let porez3 = this.zakaz.street.replace("Москва,", "");
+          this.zakaz.street = porez3;
         }
       });
     },

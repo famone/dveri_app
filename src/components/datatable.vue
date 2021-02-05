@@ -3,8 +3,8 @@
     <v-dialog v-model="dialogDopServ" width="500px">
       <v-card class="pa-4">
         <v-container fluid>
-          <v-row v-for="item in chosenItem.dopServ" :key="item.tekst">
-            {{ item.tekst }}
+          <v-row v-for="item in chosenItem.dopServ" :key="item.name">
+            {{ item.name }}
           </v-row>
         </v-container>
         <v-card-actions>

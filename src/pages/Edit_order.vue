@@ -255,19 +255,19 @@
               </div> -->
               <div class="col-lg-12">
                 <div class="col-lg-4">
-                  <v-text-field v-model="dop.tekst" label="Услуга">
+                  <v-text-field v-model="dop.name" label="Услуга">
                   </v-text-field>
                 </div>
-                <!-- <div class="col-lg-2">
+                <div class="col-lg-2">
                   <v-text-field
                     type="number"
-                    v-model="dop.additionalCount"
+                    v-model="dop.count"
                     label="Количество"
                   >
                   </v-text-field>
-                </div> -->
+                </div>
                 <div class="col-lg-3">
-                  <v-text-field v-model="dop.stoimost" label="Стоимость руб.">
+                  <v-text-field v-model="dop.price" label="Стоимость руб.">
                   </v-text-field>
                 </div>
                 <div class="col-lg-2">
@@ -713,32 +713,20 @@ export default {
     },
 
     addDop(type, category) {
-      console.log(this.EditingOrder);
-      console.log(this.EditingOrder[type]);
-
-      if (category === "Услуга") {
-        this.EditingOrder[type].push({
-          tekst: "",
-          stoimost: 0,
-        });
-      } else {
-        this.EditingOrder[type].push({
-          name: "",
-          count: 1,
-          price: 0,
-          type: category,
-        });
-      }
+      this.EditingOrder[type].push({
+        name: "",
+        count: 1,
+        price: 0,
+        type: category,
+      });
     },
 
     deliteDop(type, index) {
       this.EditingOrder[type].splice(index, 1);
     },
 
-    atInput(type, index, event) {
-      this.EditingOrder[type][index].name = event.name;
-      // this.zakaz[type][index].count = event.count;
-      this.EditingOrder[type][index].price = event.price;
+    atInput(type, index, fieldName, event) {
+      this.zakaz[type][index][fieldName] = event;
     },
 
     changeDoorCategory(param) {

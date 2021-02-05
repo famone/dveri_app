@@ -796,10 +796,7 @@ export default {
     // },
 
     atInput(type, index, fieldName, event) {
-      console.log(event);
       this.zakaz[type][index][fieldName] = event;
-      // this.zakaz[type][index].count = event.count;
-      // this.zakaz[type][index].price = event.price;
     },
 
     changeDoorCategory(category) {

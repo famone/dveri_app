@@ -199,8 +199,20 @@ export default {
       console.log(this.deliting);
     },
 
-    deleteItemConfirm() {
+    async deleteItemConfirm() {
       this.closeDelete();
+      this.loadServ = true;
+      await axios(
+        "https://door.webink.site/wp-json/door/v1/delete/dopserv?id=" +
+          this.deliting
+      );
+
+      await axios
+        .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
+        .then((response) => {
+          this.dopServices = response.data;
+          this.loadServ = false;
+        });
     },
 
     close() {
@@ -219,12 +231,21 @@ export default {
         this.dopServices.push(this.editedItem);
       }
 
-      axios.post("https://door.webink.site/wp-json/door/v1/set/dopserv", {
+      this.close();
+      this.loadServ = true;
+
+      await axios.post("https://door.webink.site/wp-json/door/v1/set/dopserv", {
         ...this.editedItem,
         manufacturer_id: this.editedItem.manufacturer.term_id,
         manufacturer_name: this.editedItem.manufacturer.name,
       });
-      this.close();
+
+      await axios
+        .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
+        .then((response) => {
+          this.dopServices = response.data;
+          this.loadServ = false;
+        });
     },
   },
 

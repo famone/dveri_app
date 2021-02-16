@@ -724,6 +724,9 @@ export default {
     },
 
     addDop(type, category) {
+      if(!this.EditingOrder[type]){
+        this.EditingOrder[type] = [];
+      }
       this.EditingOrder[type].push({
         name: "",
         count: 1,

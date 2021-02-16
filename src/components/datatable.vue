@@ -279,7 +279,7 @@
 
           <template #input>
             <v-select
-              :items="statuses"
+              :items="statusesOnRole"
               v-model="status"
               item-text="title"
               label="установить статуc"
@@ -432,6 +432,10 @@ export default {
         { title: "Индивидуальный", value: "individual" },
         { title: "Выполнен", value: "completed" },
       ],
+      statusesSaler: [
+        { title: "Ожидает", value: "pending" },
+        { title: "Отменен", value: "cancelled" },        
+      ],
     };
   },
 
@@ -445,6 +449,11 @@ export default {
       GET_CHOSEN_ZAKAZ: "zakaz/GET_CHOSEN_ZAKAZ",
       loading: "zakaz/GET_LOADING",
     }),
+
+    statusesOnRole(){
+      const role = this.getUser.roles[0];
+      return role ==="administrator" ? this.statuses: this.statusesSaler
+    },
 
     formTitle() {
       return this.editedIndex === -1 ? "New Item" : "Edit Item";

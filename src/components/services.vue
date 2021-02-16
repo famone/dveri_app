@@ -128,7 +128,7 @@ export default {
     loadServ: true,
     dialog: false,
     dialogDelete: false,
-    deliting: '',
+    deliting: "",
     brand: "",
     load: true,
     categorys: [],
@@ -185,7 +185,7 @@ export default {
         this.categorys.push("Все");
       });
   },
-  
+
   methods: {
     editItem(item) {
       this.editedIndex = this.dopServices.indexOf(item);
@@ -195,30 +195,35 @@ export default {
 
     deleteItem(item) {
       this.dialogDelete = true;
-      this.deliting = item.id
-      console.log(this.deliting)
+      this.deliting = item.id;
+      console.log(this.deliting);
     },
 
     deleteItemConfirm() {
-
       this.closeDelete();
     },
 
     close() {
+      this.editedIndex = -1;
       this.dialog = false;
     },
 
     closeDelete() {
       this.dialogDelete = false;
-      
     },
 
-    save() {
+    async save() {
       if (this.editedIndex > -1) {
         Object.assign(this.dopServices[this.editedIndex], this.editedItem);
       } else {
         this.dopServices.push(this.editedItem);
       }
+
+      axios.post("https://door.webink.site/wp-json/door/v1/set/dopserv", {
+        ...this.editedItem,
+        manufacturer_id: this.editedItem.manufacturer.term_id,
+        manufacturer_name: this.editedItem.manufacturer.name,
+      });
       this.close();
     },
   },

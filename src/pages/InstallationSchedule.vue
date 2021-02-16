@@ -73,6 +73,11 @@
     <template #item.payment_rest="{ item }">
       {{ item.total - item.avans }}
     </template>
+    <template #item.dopServ="{ item }">
+      <div v-for="dop in item.dopServ" :key="dop.id">
+        {{ dop.name }}
+      </div>
+    </template>
   </v-data-table>
 </template>
 
@@ -103,7 +108,7 @@ export default {
         { text: "Размер / Сторона", value: "door_size" },
         { text: "Размер проема", value: "proem_size" },
         { text: "Примечание Руководителя", value: "prim_rukvod" },
-        { text: "Доп. работы", value: "dop_work" },
+        { text: "Доп. работы", value: "dopServ" },
         { text: "Тип оплаты", value: "payments_metod" },
         { text: "Остаток платежа", value: "payment_rest" },
       ],
@@ -175,6 +180,7 @@ export default {
 
     items(newVal) {
       this.excelJsonData = newVal.map((el) => {
+        const dopServ = el.dopServ.map((item) => item.name).join(",");
         return {
           "Номер заказа": el.id,
           Адрес: el.adress,
@@ -183,7 +189,7 @@ export default {
           "Размер двери": el.door_size,
           "Размер проема": el.proem_size,
           Примечание: el.prim_rukvod,
-          "Доп. работы": el.dop_work,
+          "Доп. работы": dopServ,
           "Способ оплаты": el.payments_metod,
           Остаток: el.payment_rest,
         };

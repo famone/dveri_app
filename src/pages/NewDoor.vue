@@ -143,6 +143,7 @@ export default {
       axios.post("https://door.webink.site/wp-json/door/v1/set/models", {
         name: this.modelName,
         manufacturer_id: this.manufacturer.term_id,
+        manufacturer_name: this.manufacturer.name,
         sizes: this.modelsArray,
       });
       this.$router.push("/directories");

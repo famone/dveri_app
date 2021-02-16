@@ -192,12 +192,14 @@
                 <v-text-field
                   type="number"
                   label="Количество"
+                  :value="dop.count"
                   @change="atInput('dopServ', index, 'count', $event)"
                 ></v-text-field>
               </div>
               <div class="col-lg-3">
                 <v-text-field
                   label="Стоимость руб."
+                  :value="dop.price"
                   @change="atInput('dopServ', index, 'price', $event)"
                 ></v-text-field>
               </div>
@@ -761,6 +763,7 @@ export default {
         }
       });
     },
+
     addDop(type, category) {
       if (category === "Услуга") {
         this.zakaz[type].push({
@@ -796,7 +799,21 @@ export default {
     // },
 
     atInput(type, index, fieldName, event) {
-      this.zakaz[type][index][fieldName] = event;
+      console.log(event);
+      if (typeof event === "object" && event !== null) {
+        this.zakaz[type][index].service = event;
+        this.zakaz[type][index].name = event.name;
+        this.zakaz[type][index].count = 1;
+        this.zakaz[type][index].price =
+          event.price * this.zakaz[type][index].count;
+      } else {
+        this.zakaz[type][index][fieldName] = event;
+        if (fieldName === "count") {
+          this.zakaz[type][index].price =
+            this.zakaz[type][index].service.price *
+            this.zakaz[type][index].count;
+        }
+      }
     },
 
     changeDoorCategory(category) {

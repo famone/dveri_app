@@ -429,33 +429,33 @@
           <div class="col-lg-3">
             <v-text-field
               label="Цена продавца со скидкой"
-              v-model="EditingOrder.cost_zdi"
+              v-model.number="EditingOrder.cost_saler"
             ></v-text-field>
           </div>
           <div class="col-lg-3">
             <v-text-field
               label="Цена двери руководителя"
-              v-model="EditingOrder.cost_diler"
+              v-model.number="EditingOrder.cost_diler"
             ></v-text-field>
           </div>
           <div class="col-lg-3">
             <v-text-field
               label="Стоимость замера, доставки и установки"
-              v-model="EditingOrder.cost_zdi"
+              v-model.number="EditingOrder.cost_zdi"
             ></v-text-field>
           </div>
 
           <div class="col-lg-2">
             <v-text-field
               label="Предоплата"
-              v-model="EditingOrder.avans"
+              v-model.number="EditingOrder.avans"
             ></v-text-field>
           </div>
 
           <div class="col-lg-2">
             <v-text-field
               label="Скидка"
-              v-model="EditingOrder.discount"
+              v-model.number="EditingOrder.discount"
             ></v-text-field>
           </div>
           <!-- TODO поситать -->
@@ -690,7 +690,13 @@ export default {
 
     totalSum() {
       const { cost_saler, cost_zdi, discount, avans } = this.EditingOrder;
-      return ((cost_saler + cost_zdi) / 100) * discount - avans;
+
+      return (
+        cost_saler +
+        cost_zdi -
+        ((cost_saler + cost_zdi) / 100) * discount -
+        avans
+      );
     },
   },
 
@@ -724,7 +730,7 @@ export default {
     },
 
     addDop(type, category) {
-      if(!this.EditingOrder[type]){
+      if (!this.EditingOrder[type]) {
         this.EditingOrder[type] = [];
       }
       this.EditingOrder[type].push({

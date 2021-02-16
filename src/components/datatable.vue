@@ -361,6 +361,7 @@ export default {
 
   data() {
     return {
+      filteredItems: [],
       now: new Date(),
       dialog: false,
       dialogDopServ: false,
@@ -434,7 +435,7 @@ export default {
       ],
       statusesSaler: [
         { title: "Ожидает", value: "pending" },
-        { title: "Отменен", value: "cancelled" },        
+        { title: "Отменен", value: "cancelled" },
       ],
     };
   },
@@ -450,9 +451,9 @@ export default {
       loading: "zakaz/GET_LOADING",
     }),
 
-    statusesOnRole(){
+    statusesOnRole() {
       const role = this.getUser.roles[0];
-      return role ==="administrator" ? this.statuses: this.statusesSaler
+      return role === "administrator" ? this.statuses : this.statusesSaler;
     },
 
     formTitle() {
@@ -482,6 +483,16 @@ export default {
       EDIT_ZAKAZ: "zakaz/EDIT_ZAKAZ",
     }),
 
+    itemsOnRole() {
+      if (this.getUser.roles[0] === "zamershik") {
+        this.filteredItems = this.doors.filter(({ status }) => {
+          status === "pending";
+        });
+      } else {
+        this.filteredItems = [...this.doors];
+      }
+    },
+
     cancel() {},
     open() {},
     close() {},
@@ -489,10 +500,10 @@ export default {
     filterCategory(category) {
       switch (category) {
         case "Все":
-          this.items = [...this.doors];
+          this.items = [...this.filteredItems];
           break;
         case "Заявки за сегодня":
-          this.items = this.doors.filter((el) => {
+          this.items = this.filteredItems.filter((el) => {
             return el.data_zamera === moment().format("DD/MM/YYYY");
           });
           break;
@@ -500,22 +511,22 @@ export default {
           console.log("Необработанные заявки");
           break;
         case "Передано замерщику":
-          this.items = this.doors.filter((el) => {
+          this.items = this.filteredItems.filter((el) => {
             return el.zamershik.name;
           });
           break;
         case "Монтаж завтра":
-          this.items = this.doors.filter(
+          this.items = this.filteredItems.filter(
             (el) => el.date_mont === moment().add(1, "d").format("DD/MM/YYYY")
           );
           break;
         case "Монтаж сегодня":
-          this.items = this.doors.filter(
+          this.items = this.filteredItems.filter(
             (el) => el.date_mont === moment().format("DD/MM/YYYY")
           );
           break;
         case "Ожидают монтаж":
-          this.items = this.doors.filter((el) => !el.date_mont);
+          this.items = this.filteredItems.filter((el) => !el.date_mont);
           break;
         case "Возврат дилеру":
           console.log("Возврат дилеру");
@@ -531,7 +542,7 @@ export default {
           break;
 
         default:
-          this.items = [...this.doors];
+          this.items = [...this.filteredItems];
           break;
       }
     },
@@ -556,7 +567,8 @@ export default {
     },
 
     saveDateMontaz(item) {
-      const date_mont = moment(this.date_mont).format("YYYY/MM/DD");
+      console.log(item);
+      const date_mont = moment(this.date_mont).format("DD/MM/YYYY");
       const time_mont = moment(this.date_mont).format("HH:mm");
 
       this.EDIT_ZAKAZ({
@@ -601,9 +613,9 @@ export default {
 
     filterByCity() {
       if (this.city === "Все") {
-        this.items = [...this.doors];
+        this.items = [...this.filteredItems];
       } else {
-        this.items = this.doors.filter((i) => {
+        this.items = this.filteredItems.filter((i) => {
           return !this.city || i.city === this.city;
         });
       }
@@ -619,7 +631,7 @@ export default {
 
         this.selectFilterTag("");
 
-        this.items = [...this.doors];
+        this.items = [...this.filteredItems];
       }
 
       let searchStr = (value) => {
@@ -652,7 +664,7 @@ export default {
           }
         }
         // let copyDoors = this.doors.map((el) => searchStr(el));
-        this.items = this.doors.filter((el) => {
+        this.items = this.filteredItems.filter((el) => {
           const comparedStr = searchStr(el) || false;
           return (
             comparedStr &&
@@ -661,7 +673,7 @@ export default {
             toCommonCaseStr(comparedStr).includes(toCommonCaseStr(searchVal))
           );
         });
-      } else this.items = [...this.doors];
+      } else this.items = [...this.filteredItems];
     },
 
     selectOrderRow(item) {
@@ -749,7 +761,8 @@ export default {
       if (this.filterTag) {
         this.filterCategory(this.filterTag);
       } else {
-        this.items = newVal;
+        this.itemsOnRole();
+        this.items = [...this.filteredItems];
       }
       this.excelJsonData = newVal.map((el) => {
         return {

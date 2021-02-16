@@ -85,7 +85,16 @@ h3{
 	
 }
 @media (max-width: 512px) {
-	
+	.v-sheet.v-toolbar:not(.v-sheet--outlined){
+		height: inherit!important;
+	}
+	.v-toolbar__content, .v-toolbar__extension{
+		flex-wrap: wrap;
+		height: inherit!important;
+	}
+	.shad-box{
+		padding:15px;
+	}
 }
 @media (max-width: 390px) {
 	

@@ -25,7 +25,7 @@
       <span class="mdi mdi-menu"></span>Меню
     </button>
 
-    <h4>SHELION CRM</h4>
+    <h4 class="hidden-xs">SHELION CRM</h4>
 
     <div class="log-box" @click="accpuntMenu = !accpuntMenu">
       <div class="text-right" v-if="user !== null">

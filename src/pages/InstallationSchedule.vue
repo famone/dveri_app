@@ -71,7 +71,7 @@
       {{ item.door_size }} / {{ item.door_direction }}
     </template>
     <template #item.payment_rest="{ item }">
-      {{ item.total - item.avans }}
+      {{ item.total }}
     </template>
     <template #item.dopServ="{ item }">
       <div v-for="dop in item.dopServ" :key="dop.id">

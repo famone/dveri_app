@@ -503,31 +503,34 @@
         <div class="col-lg-3">
           <v-text-field
             label="Цена продавца со скидкой"
-            v-model="zakaz.prod_sale"
+            v-model.number="zakaz.cost_saler"
           ></v-text-field>
         </div>
         <div class="col-lg-3">
           <v-text-field
             label="Цена двери руководителя"
-            v-model="zakaz.cost_diler"
+            v-model.number="zakaz.cost_diler"
           ></v-text-field>
         </div>
         <div class="col-lg-3">
           <v-text-field
             label="Стоимость замера, доставки и установки"
-            v-model="zakaz.cost_zdi"
+            v-model.number="zakaz.cost_zdi"
           ></v-text-field>
         </div>
 
         <div class="col-lg-2">
-          <v-text-field label="Предоплата" v-model="zakaz.avans"></v-text-field>
+          <v-text-field
+            label="Предоплата"
+            v-model.number="zakaz.avans"
+          ></v-text-field>
         </div>
 
         <!-- <div class="col-lg-2">
           <v-text-field label="Скидка" v-model="sale"></v-text-field>
         </div> -->
         <div class="col-lg-2">
-          <v-text-field label="Итого" v-model="zakaz.doorPrice"></v-text-field>
+          <v-text-field label="Итого" v-model="totalSum"></v-text-field>
         </div>
       </div>
 
@@ -662,6 +665,7 @@ export default {
         status: "",
         prod_sale: "",
         cost_diler: "",
+        cost_saler: 0,
         cost_zdi: "",
         avans: "",
         sale: "",
@@ -670,6 +674,7 @@ export default {
         payments_metod: "",
         dopServ: [],
         bossDop: [],
+        total: 0,
       },
     };
   },
@@ -678,6 +683,15 @@ export default {
     ...mapGetters({
       getUser: "auth/getUser",
     }),
+
+    totalSum() {
+      if (this.zakaz) {
+        console.log(this.zakaz.cost_saler);
+        console.log(this.zakaz.cost_zdi);
+        console.log(this.zakaz.avans);
+        return this.zakaz.cost_saler + this.zakaz.cost_zdi - this.zakaz.avans;
+      }
+    },
 
     bossAdditionalWorksCard() {
       if (this.zakaz.category_ruk && this.zakaz.category_saler) {
@@ -869,6 +883,7 @@ export default {
       axios
         .post("https://door.webink.site/wp-json/door/v1/add/sales", {
           ...this.zakaz,
+          total: this.totalSum,
           user_id: this.getUser.id,
         })
         .then((response) => {

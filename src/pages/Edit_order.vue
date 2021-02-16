@@ -645,16 +645,6 @@ export default {
         this.EditingOrder = response.data.find((item) => {
           return item.id == this.routeId;
         });
-
-        if (this.EditingOrder.date_mont && this.EditingOrder.data_zamera) {
-          const splitedDate_mont = this.EditingOrder.date_mont.split("/");
-          const splitedData_zamera = this.EditingOrder.data_zamera.split("/");
-          const date_mont = `${splitedDate_mont[2]}-${splitedDate_mont[1]}-${splitedDate_mont[0]}`;
-          const data_zamera = `${splitedData_zamera[2]}-${splitedData_zamera[1]}-${splitedData_zamera[0]}`;
-
-          this.EditingOrder = { ...this.EditingOrder, date_mont, data_zamera };
-        }
-
         this.loading = false;
       });
 
@@ -812,6 +802,7 @@ export default {
             this.EditingOrder.id,
           {
             ...this.EditingOrder,
+            total: this.totalSum,
             category_saler: this.EditingOrder.category_saler.id,
             model_saler: this.EditingOrder.model_saler.id,
             category_ruk: this.EditingOrder.category_ruk.id,

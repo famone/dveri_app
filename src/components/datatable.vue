@@ -318,7 +318,8 @@
       </template>
 
       <template #item.payment_rest="{ item }">
-        {{ item.total - item.avans }}
+        {{ item.total}}
+        <!-- {{ item.total - item.avans }} -->
       </template>
 
       <template

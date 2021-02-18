@@ -686,9 +686,6 @@ export default {
 
     totalSum() {
       if (this.zakaz) {
-        console.log(this.zakaz.cost_saler);
-        console.log(this.zakaz.cost_zdi);
-        console.log(this.zakaz.avans);
         return this.zakaz.cost_saler + this.zakaz.cost_zdi - this.zakaz.avans;
       }
     },
@@ -813,7 +810,6 @@ export default {
     // },
 
     atInput(type, index, fieldName, event) {
-      console.log(event);
       if (typeof event === "object" && event !== null) {
         this.zakaz[type][index].service = event;
         this.zakaz[type][index].name = event.name;
@@ -852,7 +848,6 @@ export default {
     },
 
     changeModelRuk(param) {
-      console.log(param);
       this.zakaz.category_ruk = param.term_id;
 
       axios
@@ -865,7 +860,6 @@ export default {
     },
 
     changeDoorModel(model) {
-      console.log(model);
       this.zakaz.model_saler = model.id;
       this.selectedModel = model;
       this.doorSizes = Object.keys(model.price);
@@ -887,7 +881,6 @@ export default {
           user_id: this.getUser.id,
         })
         .then((response) => {
-          console.log(response);
           this.loadBtn = false;
           this.$router.push("/");
         });

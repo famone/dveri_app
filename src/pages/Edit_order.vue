@@ -127,7 +127,7 @@
               :items="doorsModels"
               v-model="EditingOrder.model_saler"
               item-text="name"
-              @change="changeSize"
+              @change="changeModelSaler"
               return-object
               label="Модель двери продавца"
             ></v-select>
@@ -146,7 +146,7 @@
             <v-select
               :items="modelsRuk"
               item-text="name"
-              item-value="id"
+              return-object
               label="Модель двери руководителя"
               v-model="EditingOrder.model_ruk"
             ></v-select>
@@ -156,11 +156,11 @@
             <v-select
               :items="doorSizes"
               v-model="EditingOrder.door_size"
-              item-text="size"
               label="Размер двери"
-              @change="showPrice"
-              return-object
             ></v-select>
+            <!-- item-text="size"
+              @change="showPrice"
+              return-object -->
           </div>
           <div class="col-lg-3">
             <p>Сторона открывания:</p>
@@ -574,7 +574,7 @@ export default {
         category_ruk: "",
         model_ruk: "",
         doorNumber: "",
-        doorSize: "",
+        door_size: "",
         dop_phone: "",
         dopServ: [],
         fio: "",
@@ -604,7 +604,7 @@ export default {
 
       doorsModels: [],
       selectedModel: {},
-      doorSizes: [],
+      doorSizes: ["78", "80", "85", "86", "88", "90", "96", "98", "99", "105"],
       doorSize: "",
       modelsRuk: [],
       spayments_metod: "",
@@ -652,8 +652,16 @@ export default {
       .get("https://door.webink.site/wp-json/door/v1/get/categorys")
       .then((response) => {
         this.doorsCategory = response.data;
-        this.changeDoorCategory(this.EditingOrder.category_saler);
-        this.changeCategoryRuk(this.EditingOrder.category_ruk);
+
+        const category_saler = this.doorsCategory.find(
+          (category) => category.term_id === this.EditingOrder.category_saler.id
+        );
+        const category_ruk = this.doorsCategory.find(
+          (category) => category.term_id === this.EditingOrder.category_ruk.id
+        );
+
+        this.changeDoorCategory(category_saler);
+        this.changeCategoryRuk(category_ruk);
       });
 
     // замерщики
@@ -714,8 +722,6 @@ export default {
           let porez3 = this.EditingOrder.adress.replace("Москва,", "");
           this.EditingOrder.adress = porez3;
         }
-
-        console.log(this.EditingOrder.street);
       });
     },
 
@@ -745,24 +751,24 @@ export default {
       //получение доп услуг по производителю двери
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.id}`
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
         )
         .then((response) => {
           this.doorsModels = response.data;
-          const chosenDoor = this.doorsModels.find((door) => {
-            return door.name === this.EditingOrder.model_saler.name;
-          });
+          // const chosenDoor = this.doorsModels.find((door) => {
+          //   return door.name === this.EditingOrder.model_saler.name;
+          // });
 
-          const chosenDoorSizes = chosenDoor.price;
+          // const chosenDoorSizes = chosenDoor.price;
 
-          for (const key in chosenDoorSizes) {
-            this.doorSizes.push({ size: key, price: chosenDoorSizes[key] });
-          }
+          // for (const key in chosenDoorSizes) {
+          //   this.doorSizes.push({ size: key, price: chosenDoorSizes[key] });
+          // }
         });
 
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param.id}`
+          `https://door.webink.site/wp-json/door/v1/get/dopserv?proizvoditel=${param.term_id}`
         )
         .then((response) => {
           this.dopServArray = response.data;
@@ -774,40 +780,42 @@ export default {
 
       axios
         .get(
-          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.id}`
+          `https://door.webink.site/wp-json/door/v1/get/models?proizvoditel=${param.term_id}`
         )
         .then((response) => {
           this.modelsRuk = response.data;
         });
     },
 
-    changeSize(sizes) {
-      this.selectedModel = sizes;
-      this.doorSizes = Object.keys(sizes.price);
+    changeModelSaler(model) {
+      this.selectedModel = model;
+      // this.doorSizes = Object.keys(model.price);
     },
 
-    showPrice(num) {
-      this.doorPrice = this.selectedModel.price[num];
-      this.doorSize = num;
-      this.EditingOrder.door_size = num.size;
-    },
+    // showPrice(num) {
+    //   this.doorPrice = this.selectedModel.price[num];
+    //   this.doorSize = num;
+    //   this.EditingOrder.door_size = num.size;
+    // },
 
     updateOrder() {
       this.loadBtn = true;
       //отправить новый заказ
 
+      const reqestBody = {
+        ...this.EditingOrder,
+        total: this.totalSum,
+        category_saler: this.EditingOrder.category_saler.id,
+        model_saler: this.EditingOrder.model_saler.id,
+        category_ruk: this.EditingOrder.category_ruk.id,
+        model_ruk: this.EditingOrder.model_ruk.id,
+      };
+
       axios
         .post(
           "https://door.webink.site/wp-json/door/v1/edit/sales?order_id=" +
-            this.EditingOrder.id,
-          {
-            ...this.EditingOrder,
-            total: this.totalSum,
-            category_saler: this.EditingOrder.category_saler.id,
-            model_saler: this.EditingOrder.model_saler.id,
-            category_ruk: this.EditingOrder.category_ruk.id,
-            model_ruk: this.EditingOrder.model_ruk.id,
-          }
+            reqestBody.id,
+          reqestBody
         )
         .then(() => {
           this.loadBtn = false;

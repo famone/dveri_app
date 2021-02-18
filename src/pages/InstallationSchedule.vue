@@ -78,6 +78,10 @@
         {{ dop.name }}
       </div>
     </template>
+    <template #item.model_ruk.name="{ item }">
+      <td v-if="!item.model_ruk.name">{{ item.model_saler.name }}</td>
+      <td v-else>{{ item.model_ruk.name }}</td>
+    </template>
   </v-data-table>
 </template>
 

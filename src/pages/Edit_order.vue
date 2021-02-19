@@ -262,6 +262,8 @@
                     item-value="name"
                     :value="dop.name"
                     @change="atInput('dopServ', index, 'name', $event)"
+                    @click:clear="clearDopServ('dopServ', index)"
+                    clearable
                   ></v-combobox>
                 </div>
                 <div class="col-lg-2">
@@ -270,6 +272,7 @@
                     label="Количество"
                     :value="dop.count"
                     @change="atInput('dopServ', index, 'count', $event)"
+                    clearable
                   ></v-text-field>
                 </div>
                 <div class="col-lg-3">
@@ -277,6 +280,7 @@
                     label="Стоимость руб."
                     :value="dop.price"
                     @change="atInput('dopServ', index, 'price', $event)"
+                    clearable
                   ></v-text-field>
                 </div>
                 <div class="col-lg-2">
@@ -621,6 +625,12 @@ export default {
   },
 
   created() {
+    axios
+      .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
+      .then((response) => {
+        this.dopServArray = response.data;
+      });
+
     //инициализируем и подключаем карты
 
     const script = document.createElement("script");
@@ -742,7 +752,27 @@ export default {
     },
 
     atInput(type, index, fieldName, event) {
-      this.EditingOrder[type][index][fieldName] = event;
+      if (typeof event === "object" && event !== null) {
+        this.EditingOrder[type][index].service = event;
+        this.EditingOrder[type][index].name = event.name;
+        this.EditingOrder[type][index].count = 1;
+        this.EditingOrder[type][index].price =
+          event.price * this.EditingOrder[type][index].count;
+      } else {
+        this.EditingOrder[type][index][fieldName] = event;
+        if (fieldName === "count") {
+          this.EditingOrder[type][index].price =
+            this.EditingOrder[type][index].service.price *
+            this.EditingOrder[type][index].count;
+        }
+      }
+    },
+
+    clearDopServ(type, index) {
+      this.EditingOrder[type][index].service = null;
+      this.EditingOrder[type][index].name = null;
+      this.EditingOrder[type][index].count = 1;
+      this.EditingOrder[type][index].price = 0;
     },
 
     changeDoorCategory(param) {

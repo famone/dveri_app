@@ -184,7 +184,9 @@
                   :label="dop.type"
                   item-text="name"
                   item-value="name"
+                  clearable
                   @change="atInput('dopServ', index, 'name', $event)"
+                  @click:clear="clearDopServ('dopServ', index)"
                 >
                 </v-combobox>
               </div>
@@ -193,12 +195,14 @@
                   type="number"
                   label="Количество"
                   :value="dop.count"
+                  clearable
                   @change="atInput('dopServ', index, 'count', $event)"
                 ></v-text-field>
               </div>
               <div class="col-lg-3">
                 <v-text-field
                   label="Стоимость руб."
+                  clearable
                   :value="dop.price"
                   @change="atInput('dopServ', index, 'price', $event)"
                 ></v-text-field>
@@ -289,7 +293,9 @@
                 :label="bossDop.type"
                 item-text="name"
                 item-value="name"
+                clearable
                 @change="atInput('bossDop', index, 'name', $event)"
+                @click:clear="clearDopServ('bossDop', index)"
               >
               </v-combobox>
             </div>
@@ -298,12 +304,14 @@
                 type="number"
                 label="Количество"
                 @change="atInput('bossDop', index, 'count', $event)"
+                clearable
               ></v-text-field>
             </div>
             <div class="col-lg-3">
               <v-text-field
                 label="Стоимость руб."
                 @change="atInput('bossDop', index, 'price', $event)"
+                clearable
               ></v-text-field>
             </div>
             <div class="col-lg-2">
@@ -824,6 +832,13 @@ export default {
             this.zakaz[type][index].count;
         }
       }
+    },
+
+    clearDopServ(type, index) {
+      this.EditingOrder[type][index].service = null;
+      this.EditingOrder[type][index].name = null;
+      this.EditingOrder[type][index].count = 1;
+      this.EditingOrder[type][index].price = 0;
     },
 
     changeDoorCategory(category) {

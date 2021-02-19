@@ -318,7 +318,7 @@
       </template>
 
       <template #item.payment_rest="{ item }">
-        {{ item.total}}
+        {{ item.total }}
         <!-- {{ item.total - item.avans }} -->
       </template>
 
@@ -375,7 +375,7 @@ export default {
       deliting: "",
       cities: ["Все", "Санкт-Петербург", "Москва"],
       city: "",
-      headers: [
+      adminHeaders: [
         { text: "Ред.", value: "actions", sortable: false },
         { text: "№", value: "id" },
         { text: "Адрес", value: "adress" },
@@ -388,6 +388,27 @@ export default {
         { text: "Замерщик", value: "zamershik.name" },
         { text: "Дата монтажа", value: "date_mont" },
         { text: "Бригада", value: "brigada_mont.name" },
+        { text: "Цена диллера", value: "cost_diler" },
+        { text: "Примечание продавца", value: "prim_saler" },
+        { text: "Примечание Руководителя", value: "prim_rukvod" },
+        { text: "Дата продажи", value: "date" },
+        { text: "Продавец", sortable: true, value: "saler.name" },
+        { text: "Дополнительные услуги", value: "dopServ" },
+        { text: "Остаток платежа", value: "payment_rest" },
+        { text: "Сумма премии", value: "sum_premia" },
+        { text: "Премия ВДЗ", value: "vdz_premia" },
+      ],
+      zamershikHeaders: [
+        { text: "Ред.", value: "actions", sortable: false },
+        { text: "№", value: "id" },
+        { text: "Адрес", value: "adress" },
+        { text: "Телефон", value: "phone" },
+        { text: "ФИО", value: "fio" },
+        { text: "Модель двери", value: "door_model" },
+        { text: "Размер / Сторона", value: "door_size" },
+        { text: "Проем", value: "proem_size" },
+        { text: "Дата замера", value: "data_zamera" },
+        { text: "Замерщик", value: "zamershik.name" },
         { text: "Цена диллера", value: "cost_diler" },
         { text: "Примечание продавца", value: "prim_saler" },
         { text: "Примечание Руководителя", value: "prim_rukvod" },
@@ -452,6 +473,13 @@ export default {
       loading: "zakaz/GET_LOADING",
     }),
 
+    headers() {
+      const role = this.getUser.roles[0];
+
+      if (role === "administrator") return this.adminHeaders;
+      else if (role === "zamershik") return this.zamershikHeaders;
+    },
+
     statusesOnRole() {
       const role = this.getUser.roles[0];
       return role === "administrator" ? this.statuses : this.statusesSaler;
@@ -487,7 +515,7 @@ export default {
     itemsOnRole() {
       if (this.getUser.roles[0] === "zamershik") {
         this.filteredItems = this.doors.filter(({ status }) => {
-          status === "pending";
+          return status === "zamer";
         });
       } else {
         this.filteredItems = [...this.doors];
@@ -755,6 +783,7 @@ export default {
     this.fetchTeams();
     this.fetchZamershiki();
     this.fetchDoors();
+    this.itemsOnRole();
   },
 
   watch: {

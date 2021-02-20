@@ -835,9 +835,9 @@ export default {
       const reqestBody = {
         ...this.EditingOrder,
         total: this.totalSum,
-        category_saler: this.EditingOrder.category_saler.id,
+        category_saler: this.EditingOrder.category_saler.term_id,
         model_saler: this.EditingOrder.model_saler.id,
-        category_ruk: this.EditingOrder.category_ruk.id,
+        category_ruk: this.EditingOrder.category_ruk.term_id,
         model_ruk: this.EditingOrder.model_ruk.id,
       };
 

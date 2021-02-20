@@ -463,9 +463,8 @@ export default {
   },
 
   computed: {
-    ...mapState("zakaz", ["doors", "loadDoors"]),
-
     ...mapGetters({
+      sales: "zakaz/GET_SALES",
       getUser: "auth/getUser",
       teams: "zakaz/GET_TEAMS",
       zamershiki: "zakaz/GET_ZAMERSHIKI",
@@ -506,19 +505,18 @@ export default {
     }),
 
     ...mapActions({
-      fetchTeams: "zakaz/UPDATE_TEAMS",
-      fetchZamershiki: "zakaz/UPDATE_ZAMERSHIKI",
-      fetchDoors: "zakaz/getDoors",
+      fetchSales: "zakaz/UPDATE_SALES",
       EDIT_ZAKAZ: "zakaz/EDIT_ZAKAZ",
+      DELETE_SALE: "zakaz/DELETE_SALE",
     }),
 
     itemsOnRole() {
       if (this.getUser.roles[0] === "zamershik") {
-        this.filteredItems = this.doors.filter(({ status }) => {
+        this.filteredItems = this.sales.filter(({ status }) => {
           return status === "zamer";
         });
       } else {
-        this.filteredItems = [...this.doors];
+        this.filteredItems = [...this.sales];
       }
     },
 
@@ -591,7 +589,7 @@ export default {
         vremya_zamera,
       }).then(() => {
         this.data_zamera = null;
-        this.fetchDoors();
+        this.fetchSales();
       });
     },
 
@@ -606,7 +604,7 @@ export default {
         time_mont,
       }).then(() => {
         this.date_mont = null;
-        this.fetchDoors();
+        this.fetchSales();
       });
     },
 
@@ -616,7 +614,7 @@ export default {
         zamershik: this.zamershik,
       }).then(() => {
         this.zamershik = null;
-        this.fetchDoors();
+        this.fetchSales();
       });
     },
 
@@ -626,7 +624,7 @@ export default {
         team: this.team,
       }).then(() => {
         this.team = null;
-        this.fetchDoors();
+        this.fetchSales();
       });
     },
 
@@ -636,7 +634,7 @@ export default {
         status: this.status,
       }).then(() => {
         this.status = null;
-        this.fetchDoors();
+        this.fetchSales();
       });
     },
 
@@ -692,7 +690,7 @@ export default {
             this.columnSearchQueries[objProp] = "";
           }
         }
-        // let copyDoors = this.doors.map((el) => searchStr(el));
+        // let copyDoors = this.sales.map((el) => searchStr(el));
         this.items = this.filteredItems.filter((el) => {
           const comparedStr = searchStr(el) || false;
           return (
@@ -769,25 +767,21 @@ export default {
       this.dialogDelete = false;
       this.deliting = "";
     },
+
     deleteItemConfirm() {
-      this.$store.dispatch("zakaz/startLoader");
-      this.$store.dispatch("zakaz/deliteZakaz", this.deliting);
+      this.DELETE_SALE(this.deliting);
       this.dialogDelete = false;
       this.deliting = "";
     },
   },
 
   mounted() {
-    // api
-    // TODO no need to fetch data every time component rerender / call one time in App.vue and then make request only for the part that had been changed
-    this.fetchTeams();
-    this.fetchZamershiki();
-    this.fetchDoors();
     this.itemsOnRole();
+    this.fetchSales();
   },
 
   watch: {
-    doors(newVal) {
+    sales(newVal) {
       if (this.filterTag) {
         this.filterCategory(this.filterTag);
       } else {

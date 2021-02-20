@@ -83,6 +83,7 @@ export default {
     ...mapActions({
       AUTH_REQUEST: "auth/AUTH_REQUEST",
     }),
+    
     login() {
       if (this.$v.$invalid) {
         this.$v.$touch();

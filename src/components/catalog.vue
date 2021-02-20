@@ -9,7 +9,7 @@
           <v-data-table
             :headers="headers"
             :items="filteredItems"
-            :loading="loadModels"
+            :loading="loading"
             class="elevation-1"
           >
             <template v-slot:top>
@@ -33,29 +33,26 @@
                   </v-row></v-container
                 >
 
-
-        <v-dialog v-model="dialogModel" max-width="500px">
-            <v-card>
-              <v-card-title class="headline"
-                >Вы точно хотите удалить модель?</v-card-title
-              >
-              <v-card-actions>
-                <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="closeDelete"
-                  >Отмена</v-btn
-                >
-                <v-btn
-                  color="blue darken-1"
-                  text
-                  @click="deleteModelConfirm(delitingModel)"
-                  >Удалить</v-btn
-                >
-                <v-spacer></v-spacer>
-              </v-card-actions>
-            </v-card>
-          </v-dialog>
-
-
+                <v-dialog v-model="dialogModel" max-width="500px">
+                  <v-card>
+                    <v-card-title class="headline"
+                      >Вы точно хотите удалить модель?</v-card-title
+                    >
+                    <v-card-actions>
+                      <v-spacer></v-spacer>
+                      <v-btn color="blue darken-1" text @click="closeDelete"
+                        >Отмена</v-btn
+                      >
+                      <v-btn
+                        color="blue darken-1"
+                        text
+                        @click="deleteModelConfirm(delitingModel)"
+                        >Удалить</v-btn
+                      >
+                      <v-spacer></v-spacer>
+                    </v-card-actions>
+                  </v-card>
+                </v-dialog>
               </v-toolbar>
             </template>
 
@@ -65,8 +62,6 @@
               >
 
               <v-icon small @click="deleteModel(item)">mdi-delete</v-icon>
-
-            
             </template>
           </v-data-table>
         </div>
@@ -77,28 +72,34 @@
 
 <script>
 import axios from "axios";
-import { mapMutations, mapState } from "vuex";
+import { mapMutations, mapState, mapGetters, mapActions } from "vuex";
 export default {
-  data: () => ({
-    dialog: false,
-    brand: "",
-    load: true,
-    categorys: [],
-    dialogModel: false,
-    delitingModel: null,
-    headers: [
-      {
-        text: "Производитель двери",
-        align: "start",
-        sortable: false,
-        value: "category.name",
-      },
-      { text: "Модель двери", sortable: false, value: "name" },
-      { text: "Редактировать", value: "actions", sortable: false },
-    ],
-  }),
+  data() {
+    return {
+      dialog: false,
+      brand: "",
+      load: true,
+      categorys: [],
+      dialogModel: false,
+      delitingModel: null,
+      headers: [
+        {
+          text: "Производитель двери",
+          align: "start",
+          sortable: false,
+          value: "category.name",
+        },
+        { text: "Модель двери", sortable: false, value: "name" },
+        { text: "Редактировать", value: "actions", sortable: false },
+      ],
+    };
+  },
 
   computed: {
+    ...mapGetters({
+      loading: "zakaz/GET_LOADING",
+    }),
+
     filteredItems() {
       if (this.brand === "Все") {
         return this.models;
@@ -108,7 +109,7 @@ export default {
         });
       }
     },
-    ...mapState("zakaz", ["models", "loadModels"]),
+    ...mapState("zakaz", ["models"]),
   },
   created() {
     // категории
@@ -123,11 +124,16 @@ export default {
       });
 
     // модели
-    this.$store.dispatch("zakaz/loadModels");
+    this.LOAD_MODELS();
   },
   methods: {
     ...mapMutations({
       SET_CHOSEN_MODEL: "zakaz/SET_CHOSEN_MODEL",
+    }),
+
+    ...mapActions({
+      LOAD_MODELS: "zakaz/LOAD_MODELS",
+      DELETE_MODEL: "zakaz/DELETE_MODEL",
     }),
 
     editItem(item) {
@@ -135,18 +141,18 @@ export default {
       this.SET_CHOSEN_MODEL(item);
       this.$router.push("/edit_model/" + item.id);
     },
-    deleteModel(item){
+    deleteModel(item) {
       this.dialogModel = true;
       this.delitingModel = item.id;
-      console.log(this.delitingModel)
+      console.log(this.delitingModel);
     },
     closeDelete() {
       this.dialogModel = false;
       this.delitingModel = null;
-      console.log(this.delitingModel)
+      console.log(this.delitingModel);
     },
     deleteModelConfirm(item) {
-      this.$store.dispatch("zakaz/deliteModel", item);
+      this.DELETE_MODEL(item);
       this.dialogModel = false;
       this.delitingModel = "";
     },

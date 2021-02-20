@@ -10,7 +10,7 @@
             :headers="headers"
             :items="teams"
             sort-by="calories"
-            :loading="loadTeams"
+            :loading="loading"
             class="elevation-1"
           >
             <template v-slot:top>
@@ -35,7 +35,7 @@
                     <v-card-text>
                       <v-container>
                         <v-row>
-                          <v-col cols="12" >
+                          <v-col cols="12">
                             <v-text-field
                               v-model="editedItem.title"
                               label="Название"
@@ -99,48 +99,53 @@
 </template>
 
 <script>
-import {mapState} from 'vuex'
-import axios from "axios";
+import { mapActions, mapGetters } from "vuex";
+
 export default {
-  data: () => ({
-    dialog: false,
-    deliting: '',
-    load: true,
-    dialogDelete: false,
-    headers: [
-      {
-        text: "Бригада",
-        align: "start",
-        sortable: false,
-        value: "title",
+  data() {
+    return {
+      dialog: false,
+      deliting: "",
+      load: true,
+      dialogDelete: false,
+      headers: [
+        {
+          text: "Бригада",
+          align: "start",
+          sortable: false,
+          value: "title",
+        },
+        {
+          text: "Количество заказов бригады",
+          sortable: false,
+          value: "kolZakazov",
+        },
+        { text: "Редактировать", value: "actions", sortable: false },
+      ],
+      models: [],
+      editedIndex: -1,
+      editedItem: {
+        title: "",
+        kolZakazov: 0,
       },
-      {
-        text: "Количество заказов бригады",
-        sortable: false,
-        value: "kolZakazov",
+      defaultItem: {
+        title: "",
+        kolZakazov: 0,
       },
-      { text: "Редактировать", value: "actions", sortable: false },
-    ],
-    models: [],
-    editedIndex: -1,
-    editedItem: {
-      title: "",
-      kolZakazov: 0,
-    },
-    defaultItem: {
-      title: "",
-      kolZakazov: 0,
-    },
-  }),
+    };
+  },
 
   computed: {
+    ...mapGetters({
+      loading: "zakaz/GET_LOADING",
+      teams: "zakaz/GET_TEAMS",
+    }),
+
     formTitle() {
       return this.editedIndex === -1
         ? "Создать бригаду"
         : "Редактировать бригаду";
     },
-
-    ...mapState("zakaz", ["teams", "loadTeams"]),
   },
 
   watch: {
@@ -151,12 +156,13 @@ export default {
       val || this.closeDelete();
     },
   },
-  created() {
-    // бригады
-    this.$store.dispatch("zakaz/UPDATE_TEAMS");
-    
-  },
+
   methods: {
+    ...mapActions({
+      DELETE_TEAM: "zakaz/DELETE_TEAM",
+      ADD_TEAM: "zakaz/ADD_TEAM",
+    }),
+
     editItem(item) {
       this.editedIndex = this.teams.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -165,12 +171,12 @@ export default {
 
     deleteItem(item) {
       this.dialogDelete = true;
-      this.deliting = item.id
-      console.log( this.deliting)
+      this.deliting = item.id;
+      console.log(this.deliting);
     },
 
     deleteItemConfirm(item) {
-      this.$store.dispatch("zakaz/deliteTeam", item);
+      this.DELETE_TEAM(item);
       this.closeDelete();
     },
 
@@ -184,14 +190,14 @@ export default {
 
     closeDelete() {
       this.dialogDelete = false;
-      this.deliting = ""
+      this.deliting = "";
     },
 
     save() {
       if (this.editedIndex > -1) {
         Object.assign(this.teams[this.editedIndex], this.editedItem);
       } else {
-        this.$store.dispatch("zakaz/addTeam", this.editedItem);
+        this.ADD_TEAM(this.editedItem);
       }
       this.close();
     },

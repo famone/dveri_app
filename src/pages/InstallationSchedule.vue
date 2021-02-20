@@ -164,12 +164,12 @@ export default {
 
   methods: {
     ...mapActions({
-      fetchDoors: "zakaz/getDoors",
+      fetchSales: "zakaz/UPDATE_SALES",
     }),
   },
 
   async created() {
-    await this.fetchDoors();
+    await this.fetchSales();
     await axios
       .get("https://door.webink.site/wp-json/door/v1/get/teams")
       .then((response) => {

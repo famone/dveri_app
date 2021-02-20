@@ -121,13 +121,14 @@ export default {
       GET_CHOSEN_MODEL: "zakaz/GET_CHOSEN_MODEL",
     }),
   },
+
   mounted() {
     this.brand = this.getModelEdit(this.id).category;
     console.log(this.brand);
     this.doorModels = this.GET_MODELS(this.brand);
     this.doorModel = this.getModelEdit(this.id).name;
     // модели
-    this.$store.dispatch("zakaz/loadModels");
+    this.LOAD_MODELS();
 
     axios
       .get("https://door.webink.site/wp-json/door/v1/get/categorys")
@@ -149,6 +150,7 @@ export default {
   methods: {
     ...mapActions({
       EDIT_MODELS: "zakaz/EDIT_MODELS",
+      LOAD_MODELS: "zakaz/LOAD_MODELS",
     }),
 
     addModel() {

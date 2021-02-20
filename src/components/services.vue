@@ -10,7 +10,7 @@
           <v-data-table
             :headers="headers"
             :items="filteredDopServices"
-            :loading="loadServ"
+            :loading="loading"
             class="elevation-1"
           >
             <template v-slot:top>
@@ -120,36 +120,41 @@
 
 <script>
 import axios from "axios";
-import { mapState } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 export default {
-  data: () => ({
-    dopServices: [],
-    manufacturers: [],
-    loadServ: true,
-    dialog: false,
-    dialogDelete: false,
-    deliting: "",
-    brand: "",
-    load: true,
-    categorys: [],
-    headers: [
-      { text: "Название услуги", align: "start", value: "name" },
-      { text: "Стоимость", sortable: false, value: "price" },
-      { text: "Редактировать", value: "actions", sortable: false },
-    ],
-    editedIndex: -1,
-    editedItem: {
-      name: "",
-      price: 0,
-      manufacturer: null,
-    },
-    defaultItem: {
-      name: "",
-      price: 0,
-    },
-  }),
+  data() {
+    return {
+      manufacturers: [],
+      dialog: false,
+      dialogDelete: false,
+      deliting: "",
+      brand: "",
+      load: true,
+      categorys: [],
+      headers: [
+        { text: "Название услуги", align: "start", value: "name" },
+        { text: "Стоимость", sortable: false, value: "price" },
+        { text: "Редактировать", value: "actions", sortable: false },
+      ],
+      editedIndex: -1,
+      editedItem: {
+        name: "",
+        price: 0,
+        manufacturer: null,
+      },
+      defaultItem: {
+        name: "",
+        price: 0,
+      },
+    };
+  },
 
   computed: {
+    ...mapGetters({
+      dopServices: "zakaz/GET_SERVICES",
+      loading: "zakaz/GET_LOADING",
+    }),
+
     formTitle() {
       return this.editedIndex === -1
         ? "Создать доп. услугу"
@@ -168,12 +173,6 @@ export default {
   },
   created() {
     // дополнительные услуги
-    axios
-      .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
-      .then((response) => {
-        this.dopServices = response.data;
-        this.loadServ = false;
-      });
 
     axios
       .get("https://door.webink.site/wp-json/door/v1/get/categorys")
@@ -187,6 +186,11 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      DELETE_SERVICE: "zakaz/DELETE_SERVICE",
+      EDIT_SERVICE: "zakaz/EDIT_SERVICE",
+    }),
+
     editItem(item) {
       this.editedIndex = this.dopServices.indexOf(item);
       this.editedItem = Object.assign({}, item);
@@ -196,23 +200,11 @@ export default {
     deleteItem(item) {
       this.dialogDelete = true;
       this.deliting = item.id;
-      console.log(this.deliting);
     },
 
     async deleteItemConfirm() {
       this.closeDelete();
-      this.loadServ = true;
-      await axios(
-        "https://door.webink.site/wp-json/door/v1/delete/dopserv?id=" +
-          this.deliting
-      );
-
-      await axios
-        .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
-        .then((response) => {
-          this.dopServices = response.data;
-          this.loadServ = false;
-        });
+      this.DELETE_SERVICE(this.deliting);
     },
 
     close() {
@@ -232,20 +224,14 @@ export default {
       }
 
       this.close();
-      this.loadServ = true;
 
-      await axios.post("https://door.webink.site/wp-json/door/v1/set/dopserv", {
+      const requestBody = {
         ...this.editedItem,
         manufacturer_id: this.editedItem.manufacturer.term_id,
         manufacturer_name: this.editedItem.manufacturer.name,
-      });
+      };
 
-      await axios
-        .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
-        .then((response) => {
-          this.dopServices = response.data;
-          this.loadServ = false;
-        });
+      this.EDIT_SERVICE(requestBody);
     },
   },
 

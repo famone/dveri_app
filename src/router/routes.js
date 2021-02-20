@@ -1,15 +1,15 @@
-import Analitics from '../pages/Analitics';
-import Orders from '../pages/Orders';
-import Catalog from '../pages/Catalog/Catalog';
-import Users from '../pages/Users';
-import Home from '../pages/Home';
-import Login from '../pages/Login';
-import Neworder from '../pages/Neworder';
-import Directories from '../pages/Directories'
-import Edit_order from '../pages/Edit_order.vue'
-import Edit_model from '../pages/Edit_model.vue'
-import NewDoor from '../pages/NewDoor.vue'
-import InstallationSchedule from '../pages/InstallationSchedule';
+const Analitics = () => import('../pages/Analitics');
+const Orders = () => import('../pages/Orders');
+const Catalog = () => import('../pages/Catalog/Catalog');
+const Users = () => import('../pages/Users');
+const Home = () => import('../pages/Home');
+const Login = () => import('../pages/Login');
+const Neworder = () => import('../pages/Neworder');
+const Directories = () => import('../pages/Directories');
+const Edit_order = () => import('../pages/Edit_order');
+const Edit_model = () => import('../pages/Edit_model');
+const NewDoor = () => import('../pages/NewDoor');
+const InstallationSchedule = () => import('../pages/InstallationSchedule');
 
 const routes = [
   {

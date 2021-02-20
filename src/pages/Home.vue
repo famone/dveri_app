@@ -12,17 +12,19 @@
         </v-chip>
       </v-chip-group>
 
-      <datatable :filterTag="filterTag" :selectFilterTag="selectFilterTag" />
+      <SalesDataTable
+        :filterTag="filterTag"
+        :selectFilterTag="selectFilterTag"
+      />
     </div>
   </section>
 </template>
 
 <script>
-// TODO edit
-import datatable from "../components/datatable.vue";
-
 export default {
-  components: { datatable },
+  components: {
+    SalesDataTable: () => import("../components/SalesDataTable"),
+  },
   data() {
     return {
       tags: [

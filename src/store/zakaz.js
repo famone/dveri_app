@@ -3,22 +3,19 @@ import axios from 'axios'
 const zakaz = {
   namespaced: true,
   state: {
-    doors: [],
-    loadDoors: true,
+    sales: [],
     models: [],
-    loadModels: true,
     teams: [],
     zamershiki: [],
+    services: [],
     chosenZakaz: null,
     chosenModel: null,
-    loadTeams: true,
-    // ---------------
     loading: false
   },
 
   getters: {
     GET_SALES(state) {
-      return state.doors
+      return state.sales
     },
 
     GET_MODELS: state => brand => {
@@ -28,7 +25,7 @@ const zakaz = {
     },
 
     getDoorEdit: (state) => (id) => {
-      return state.doors.find(item => item.id == id)
+      return state.sales.find(item => item.id == id)
     },
     getModelEdit: (state) => (id) => {
       return state.models.find(item => item.id == id)
@@ -36,8 +33,13 @@ const zakaz = {
     GET_TEAMS(state) {
       return state.teams
     },
+
     GET_ZAMERSHIKI(state) {
       return state.zamershiki
+    },
+
+    GET_SERVICES(state) {
+      return state.services
     },
 
     GET_CHOSEN_ZAKAZ(state) {
@@ -55,26 +57,23 @@ const zakaz = {
 
   mutations: {
     SET_DOORS(state, payload) {
-      state.doors = payload
-      state.loadDoors = false
+      state.sales = payload
     },
 
     SET_MODELS(state, payload) {
       state.models = payload
-      state.loadModels = false
-    },
-
-    START_LOADER(state) {
-      state.loadDoors = true
     },
 
     SET_TEAMS(state, teams) {
       state.teams = teams
-      state.loadTeams = false
     },
 
     SET_ZAMERSHIKI(state, zamershiki) {
       state.zamershiki = zamershiki
+    },
+
+    SET_SERVICES(state, services) {
+      state.services = services
     },
 
     SET_CHOSEN_ZAKAZ(state, zakaz) {
@@ -91,7 +90,7 @@ const zakaz = {
   },
 
   actions: {
-    getDoors({ commit, rootGetters }) {
+    UPDATE_SALES({ commit, rootGetters }) {
 
       const userRoleId = rootGetters["auth/getUser"].id;
 
@@ -101,22 +100,20 @@ const zakaz = {
         .get("https://door.webink.site/wp-json/door/v1/get/sales?user_id=" + userRoleId)
         .then((response) => {
           commit("SET_DOORS", response.data)
-          commit("SET_LOADING", false);
-          commit("SET_LOADING", false);
         })
         .catch(err => console.log(err))
         .finally(() => commit("SET_LOADING", false))
     },
 
-    loadModels({ commit }) {
+    LOAD_MODELS({ commit }) {
+      commit("SET_LOADING", true);
+
       axios
         .get('https://door.webink.site/wp-json/door/v1/get/models')
         .then(response => {
           commit("SET_MODELS", response.data)
         })
-    },
-    startLoader({ commit }) {
-      commit("START_LOADER")
+        .finally(() => commit("SET_LOADING", false));
     },
 
     async EDIT_ZAKAZ({ commit }, zakaz) {
@@ -142,87 +139,45 @@ const zakaz = {
       axios.post("https://door.webink.site/wp-json/door/v1/edit/models?door_id=" + model.id, model)
     },
 
-    deliteZakaz({ commit, rootGetters }, payload) {
+    DELETE_SALE({ commit, dispatch, rootGetters }, payload) {
       const userRoleId = rootGetters["auth/getUser"].id;
-
-      commit("SET_LOADING", true);
-
       axios
         .get("https://door.webink.site/wp-json/door/v1/delete/sales?order_id=" + payload)
-        .then((response) => {
-          if (response.data.status === 'OK') {
-            axios
-              .get("https://door.webink.site/wp-json/door/v1/get/sales?user_id=" + userRoleId)
-              .then((response) => {
-                commit("SET_DOORS", response.data)
-
-              });
-          }
-
-        })
-        .finally(() => commit("SET_LOADING", false))
+        .then(() => dispatch("UPDATE_SALES"))
     },
 
-    deliteModel({ commit, state }, id) {
-      state.loadModels = true
+    DELETE_MODEL({ commit, dispatch }, id) {
       axios
         .get("https://door.webink.site/wp-json/door/v1/delete/models?id=" + id)
-        .then((response) => {
-
-
-          if (response.data.status == 200) {
-            axios
-              .get('https://door.webink.site/wp-json/door/v1/get/models')
-              .then(response => {
-                commit("SET_MODELS", response.data)
-              })
-          }
-        });
+        .then(() => dispatch("LOAD_MODELS"))
     },
 
     UPDATE_TEAMS({ commit }) {
+      commit("SET_LOADING", true);
+
       axios.get("https://door.webink.site/wp-json/door/v1/get/teams")
         .then(({ data }) => {
           commit("SET_TEAMS", data)
         })
+        .finally(() => {
+          commit("SET_LOADING", false);
+        })
     },
 
-    deliteTeam({ commit, state }, id) {
-      state.loadTeams = true
+    DELETE_TEAM({ commit, dispatch }, id) {
       axios
         .get("https://door.webink.site/wp-json/door/v1/delete/teams?id=" + id)
-        .then((response) => {
-
-
-          if (response.data.status == 200) {
-            axios
-              .get('https://door.webink.site/wp-json/door/v1/get/teams')
-              .then(response => {
-                commit("SET_TEAMS", response.data)
-              })
-          }
-        });
+        .then(() => dispatch("UPDATE_TEAMS"));
     },
 
-    addTeam({ commit, state }, name) {
-      state.loadTeams = true
-
+    ADD_TEAM({ commit, dispatch }, name) {
       let team = {
         name: name.title
       }
 
       axios
         .post('https://door.webink.site/wp-json/door/v1/create/teams', team)
-        .then((response) => {
-
-          if (response.data.status == 200) {
-            axios
-              .get('https://door.webink.site/wp-json/door/v1/get/teams')
-              .then(response => {
-                commit("SET_TEAMS", response.data)
-              })
-          }
-        })
+        .then(() => dispatch("UPDATE_TEAMS"))
     },
 
     UPDATE_ZAMERSHIKI({ commit }) {
@@ -231,6 +186,30 @@ const zakaz = {
         .then(({ data }) => {
           commit("SET_ZAMERSHIKI", data)
         });
+    },
+
+    LOAD_SERVICES({ commit }) {
+      commit("SET_LOADING", true);
+      axios
+        .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
+        .then(({ data }) => {
+          commit("SET_SERVICES", data)
+        })
+        .finally(() => {
+          commit("SET_LOADING", false);
+        })
+    },
+
+    DELETE_SERVICE({ commit, dispatch }, id) {
+      axios
+        .get("https://door.webink.site/wp-json/door/v1/delete/dopserv?id=" + id)
+        .then(() => dispatch("LOAD_SERVICES"));
+    },
+
+    EDIT_SERVICE({ commit, dispatch }, payload) {
+      axios
+        .post("https://door.webink.site/wp-json/door/v1/set/dopserv", payload)
+        .then(() => dispatch("LOAD_SERVICES"))
     },
   },
 

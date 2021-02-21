@@ -79,6 +79,7 @@
             label="Группа двери продавца"
             @change="changeDoorCategory"
             return-object
+            clearable
           ></v-select>
         </div>
         <div class="col-lg-3">
@@ -88,6 +89,7 @@
             @change="changeDoorModel"
             return-object
             label="Модель двери продавца"
+            clearable
           ></v-select>
         </div>
         <div class="col-lg-3" v-if="getUser.roles[0] !== 'shop_manager'">
@@ -97,6 +99,7 @@
             label="Группа двери руководителя"
             return-object
             @change="changeModelRuk"
+            clearable
           ></v-select>
         </div>
         <div class="col-lg-3" v-if="getUser.roles[0] !== 'shop_manager'">
@@ -106,6 +109,7 @@
             item-value="id"
             label="Модель двери руководителя"
             v-model="zakaz.model_ruk"
+            clearable
           ></v-select>
         </div>
         <!--  -->
@@ -116,6 +120,7 @@
             label="Размер двери"
             @change="showPrice"
             return-object
+            clearable
           ></v-select>
         </div>
         <div class="col-lg-3">
@@ -417,6 +422,7 @@
             item-text="fname"
             return-object
             v-model="zakaz.zamershik"
+            clearable
           ></v-select>
         </div>
 
@@ -487,11 +493,12 @@
 
         <div class="col-lg-2">
           <v-select
-            :items="brigadi"
+            :items="teams"
             label="Бригада"
             item-text="title"
             return-object
             v-model="zakaz.team"
+            clearable
           ></v-select>
         </div>
       </div>
@@ -506,6 +513,7 @@
             :items="payments_metod_list"
             v-model="zakaz.payments_metod"
             label="Тип расчета"
+            clearable
           ></v-select>
         </div>
         <div class="col-lg-3">
@@ -553,6 +561,7 @@
               item-text="title"
               v-model="zakaz.status"
               label="Статус заявки"
+              clearable
             ></v-select>
           </div>
         </div>
@@ -572,6 +581,7 @@
               :items="items"
               label="Статус премии"
               v-model="zakaz.status_premii"
+              clearable
             ></v-select>
           </div>
         </div>
@@ -612,7 +622,6 @@ export default {
     return {
       noZamer: false,
       loadBtn: false,
-      doorsCategory: [],
       doorsModels: [],
       items: ["Тест 1", "Тест 2", "Тест 3", "Тест 4"],
       sideCity: "",
@@ -637,8 +646,6 @@ export default {
       bossDopolnServ: [],
       selectedModel: {},
       doorSizes: [],
-      zamershiks: [],
-      brigadi: [],
       modelsRuk: [],
       // заказ
       zakaz: {
@@ -690,6 +697,9 @@ export default {
     ...mapState("auth", ["user"]),
     ...mapGetters({
       getUser: "auth/getUser",
+      teams: "zakaz/GET_TEAMS",
+      doorsCategory: "zakaz/GET_DOOR_CATEGORIES",
+      zamershiks: "zakaz/GET_ZAMERSHIKI",
     }),
 
     totalSum() {
@@ -718,27 +728,6 @@ export default {
       .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
       .then((response) => {
         this.dopServArray = response.data;
-      });
-
-    // категории дверей
-    axios
-      .get("https://door.webink.site/wp-json/door/v1/get/categorys")
-      .then((response) => {
-        this.doorsCategory = response.data;
-      });
-
-    // замерщики
-    axios
-      .get("https://door.webink.site/wp-json/door/v1/get/users?type=zamershik")
-      .then((response) => {
-        this.zamershiks = response.data;
-      });
-
-    // ,бригады
-    axios
-      .get("https://door.webink.site/wp-json/door/v1/get/teams")
-      .then((response) => {
-        this.brigadi = response.data;
       });
 
     //инициализируем и подключаем карты

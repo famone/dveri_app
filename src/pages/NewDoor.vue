@@ -20,6 +20,7 @@
                 item-text="name"
                 v-model="manufacturer"
                 return-object
+                clearable
               ></v-select>
             </div>
             <div class="col-lg-4 pb-0">

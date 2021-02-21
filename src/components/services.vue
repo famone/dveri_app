@@ -22,6 +22,7 @@
                         label="Производитель"
                         :items="categorys"
                         v-model="brand"
+                        clearable
                       ></v-select>
                     </v-col>
                     <v-spacer></v-spacer>
@@ -64,6 +65,7 @@
                                   item-text="name"
                                   v-model="editedItem.manufacturer"
                                   return-object
+                                  clearable
                                 ></v-select>
                               </v-col>
                             </v-row>

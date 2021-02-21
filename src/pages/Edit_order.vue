@@ -1,515 +1,459 @@
 <template>
   <section>
     <div class="container">
-      <div class="col-lg-12">
-        <v-btn depressed color="primary" @click="$router.go(-1)">
-          <v-icon>mdi-arrow-left</v-icon>
-          Назад</v-btn
-        >
-        <h2>Редактирование заказа № {{ routeId }}</h2>
+      <div class="row">
+        <div class="col-lg-12">
+          <v-btn depressed color="primary" @click="$router.go(-1)">
+            <v-icon>mdi-arrow-left</v-icon>
+            Назад</v-btn
+          >
+          <h2>Редактирование заказа № {{ routeId }}</h2>
+        </div>
       </div>
 
-      <v-skeleton-loader
-        v-if="loading"
-        class="mx-auto"
-        width="100%"
-        type="card"
-      >
-      </v-skeleton-loader>
-      <br /><br />
-      <v-skeleton-loader
-        v-if="loading"
-        class="mx-auto"
-        width="100%"
-        type="card"
-      >
-      </v-skeleton-loader>
-      <br /><br />
-      <v-skeleton-loader
-        v-if="loading"
-        class="mx-auto"
-        width="100%"
-        type="card"
-      >
-      </v-skeleton-loader>
-
-      <div class="row" v-else>
-        <div class="row shad-box">
-          <div class="col-lg-12">
-            <h3>
-              <span class="mdi mdi-account-multiple-outline"></span>
-              Персональная информация:
-            </h3>
-          </div>
-          <div class="col-lg-6">
-            <v-text-field label="ФИО" v-model="EditingOrder.fio"></v-text-field>
-          </div>
-          <div class="col-lg-3">
-            <v-text-field
-              label="Телефон"
-              v-model="EditingOrder.phone"
-              v-mask="'+7 (###) ###-##-##'"
-            ></v-text-field>
-          </div>
-          <div class="col-lg-3">
-            <v-text-field
-              label="Дополнительный телефон"
-              v-model="EditingOrder.dop_phone"
-              v-mask="'+7 (###) ###-##-##'"
-            ></v-text-field>
-          </div>
-          <div class="col-lg-3">
-            <v-text-field
-              label="Улица"
-              :value="EditingOrder.adress"
-              id="suggest1"
-            ></v-text-field>
-          </div>
-          <div class="col-lg-1">
-            <v-text-field
-              label="Номер дома"
-              v-model="EditingOrder.house"
-            ></v-text-field>
-          </div>
-
-          <!--  -->
-          <div class="col-lg-1">
-            <v-text-field
-              label="Корпус"
-              v-model="EditingOrder.korpus"
-            ></v-text-field>
-          </div>
-          <!--  -->
-
-          <div class="col-lg-2">
-            <v-text-field
-              label="Квартира"
-              v-model="EditingOrder.flat"
-            ></v-text-field>
-          </div>
-
-          <div class="col-lg-2">
-            <v-text-field
-              label="Этаж"
-              v-model="EditingOrder.floor"
-            ></v-text-field>
-          </div>
-
-          <div class="col-lg-3">
-            <p>Часть города:</p>
-            <v-radio-group v-model="EditingOrder.part_city" row>
-              <v-radio label="Север" value="Север"></v-radio>
-              <v-radio label="Юг" value="Юг"></v-radio>
-            </v-radio-group>
-          </div>
+      <div class="row shad-box">
+        <div class="col-lg-12">
+          <h3>
+            <span class="mdi mdi-account-multiple-outline"></span>
+            Персональная информация:
+          </h3>
+        </div>
+        <div class="col-lg-6">
+          <v-text-field label="ФИО" v-model="EditingOrder.fio"></v-text-field>
+        </div>
+        <div class="col-lg-3">
+          <v-text-field
+            label="Телефон"
+            v-model="EditingOrder.phone"
+            v-mask="'+7 (###) ###-##-##'"
+          ></v-text-field>
+        </div>
+        <div class="col-lg-3">
+          <v-text-field
+            label="Дополнительный телефон"
+            v-model="EditingOrder.dop_phone"
+            v-mask="'+7 (###) ###-##-##'"
+          ></v-text-field>
+        </div>
+        <div class="col-lg-3">
+          <v-text-field
+            label="Улица"
+            :value="EditingOrder.adress"
+            id="suggest1"
+          ></v-text-field>
+        </div>
+        <div class="col-lg-1">
+          <v-text-field
+            label="Номер дома"
+            v-model="EditingOrder.house"
+          ></v-text-field>
         </div>
 
         <!--  -->
+        <div class="col-lg-1">
+          <v-text-field
+            label="Корпус"
+            v-model="EditingOrder.korpus"
+          ></v-text-field>
+        </div>
+        <!--  -->
 
-        <div class="row shad-box">
-          <div class="col-lg-12">
-            <h3>
-              <span class="mdi mdi-cart-outline"></span> Информация о товаре:
-            </h3>
-          </div>
-          <div class="col-lg-3">
-            <v-select
-              :items="doorsCategory"
-              v-model="EditingOrder.category_saler"
-              item-text="name"
-              label="Группа двери продавца"
-              @change="changeDoorCategory"
-              return-object
-            ></v-select>
-          </div>
-          <div class="col-lg-3">
-            <v-select
-              :items="doorsModels"
-              v-model="EditingOrder.model_saler"
-              item-text="name"
-              @change="changeModelSaler"
-              return-object
-              label="Модель двери продавца"
-            ></v-select>
-          </div>
-          <div class="col-lg-3">
-            <v-select
-              :items="doorsCategory"
-              v-model="EditingOrder.category_ruk"
-              item-text="name"
-              label="Группа двери руководителя"
-              @change="changeCategoryRuk"
-              return-object
-            ></v-select>
-          </div>
-          <div class="col-lg-3">
-            <v-select
-              :items="modelsRuk"
-              item-text="name"
-              return-object
-              label="Модель двери руководителя"
-              v-model="EditingOrder.model_ruk"
-            ></v-select>
-          </div>
-
-          <div class="col-lg-3">
-            <v-select
-              :items="doorSizes"
-              v-model="EditingOrder.door_size"
-              label="Размер двери"
-            ></v-select>
-            <!-- item-text="size"
-              @change="showPrice"
-              return-object -->
-          </div>
-          <div class="col-lg-3">
-            <p>Сторона открывания:</p>
-            <v-radio-group v-model="EditingOrder.door_direction" row>
-              <v-radio label="Лево" value="Лево"></v-radio>
-              <v-radio label="Право" value="Право"></v-radio>
-            </v-radio-group>
-          </div>
-          <div class="col-lg-3">
-            <v-text-field
-              label="Размер проема"
-              v-model="EditingOrder.proem_size"
-            ></v-text-field>
-          </div>
-
-          <div class="col-lg-3">
-            <v-text-field
-              label="Номер двери"
-              v-model="EditingOrder.door_number"
-            ></v-text-field>
-          </div>
-
-          <div class="col-lg-6">
-            <v-textarea
-              label="Примечание продавца:"
-              rows="1"
-              prepend-icon="mdi-comment"
-              v-model="EditingOrder.prim_saler"
-            >
-            </v-textarea>
-          </div>
-          <div class="col-lg-6">
-            <v-textarea
-              label="Примечание руководителя:"
-              rows="1"
-              prepend-icon="mdi-comment"
-              v-model="EditingOrder.prim_rukvod"
-            >
-            </v-textarea>
-          </div>
+        <div class="col-lg-2">
+          <v-text-field
+            label="Квартира"
+            v-model="EditingOrder.flat"
+          ></v-text-field>
         </div>
 
-        <div class="row shad-box">
-          <div class="col-lg-12">
-            <h2>
-              <span class="mdi mdi-bookmark-plus-outline"></span> Дополнительные
-              работы:
-            </h2>
-          </div>
-          <div class="col-lg-12">
-            <div
-              class="row repeater"
-              v-for="(dop, index) in EditingOrder.dopServ"
-              :key="index"
-            >
-              <!-- <div v-if="dop.type === 'Доп услуга'" class="col-lg-12">
-                <div class="col-lg-4">
-                  <v-select
-                    :items="dopServArray"
-                    :label="dop.type"
-                    item-text="tekst"
-                    item-value="stoimost"
-                    @change="atInput('dopServ', index, $event)"
-                    return-object
-                  ></v-select>
-                </div>
-                <div class="col-lg-2">
-                  <v-text-field
-                    type="number"
-                    label="Количество"
-                    v-model="EditingOrder.dop.count"
-                  ></v-text-field>
-                </div>
-                <div class="col-lg-3">
-                  <v-text-field
-                    label="Стоимость руб."
-                    v-model="EditingOrder.dop.price"
-                  ></v-text-field>
-                </div>
-                <div class="col-lg-2">
-                  <v-btn
-                    depressed
-                    color="error"
-                    class="m-15"
-                    @click="deliteDop('dopServ', index)"
-                  >
-                    <v-icon left>mdi-delete</v-icon>Удалить</v-btn
-                  >
-                </div>
+        <div class="col-lg-2">
+          <v-text-field
+            label="Этаж"
+            v-model="EditingOrder.floor"
+          ></v-text-field>
+        </div>
 
-                <div class="col-lg-11 pa-0"></div>
-              </div> -->
-              <div class="col-lg-12">
-                <div class="col-lg-4">
-                  <v-combobox
-                    :items="dopServArray"
-                    :label="dop.type"
-                    item-text="name"
-                    item-value="name"
-                    :value="dop.name"
-                    @change="atInput('dopServ', index, 'name', $event)"
-                    @click:clear="clearDopServ('dopServ', index)"
-                    clearable
-                  ></v-combobox>
-                </div>
-                <div class="col-lg-2">
-                  <v-text-field
-                    type="number"
-                    label="Количество"
-                    :value="dop.count"
-                    @change="atInput('dopServ', index, 'count', $event)"
-                    clearable
-                  ></v-text-field>
-                </div>
-                <div class="col-lg-3">
-                  <v-text-field
-                    label="Стоимость руб."
-                    :value="dop.price"
-                    @change="atInput('dopServ', index, 'price', $event)"
-                    clearable
-                  ></v-text-field>
-                </div>
-                <div class="col-lg-2">
-                  <v-btn
-                    depressed
-                    color="error"
-                    class="m-15"
-                    @click="deliteDop('dopServ', index)"
-                  >
-                    <v-icon left>mdi-delete</v-icon>Удалить</v-btn
-                  >
-                </div>
+        <div class="col-lg-3">
+          <p>Часть города:</p>
+          <v-radio-group v-model="EditingOrder.part_city" row>
+            <v-radio label="Север" value="Север"></v-radio>
+            <v-radio label="Юг" value="Юг"></v-radio>
+          </v-radio-group>
+        </div>
+      </div>
+
+      <!--  -->
+
+      <div class="row shad-box">
+        <div class="col-lg-12">
+          <h3>
+            <span class="mdi mdi-cart-outline"></span> Информация о товаре:
+          </h3>
+        </div>
+        <div class="col-lg-3">
+          <v-select
+            :items="doorsCategory"
+            v-model="EditingOrder.category_saler"
+            item-text="name"
+            label="Группа двери продавца"
+            @change="changeDoorCategory"
+            return-object
+            clearable
+          ></v-select>
+        </div>
+        <div class="col-lg-3">
+          <v-select
+            :items="doorsModels"
+            v-model="EditingOrder.model_saler"
+            item-text="name"
+            @change="changeModelSaler"
+            return-object
+            label="Модель двери продавца"
+            clearable
+          ></v-select>
+        </div>
+        <div class="col-lg-3">
+          <v-select
+            :items="doorsCategory"
+            v-model="EditingOrder.category_ruk"
+            item-text="name"
+            label="Группа двери руководителя"
+            @change="changeCategoryRuk"
+            return-object
+            clearable
+          ></v-select>
+        </div>
+        <div class="col-lg-3">
+          <v-select
+            :items="modelsRuk"
+            item-text="name"
+            return-object
+            label="Модель двери руководителя"
+            v-model="EditingOrder.model_ruk"
+            clearable
+          ></v-select>
+        </div>
+
+        <div class="col-lg-3">
+          <v-select
+            :items="doorSizes"
+            v-model="EditingOrder.door_size"
+            label="Размер двери"
+            clearable
+          ></v-select>
+          <!-- item-text="size"
+              @change="showPrice"
+              return-object -->
+        </div>
+        <div class="col-lg-3">
+          <p>Сторона открывания:</p>
+          <v-radio-group v-model="EditingOrder.door_direction" row>
+            <v-radio label="Лево" value="Лево"></v-radio>
+            <v-radio label="Право" value="Право"></v-radio>
+          </v-radio-group>
+        </div>
+        <div class="col-lg-3">
+          <v-text-field
+            label="Размер проема"
+            v-model="EditingOrder.proem_size"
+          ></v-text-field>
+        </div>
+
+        <div class="col-lg-3">
+          <v-text-field
+            label="Номер двери"
+            v-model="EditingOrder.door_number"
+          ></v-text-field>
+        </div>
+
+        <div class="col-lg-6">
+          <v-textarea
+            label="Примечание продавца:"
+            rows="1"
+            prepend-icon="mdi-comment"
+            v-model="EditingOrder.prim_saler"
+          >
+          </v-textarea>
+        </div>
+        <div class="col-lg-6">
+          <v-textarea
+            label="Примечание руководителя:"
+            rows="1"
+            prepend-icon="mdi-comment"
+            v-model="EditingOrder.prim_rukvod"
+          >
+          </v-textarea>
+        </div>
+      </div>
+
+      <div class="row shad-box">
+        <div class="col-lg-12">
+          <h2>
+            <span class="mdi mdi-bookmark-plus-outline"></span> Дополнительные
+            работы:
+          </h2>
+        </div>
+        <div class="col-lg-12">
+          <div
+            class="row repeater"
+            v-for="(dop, index) in EditingOrder.dopServ"
+            :key="index"
+          >
+            <div class="col-lg-12">
+              <div class="col-lg-4">
+                <v-combobox
+                  :items="dopServArray"
+                  :label="dop.type"
+                  item-text="name"
+                  item-value="name"
+                  :value="dop.name"
+                  @change="atInput('dopServ', index, 'name', $event)"
+                  @click:clear="clearDopServ('dopServ', index)"
+                  clearable
+                ></v-combobox>
+              </div>
+              <div class="col-lg-2">
+                <v-text-field
+                  type="number"
+                  label="Количество"
+                  :value="dop.count"
+                  @change="atInput('dopServ', index, 'count', $event)"
+                  clearable
+                ></v-text-field>
+              </div>
+              <div class="col-lg-3">
+                <v-text-field
+                  label="Стоимость руб."
+                  :value="dop.price"
+                  @change="atInput('dopServ', index, 'price', $event)"
+                  clearable
+                ></v-text-field>
+              </div>
+              <div class="col-lg-2">
+                <v-btn
+                  depressed
+                  color="error"
+                  class="m-15"
+                  @click="deliteDop('dopServ', index)"
+                >
+                  <v-icon left>mdi-delete</v-icon>Удалить</v-btn
+                >
               </div>
             </div>
           </div>
+        </div>
 
-          <v-btn
-            depressed
-            color="primary"
-            @click="addDop('dopServ', 'Услуга')"
-            class="mr-4"
-          >
-            <v-icon left>mdi-cart-plus</v-icon>
-            Добавить
-          </v-btn>
-          <!-- <v-btn
+        <v-btn
+          depressed
+          color="primary"
+          @click="addDop('dopServ', 'Услуга')"
+          class="mr-4"
+        >
+          <v-icon left>mdi-cart-plus</v-icon>
+          Добавить
+        </v-btn>
+        <!-- <v-btn
             depressed
             color="secondary"
             @click="addDop('dopServ', 'Доп услуга')"
           >
             <v-icon left>mdi-plus</v-icon>Добавить другое
           </v-btn> -->
+      </div>
+
+      <div class="row shad-box" v-if="getUser.id !== 6">
+        <div class="col-lg-12">
+          <h2>
+            <span class="mdi mdi-bookmark-plus-outline"></span> Замер и монтаж:
+          </h2>
         </div>
 
-        <div class="row shad-box" v-if="getUser.id !== 6">
-          <div class="col-lg-12">
-            <h2>
-              <span class="mdi mdi-bookmark-plus-outline"></span> Замер и
-              монтаж:
-            </h2>
-          </div>
-
-          <div class="col-lg-3">
-            <v-menu
-              ref="menu"
-              v-model="menu"
-              :close-on-content-click="false"
-              :return-value.sync="EditingOrder.data_zamera"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="EditingOrder.data_zamera"
-                  label="Желаемая дата замера"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
+        <div class="col-lg-3">
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            :return-value.sync="EditingOrder.data_zamera"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
                 v-model="EditingOrder.data_zamera"
-                no-title
-                scrollable
-              >
-                <v-spacer></v-spacer>
-                <v-btn text color="primary" @click="menu = false">Отмена</v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.menu.save(EditingOrder.data_zamera)"
-                  >Ок</v-btn
-                >
-              </v-date-picker>
-            </v-menu>
-          </div>
-          <div class="col-lg-3">
-            <v-select
-              label="Замерщик"
-              :items="zamershiks"
-              v-model="EditingOrder.zamershik"
-              item-text="name"
-            ></v-select>
-          </div>
-
-          <div class="col-lg-3">
-            <v-menu
-              ref="menu2"
-              v-model="menu2"
-              :close-on-content-click="false"
-              :return-value.sync="EditingOrder.date_mont"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
+                label="Желаемая дата замера"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker
+              v-model="EditingOrder.data_zamera"
+              no-title
+              scrollable
             >
-              <template v-slot:activator="{ on, attrs }">
-                <v-text-field
-                  v-model="EditingOrder.date_mont"
-                  label="Желаемая дата монтажа"
-                  prepend-icon="mdi-calendar"
-                  readonly
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="EditingOrder.date_mont"
-                no-title
-                scrollable
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu = false">Отмена</v-btn>
+              <v-btn
+                text
+                color="primary"
+                @click="$refs.menu.save(EditingOrder.data_zamera)"
+                >Ок</v-btn
               >
-                <v-spacer></v-spacer>
-                <v-btn text color="primary" @click="menu2 = false"
-                  >Отмена</v-btn
-                >
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.menu2.save(EditingOrder.date_mont)"
-                  >Ок</v-btn
-                >
-              </v-date-picker>
-            </v-menu>
-          </div>
-
-          <div class="col-lg-3">
-            <v-select
-              :items="brigadi"
-              label="Бригада"
-              v-model="EditingOrder.team"
-              item-text="title"
-              item-value="id"
-            ></v-select>
-          </div>
+            </v-date-picker>
+          </v-menu>
+        </div>
+        <div class="col-lg-3">
+          <v-select
+            label="Замерщик"
+            :items="zamershiks"
+            v-model="EditingOrder.zamershik"
+            item-text="name"
+            return-object
+            clearable
+          ></v-select>
         </div>
 
-        <div class="row shad-box" v-if="getUser.id !== 6">
-          <div class="col-lg-12">
-            <h2><span class="mdi mdi-sale"></span> Итого:</h2>
-          </div>
+        <div class="col-lg-3">
+          <v-menu
+            ref="menu2"
+            v-model="menu2"
+            :close-on-content-click="false"
+            :return-value.sync="EditingOrder.date_mont"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="EditingOrder.date_mont"
+                label="Желаемая дата монтажа"
+                prepend-icon="mdi-calendar"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="EditingOrder.date_mont" no-title scrollable>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu2 = false">Отмена</v-btn>
+              <v-btn
+                text
+                color="primary"
+                @click="$refs.menu2.save(EditingOrder.date_mont)"
+                >Ок</v-btn
+              >
+            </v-date-picker>
+          </v-menu>
+        </div>
 
-          <div class="col-lg-3">
-            <v-select
-              :items="payments_metod"
-              v-model="EditingOrder.payments_metod"
-              label="Тип расчета"
-            ></v-select>
-          </div>
-          <div class="col-lg-3">
-            <v-text-field
-              label="Цена продавца со скидкой"
-              v-model.number="EditingOrder.cost_saler"
-            ></v-text-field>
-          </div>
-          <div class="col-lg-3">
-            <v-text-field
-              label="Цена двери руководителя"
-              v-model.number="EditingOrder.cost_diler"
-            ></v-text-field>
-          </div>
-          <div class="col-lg-3">
-            <v-text-field
-              label="Стоимость замера, доставки и установки"
-              v-model.number="EditingOrder.cost_zdi"
-            ></v-text-field>
-          </div>
+        <div class="col-lg-3">
+          <v-select
+            :items="teams"
+            label="Бригада"
+            v-model="EditingOrder.team"
+            item-text="title"
+            item-value="id"
+            clearable
+          ></v-select>
+        </div>
+      </div>
 
-          <div class="col-lg-2">
-            <v-text-field
-              label="Предоплата"
-              v-model.number="EditingOrder.avans"
-            ></v-text-field>
-          </div>
+      <div class="row shad-box" v-if="getUser.id !== 6">
+        <div class="col-lg-12">
+          <h2><span class="mdi mdi-sale"></span> Итого:</h2>
+        </div>
 
-          <div class="col-lg-2">
-            <v-text-field
-              label="Скидка"
-              v-model.number="EditingOrder.discount"
-            ></v-text-field>
-          </div>
-          <!-- TODO поситать -->
-          <div class="col-lg-2">
-            <v-text-field label="Итого" v-model="totalSum"></v-text-field>
-          </div>
-          <!-- <div class="col-lg-2">
+        <div class="col-lg-3">
+          <v-select
+            :items="payments_metod"
+            v-model="EditingOrder.payments_metod"
+            label="Тип расчета"
+            clearable
+          ></v-select>
+        </div>
+        <div class="col-lg-3">
+          <v-text-field
+            label="Цена продавца со скидкой"
+            v-model.number="EditingOrder.cost_saler"
+          ></v-text-field>
+        </div>
+        <div class="col-lg-3">
+          <v-text-field
+            label="Цена двери руководителя"
+            v-model.number="EditingOrder.cost_diler"
+          ></v-text-field>
+        </div>
+        <div class="col-lg-3">
+          <v-text-field
+            label="Стоимость замера, доставки и установки"
+            v-model.number="EditingOrder.cost_zdi"
+          ></v-text-field>
+        </div>
+
+        <div class="col-lg-2">
+          <v-text-field
+            label="Предоплата"
+            v-model.number="EditingOrder.avans"
+          ></v-text-field>
+        </div>
+
+        <div class="col-lg-2">
+          <v-text-field
+            label="Скидка"
+            v-model.number="EditingOrder.discount"
+          ></v-text-field>
+        </div>
+        <!-- TODO поситать -->
+        <div class="col-lg-2">
+          <v-text-field label="Итого" v-model="totalSum"></v-text-field>
+        </div>
+        <!-- <div class="col-lg-2">
             <v-text-field
               label="Остаток"
               v-model="EditingOrder."
             ></v-text-field>
           </div> -->
+      </div>
+
+      <div class="row shad-box" v-if="getUser.id !== 6">
+        <div class="col-lg-3">
+          <div class="col-lg-12">
+            <h2><span class="mdi mdi-bookmark-outline"></span> Заявка:</h2>
+          </div>
+          <div class="col-lg-12">
+            <v-select
+              :items="statuses"
+              v-model="EditingOrder.status"
+              item-text="title"
+              item-value="value"
+              label="Статус заявки"
+              clearable
+            ></v-select>
+          </div>
         </div>
 
-        <div class="row shad-box" v-if="getUser.id !== 6">
-          <div class="col-lg-3">
-            <div class="col-lg-12">
-              <h2><span class="mdi mdi-bookmark-outline"></span> Заявка:</h2>
-            </div>
-            <div class="col-lg-12">
-              <v-select
-                :items="statuses"
-                v-model="EditingOrder.status"
-                item-text="title"
-                item-value="value"
-                label="Статус заявки"
-              ></v-select>
-            </div>
+        <div class="col-lg-8">
+          <div class="col-lg-12">
+            <h2><span class="mdi mdi-sale"></span> Премия:</h2>
           </div>
-
-          <div class="col-lg-8">
-            <div class="col-lg-12">
-              <h2><span class="mdi mdi-sale"></span> Премия:</h2>
-            </div>
-            <div class="col-lg-4">
-              <v-text-field
-                label="Сумма премии"
-                v-model="EditingOrder.sum_premia"
-              ></v-text-field>
-            </div>
-            <div class="col-lg-4">
-              <v-select
-                :items="status_premii"
-                label="Статус премии"
-                v-model="EditingOrder.status_premia"
-              ></v-select>
-            </div>
+          <div class="col-lg-4">
+            <v-text-field
+              label="Сумма премии"
+              v-model="EditingOrder.sum_premia"
+            ></v-text-field>
+          </div>
+          <div class="col-lg-4">
+            <v-select
+              :items="status_premii"
+              label="Статус премии"
+              v-model="EditingOrder.status_premia"
+              clearable
+            ></v-select>
           </div>
         </div>
       </div>
+
       <div class="row">
         <div class="row">
           <v-btn
@@ -539,11 +483,8 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 import axios from "axios";
-import moment from "moment";
-
-// Для селектов надо предварительно проитись помассиву и подставить в :value (в data добавить свойство) то что у нас есть уже в заказе, но при изменении добавлять в данные новое значение
 
 export default {
   name: "EditOrder",
@@ -551,12 +492,9 @@ export default {
   data() {
     return {
       loadBtn: false,
-      loading: true,
       routeId: "",
       menu: false,
       menu2: false,
-      zamershiks: [],
-      brigadi: [],
       statuses: [
         { title: "Ожидает", value: "pending" },
         { title: "Ожидает монтаж", value: "waitmontazh" },
@@ -571,47 +509,48 @@ export default {
         "Оплата по безналичному расчету",
       ],
 
-      EditingOrder: {
-        cost_zdi: "",
-        category_saler: "",
-        model_saler: "",
-        category_ruk: "",
-        model_ruk: "",
-        doorNumber: "",
-        door_size: "",
-        dop_phone: "",
-        dopServ: [],
-        fio: "",
-        flat: "",
-        floor: "",
-        house: "",
-        korpus: "",
-        part_city: "",
-        payments_metod: "",
-        phone: "",
-        predoplata: "",
-        primecProd: "",
-        primecRuk: "",
-        prod_sale: "",
-        proemSize: "",
-        cost_diler: "",
-        sale: "",
-        sideOpen: "",
-        status_zayavka: "",
-        street: "",
-        sum_premii: "",
-        team: "",
-        user_id: "",
-        zamershik: "",
-      },
+      // EditingOrder: {
+      //   cost_zdi: "",
+      //   category_saler: "",
+      //   model_saler: "",
+      //   category_ruk: "",
+      //   model_ruk: "",
+      //   doorNumber: "",
+      //   door_size: "",
+      //   dop_phone: "",
+      //   dopServ: [],
+      //   fio: "",
+      //   flat: "",
+      //   floor: "",
+      //   house: "",
+      //   korpus: "",
+      //   part_city: "",
+      //   payments_metod: "",
+      //   phone: "",
+      //   predoplata: "",
+      //   primecProd: "",
+      //   primecRuk: "",
+      //   prod_sale: "",
+      //   proemSize: "",
+      //   cost_diler: "",
+      //   sale: "",
+      //   sideOpen: "",
+      //   status_zayavka: "",
+      //   street: "",
+      //   sum_premii: "",
+      //   team: "",
+      //   user_id: "",
+      //   zamershik: "",
+      // },
       // ----------------------------------------------------------------------------
-
+      EditingOrder: {},
       doorsModels: [],
       selectedModel: {},
       doorSizes: ["78", "80", "85", "86", "88", "90", "96", "98", "99", "105"],
       doorSize: "",
       modelsRuk: [],
       spayments_metod: "",
+      dopServArray: [],
 
       predoplata: "",
       doorPrice: "",
@@ -619,82 +558,24 @@ export default {
       status_zayavka: "",
       sum_premii: "",
       status_premii: "",
-      doorsCategory: [],
       status_premii: ["Выплачена", "Ожидается", "Ожидается выплата", "Отмена"],
     };
   },
 
-  created() {
-    axios
-      .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
-      .then((response) => {
-        this.dopServArray = response.data;
-      });
-
-    //инициализируем и подключаем карты
-
-    const script = document.createElement("script");
-
-    script.onload = () => {
-      ymaps.ready(() => this.yaMapInit2());
-    };
-
-    script.id = "ymaps";
-    script.src =
-      "https://api-maps.yandex.ru/2.1/?apikey=8c4059db-3b8d-4535-a15e-569ee80fc827&lang=ru_RU";
-    document.head.append(script);
-
-    //инициализируем и подключаем карты
-  },
-
-  async mounted() {
-    this.routeId = this.$route.params.id;
-    await axios
-      .get("https://door.webink.site/wp-json/door/v1/get/sales")
-      .then((response) => {
-        this.EditingOrder = response.data.find((item) => {
-          return item.id == this.routeId;
-        });
-        this.loading = false;
-      });
-
-    await axios
-      .get("https://door.webink.site/wp-json/door/v1/get/categorys")
-      .then((response) => {
-        this.doorsCategory = response.data;
-
-        const category_saler = this.doorsCategory.find(
-          (category) => category.term_id === this.EditingOrder.category_saler.id
-        );
-        const category_ruk = this.doorsCategory.find(
-          (category) => category.term_id === this.EditingOrder.category_ruk.id
-        );
-
-        this.changeDoorCategory(category_saler);
-        this.changeCategoryRuk(category_ruk);
-      });
-
-    // замерщики
-    await axios
-      .get("https://door.webink.site/wp-json/door/v1/get/users?type=zamershik")
-      .then((response) => {
-        this.zamershiks = response.data.map((el) => {
-          return { ...el, name: el.fname, fname: el.name };
-        });
-      });
-
-    // ,бригады
-    await axios
-      .get("https://door.webink.site/wp-json/door/v1/get/teams")
-      .then((response) => {
-        this.brigadi = response.data;
-      });
-  },
-
   computed: {
     ...mapGetters({
+      sales: "zakaz/GET_SALES",
+      teams: "zakaz/GET_TEAMS",
       getUser: "auth/getUser",
+      GET_ZAMERSHIKI: "zakaz/GET_ZAMERSHIKI",
+      doorsCategory: "zakaz/GET_DOOR_CATEGORIES",
     }),
+
+    zamershiks() {
+      return this.GET_ZAMERSHIKI.map((el) => {
+        return { ...el, name: el.fname, fname: el.name };
+      });
+    },
 
     totalSum() {
       const { cost_saler, cost_zdi, discount, avans } = this.EditingOrder;
@@ -709,6 +590,10 @@ export default {
   },
 
   methods: {
+    ...mapActions({
+      LOAD_SALES: "zakaz/LOAD_SALES",
+    }),
+
     yaMapInit2() {
       var suggestView1 = new ymaps.SuggestView("suggest1", {
         provider: {
@@ -853,5 +738,53 @@ export default {
         });
     },
   },
+
+  mounted() {
+    this.LOAD_SALES();
+
+    axios
+      .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
+      .then((response) => {
+        this.dopServArray = response.data;
+      });
+
+    //инициализируем и подключаем карты
+
+    const script = document.createElement("script");
+
+    script.onload = () => {
+      ymaps.ready(() => this.yaMapInit2());
+    };
+
+    script.id = "ymaps";
+    script.src =
+      "https://api-maps.yandex.ru/2.1/?apikey=8c4059db-3b8d-4535-a15e-569ee80fc827&lang=ru_RU";
+    document.head.append(script);
+
+    //инициализируем и подключаем карты
+
+    this.routeId = this.$route.params.id;
+
+    this.EditingOrder = this.sales.find((item) => {
+      return item.id == this.routeId;
+    });
+
+    const category_saler = this.doorsCategory.find((category) => {
+      return category.term_id === this.EditingOrder.category_saler.id;
+    });
+
+    const category_ruk = this.doorsCategory.find((category) => {
+      return category.term_id === this.EditingOrder.category_ruk.id;
+    });
+
+    if (category_saler) this.changeDoorCategory(category_saler);
+    if (category_ruk) this.changeCategoryRuk(category_ruk);
+  },
 };
 </script>
+
+<style>
+.m-15 {
+  margin: 15px;
+}
+</style>

@@ -17,6 +17,7 @@
               v-model="team"
               item-text="title"
               return-object
+              clearable
             ></v-select>
           </v-col>
           <v-col cols="2">
@@ -59,7 +60,7 @@
             :data="excelJsonData"
             v-if="getUser.roles[0] !== 'shop_manager'"
           >
-            <v-btn depressed color="primary ma-2">
+            <v-btn @click="downloadExcel" depressed color="primary ma-2">
               <v-icon>mdi-download</v-icon>
               Выгрузить EXСEL
             </v-btn>
@@ -97,13 +98,10 @@ export default {
   data() {
     return {
       menu: false,
-      teams: [],
-      excelJsonData: "",
+      excelJsonData: [],
       team: {},
       date: null,
       headers: [
-        //  доп работы (массив в строку перегнать), остаток денег(посчитать), примечание
-
         { text: "Время", value: "time_mont" },
         { text: "№", value: "id" },
         { text: "Адрес", value: "adress" },
@@ -122,6 +120,7 @@ export default {
   computed: {
     ...mapGetters({
       sales: "zakaz/GET_SALES",
+      teams: "zakaz/GET_TEAMS",
       getUser: "auth/getUser",
     }),
 
@@ -164,27 +163,13 @@ export default {
 
   methods: {
     ...mapActions({
-      fetchSales: "zakaz/UPDATE_SALES",
+      fetchSales: "zakaz/LOAD_SALES",
     }),
-  },
 
-  async created() {
-    await this.fetchSales();
-    await axios
-      .get("https://door.webink.site/wp-json/door/v1/get/teams")
-      .then((response) => {
-        this.teams = response.data;
-      });
-  },
-
-  watch: {
-    team() {
-      this.date = null;
-    },
-
-    items(newVal) {
-      this.excelJsonData = newVal.map((el) => {
+    downloadExcel() {
+      this.excelJsonData = this.items.map((el) => {
         const dopServ = el.dopServ.map((item) => item.name).join(",");
+
         return {
           "Номер заказа": el.id,
           Адрес: el.adress,
@@ -199,6 +184,35 @@ export default {
         };
       });
     },
+  },
+
+  created() {
+    this.fetchSales();
+  },
+
+  watch: {
+    team() {
+      this.date = null;
+    },
+
+    // items(newVal) {
+    //   this.excelJsonData = newVal.map((el) => {
+    //     const dopServ = el.dopServ.map((item) => item.name).join(",");
+
+    //     return {
+    //       "Номер заказа": el.id,
+    //       Адрес: el.adress,
+    //       "Номер телефона": el.phone,
+    //       "Модель двери": el.model_ruk.name,
+    //       "Размер двери": el.door_size,
+    //       "Размер проема": el.proem_size,
+    //       Примечание: el.prim_rukvod,
+    //       "Доп. работы": dopServ,
+    //       "Способ оплаты": el.payments_metod,
+    //       Остаток: el.payment_rest,
+    //     };
+    //   });
+    // },
   },
 };
 </script>

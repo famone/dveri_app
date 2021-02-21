@@ -4,6 +4,7 @@ const zakaz = {
   namespaced: true,
   state: {
     sales: [],
+    doorCategories: [],
     models: [],
     teams: [],
     zamershiki: [],
@@ -30,6 +31,7 @@ const zakaz = {
     getModelEdit: (state) => (id) => {
       return state.models.find(item => item.id == id)
     },
+
     GET_TEAMS(state) {
       return state.teams
     },
@@ -40,6 +42,10 @@ const zakaz = {
 
     GET_SERVICES(state) {
       return state.services
+    },
+
+    GET_DOOR_CATEGORIES(state) {
+      return state.doorCategories
     },
 
     GET_CHOSEN_ZAKAZ(state) {
@@ -56,7 +62,7 @@ const zakaz = {
   },
 
   mutations: {
-    SET_DOORS(state, payload) {
+    SET_SALES(state, payload) {
       state.sales = payload
     },
 
@@ -76,6 +82,10 @@ const zakaz = {
       state.services = services
     },
 
+    SET_DOOR_CATEGORIES(state, payload) {
+      state.doorCategories = payload
+    },
+
     SET_CHOSEN_ZAKAZ(state, zakaz) {
       state.chosenZakaz = zakaz
     },
@@ -90,7 +100,7 @@ const zakaz = {
   },
 
   actions: {
-    UPDATE_SALES({ commit, rootGetters }) {
+    LOAD_SALES({ commit, rootGetters }) {
 
       const userRoleId = rootGetters["auth/getUser"].id;
 
@@ -99,7 +109,7 @@ const zakaz = {
       axios
         .get("https://door.webink.site/wp-json/door/v1/get/sales?user_id=" + userRoleId)
         .then((response) => {
-          commit("SET_DOORS", response.data)
+          commit("SET_SALES", response.data)
         })
         .catch(err => console.log(err))
         .finally(() => commit("SET_LOADING", false))
@@ -112,6 +122,17 @@ const zakaz = {
         .get('https://door.webink.site/wp-json/door/v1/get/models')
         .then(response => {
           commit("SET_MODELS", response.data)
+        })
+        .finally(() => commit("SET_LOADING", false));
+    },
+
+    LOAD_DOOR_CATEGORIES({ commit }) {
+      commit("SET_LOADING", true);
+
+      axios
+        .get('https://door.webink.site/wp-json/door/v1/get/categorys')
+        .then(({ data }) => {
+          commit("SET_DOOR_CATEGORIES", data)
         })
         .finally(() => commit("SET_LOADING", false));
     },
@@ -143,7 +164,7 @@ const zakaz = {
       const userRoleId = rootGetters["auth/getUser"].id;
       axios
         .get("https://door.webink.site/wp-json/door/v1/delete/sales?order_id=" + payload)
-        .then(() => dispatch("UPDATE_SALES"))
+        .then(() => dispatch("LOAD_SALES"))
     },
 
     DELETE_MODEL({ commit, dispatch }, id) {

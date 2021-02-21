@@ -9,14 +9,20 @@ import Vuelidate from 'vuelidate'
 import Vuetify from 'vuetify'
 import DatetimePicker from 'vuetify-datetime-picker'
 import VueTippy, { TippyComponent } from "vue-tippy";
-
 import JsonExcel from "vue-json-excel";
+import moment from 'moment'
+
 
 import 'vuetify/dist/vuetify.min.css'
 
 import ru from 'vuetify/es5/locale/ru'
 
 import 'swiper/css/swiper.css'
+
+
+Vue.filter('formatDate', (value, formatType) => {
+  return moment(value).format(formatType)
+});
 
 
 Vue.use(Vuetify)

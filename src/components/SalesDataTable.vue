@@ -39,6 +39,7 @@
             :items="cities"
             v-model="city"
             @change="filterByCity"
+            clearable
           ></v-select>
 
           <v-spacer></v-spacer>
@@ -195,7 +196,7 @@
       </template>
 
       <template #item.date="{ item }">
-        {{ item.date | dateSale }}
+        {{ item.date | formatDate("DD/MM") }}
       </template>
 
       <template #item.zamershik.name="{ item }" v-if="getUser.id !== 6">
@@ -220,6 +221,7 @@
               return-object
               item-text="fname"
               label="установить замерщика"
+              clearable
             ></v-select>
           </template>
         </v-edit-dialog>
@@ -249,6 +251,7 @@
               return-object
               item-text="title"
               label="Выберите бригаду"
+              clearable
             ></v-select>
           </template>
         </v-edit-dialog>
@@ -283,6 +286,7 @@
               v-model="status"
               item-text="title"
               label="установить статуc"
+              clearable
             ></v-select>
           </template>
         </v-edit-dialog>
@@ -344,8 +348,6 @@
 
 
 	<script>
-import axios from "axios";
-
 import moment from "moment";
 
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
@@ -425,7 +427,7 @@ export default {
       data_zamera: null,
       zamershik: null,
       items: [],
-      excelJsonData: "",
+      excelJsonData: [],
       columnSearchQueries: {
         id: "",
         adress: "",
@@ -489,23 +491,13 @@ export default {
     },
   },
 
-  filters: {
-    dateWithoutYear(date) {
-      return date.split("/").slice(0, 2).join("/");
-    },
-
-    dateSale(date) {
-      return moment(date).format("DD/MM/YYYY").split("/").slice(0, 2).join("/");
-    },
-  },
-
   methods: {
     ...mapMutations({
       SET_CHOSEN_ZAKAZ: "zakaz/SET_CHOSEN_ZAKAZ",
     }),
 
     ...mapActions({
-      fetchSales: "zakaz/UPDATE_SALES",
+      fetchSales: "zakaz/LOAD_SALES",
       EDIT_ZAKAZ: "zakaz/EDIT_ZAKAZ",
       DELETE_SALE: "zakaz/DELETE_SALE",
     }),
@@ -778,6 +770,12 @@ export default {
   mounted() {
     this.itemsOnRole();
     this.fetchSales();
+  },
+
+  filters: {
+    dateWithoutYear(date) {
+      return date.split("/").slice(0, 2).join("/");
+    },
   },
 
   watch: {

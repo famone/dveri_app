@@ -16,10 +16,11 @@
             <div class="col-lg-4 pb-0">
               <v-select
                 label="Производитель"
-                :items="manufacturer"
+                :items="doorsCategory"
                 item-text="name"
                 v-model="brand"
                 return-object
+                clearable
               ></v-select>
             </div>
             <div class="col-lg-4 pb-0">
@@ -28,6 +29,7 @@
                 :items="doorModels"
                 item-text="name"
                 v-model="doorModel"
+                clearable
               ></v-select>
             </div>
           </div>
@@ -109,7 +111,6 @@ export default {
     return {
       modelsArray: [],
       brand: "",
-      manufacturer: [],
       doorModels: [],
       doorModel: "",
     };
@@ -117,6 +118,7 @@ export default {
   computed: {
     ...mapGetters({
       getModelEdit: "zakaz/getModelEdit",
+      doorsCategory: "zakaz/GET_DOOR_CATEGORIES",
       GET_MODELS: "zakaz/GET_MODELS",
       GET_CHOSEN_MODEL: "zakaz/GET_CHOSEN_MODEL",
     }),
@@ -124,17 +126,10 @@ export default {
 
   mounted() {
     this.brand = this.getModelEdit(this.id).category;
-    console.log(this.brand);
     this.doorModels = this.GET_MODELS(this.brand);
     this.doorModel = this.getModelEdit(this.id).name;
     // модели
     this.LOAD_MODELS();
-
-    axios
-      .get("https://door.webink.site/wp-json/door/v1/get/categorys")
-      .then((response) => {
-        this.manufacturer = response.data;
-      });
 
     let newKey = Object.keys(this.getModelEdit(this.id).price);
     let newVal = Object.values(this.getModelEdit(this.id).price);

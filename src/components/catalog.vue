@@ -21,6 +21,7 @@
                         label="Производитель"
                         :items="categorys"
                         v-model="brand"
+                        clearable
                       ></v-select>
                     </v-col>
                     <v-spacer></v-spacer>
@@ -137,19 +138,16 @@ export default {
     }),
 
     editItem(item) {
-      // console.log(item);
       this.SET_CHOSEN_MODEL(item);
       this.$router.push("/edit_model/" + item.id);
     },
     deleteModel(item) {
       this.dialogModel = true;
       this.delitingModel = item.id;
-      console.log(this.delitingModel);
     },
     closeDelete() {
       this.dialogModel = false;
       this.delitingModel = null;
-      console.log(this.delitingModel);
     },
     deleteModelConfirm(item) {
       this.DELETE_MODEL(item);

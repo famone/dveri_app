@@ -134,7 +134,16 @@
           ></v-select>
         </div>
         <div class="col-lg-3">
-          <p>Сторона открывания:</p>
+          <p>Сторона открывания:
+            <span
+              class="uncheck"
+              v-if="zakaz.door_direction"
+              @click="zakaz.door_direction = ''"
+            >
+              <strong>✕</strong>
+              Очистить
+            </span>
+          </p>
           <v-radio-group v-model="zakaz.door_direction" row>
             <v-radio label="Лево" value="Лево"></v-radio>
             <v-radio label="Право" value="Право"></v-radio>

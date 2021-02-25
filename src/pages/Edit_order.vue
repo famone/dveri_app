@@ -73,7 +73,16 @@
         </div>
 
         <div class="col-lg-3">
-          <p>Часть города:</p>
+          <p>Часть города:
+            <span
+              class="uncheck"
+              v-if="EditingOrder.part_city"
+              @click="EditingOrder.part_city = ''"
+            >
+              <strong>✕</strong>
+              Очистить
+            </span>
+          </p>
           <v-radio-group v-model="EditingOrder.part_city" row>
             <v-radio label="Север" value="Север"></v-radio>
             <v-radio label="Юг" value="Юг"></v-radio>
@@ -145,7 +154,16 @@
               return-object -->
         </div>
         <div class="col-lg-3">
-          <p>Сторона открывания:</p>
+          <p>Сторона открывания:
+            <span
+              class="uncheck"
+              v-if="EditingOrder.door_direction"
+              @click="EditingOrder.door_direction = ''"
+            >
+              <strong>✕</strong>
+              Очистить
+            </span>
+          </p>
           <v-radio-group v-model="EditingOrder.door_direction" row>
             <v-radio label="Лево" value="Лево"></v-radio>
             <v-radio label="Право" value="Право"></v-radio>

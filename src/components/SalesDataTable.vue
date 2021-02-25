@@ -421,6 +421,25 @@ export default {
         { text: "Сумма премии", value: "sum_premia" },
         { text: "Премия ВДЗ", value: "vdz_premia" },
       ],
+      salesHeaders: [
+        { text: "Ред.", value: "actions", sortable: false },
+        { text: "№", value: "id" },
+        { text: "Адрес", value: "adress" },
+        { text: "Телефон", value: "phone" },
+        { text: "ФИО", value: "fio" },
+        { text: "Модель двери", value: "door_model" },
+        { text: "Размер / Сторона", value: "door_size" },
+        { text: "Проем", value: "proem_size" },
+        { text: "Дата замера", value: "data_zamera" },
+        { text: "Замерщик", value: "zamershik.name" },
+        { text: "Примечание продавца", value: "prim_saler" },
+        { text: "Примечание Руководителя", value: "prim_rukvod" },
+        { text: "Дата продажи", value: "date" },
+        { text: "Дополнительные услуги", value: "dopServ" },
+        { text: "Остаток платежа", value: "payment_rest" },
+        { text: "Сумма премии", value: "sum_premia" },
+        { text: "Премия ВДЗ", value: "vdz_premia" },
+      ],
       editedIndex: -1,
       team: "",
       date_mont: null,
@@ -479,6 +498,7 @@ export default {
 
       if (role === "administrator") return this.adminHeaders;
       else if (role === "zamershik") return this.zamershikHeaders;
+      else if (role === "shop_manager") return this.salesHeaders;
     },
 
     statusesOnRole() {

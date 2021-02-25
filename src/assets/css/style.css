@@ -65,6 +65,12 @@ h3{
 	margin: 0;
 	margin-bottom: 20px;
 }
+.uncheck{
+	padding:2px 5px;
+	border-radius: 10px;
+	cursor: pointer;
+	background-color: #d2d0d0;
+}
 
 /*ADAPTIIIIIIIIIV*/
 

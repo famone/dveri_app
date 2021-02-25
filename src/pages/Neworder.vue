@@ -58,7 +58,12 @@
         </div>
 
         <div class="col-lg-3">
-          <p>Часть города:</p>
+          <p>Часть города: 
+            <span class="uncheck" v-if="zakaz.part_city" @click="zakaz.part_city = '' ">
+              <strong>✕</strong>
+              Очистить
+            </span>
+          </p>
           <v-radio-group v-model="zakaz.part_city" row>
             <v-radio label="Север" value="Север"></v-radio>
             <v-radio label="Юг" value="Юг"></v-radio>

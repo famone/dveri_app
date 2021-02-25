@@ -484,6 +484,8 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import moment from "moment";
+
 import axios from "axios";
 
 export default {
@@ -491,6 +493,7 @@ export default {
 
   data() {
     return {
+      sales: [],
       loadBtn: false,
       routeId: "",
       menu: false,
@@ -508,41 +511,6 @@ export default {
         "Терминал",
         "Оплата по безналичному расчету",
       ],
-
-      // EditingOrder: {
-      //   cost_zdi: "",
-      //   category_saler: "",
-      //   model_saler: "",
-      //   category_ruk: "",
-      //   model_ruk: "",
-      //   doorNumber: "",
-      //   door_size: "",
-      //   dop_phone: "",
-      //   dopServ: [],
-      //   fio: "",
-      //   flat: "",
-      //   floor: "",
-      //   house: "",
-      //   korpus: "",
-      //   part_city: "",
-      //   payments_metod: "",
-      //   phone: "",
-      //   predoplata: "",
-      //   primecProd: "",
-      //   primecRuk: "",
-      //   prod_sale: "",
-      //   proemSize: "",
-      //   cost_diler: "",
-      //   sale: "",
-      //   sideOpen: "",
-      //   status_zayavka: "",
-      //   street: "",
-      //   sum_premii: "",
-      //   team: "",
-      //   user_id: "",
-      //   zamershik: "",
-      // },
-      // ----------------------------------------------------------------------------
       EditingOrder: {},
       doorsModels: [],
       selectedModel: {},
@@ -564,7 +532,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      sales: "zakaz/GET_SALES",
+      GET_SALES: "zakaz/GET_SALES",
       teams: "zakaz/GET_TEAMS",
       getUser: "auth/getUser",
       GET_ZAMERSHIKI: "zakaz/GET_ZAMERSHIKI",
@@ -578,13 +546,16 @@ export default {
     },
 
     totalSum() {
-      const { cost_saler, cost_zdi, discount, avans } = this.EditingOrder;
+      const {
+        cost_saler,
+        cost_diler,
+        cost_zdi,
+        discount,
+        avans,
+      } = this.EditingOrder;
 
       return (
-        cost_saler +
-        cost_zdi -
-        ((cost_saler + cost_zdi) / 100) * discount -
-        avans
+        (cost_diler ? cost_diler : cost_saler) + cost_zdi - discount - avans
       );
     },
   },
@@ -724,6 +695,8 @@ export default {
         model_saler: this.EditingOrder.model_saler.id,
         category_ruk: this.EditingOrder.category_ruk.term_id,
         model_ruk: this.EditingOrder.model_ruk.id,
+        data_zamera: moment(this.EditingOrder.data_zamera).format("DD/MM/YYYY"),
+        date_mont: moment(this.EditingOrder.date_mont).format("DD/MM/YYYY"),
       };
 
       axios
@@ -741,6 +714,15 @@ export default {
 
   mounted() {
     this.LOAD_SALES();
+
+    this.sales = this.GET_SALES.map((el) => {
+      const data_zamera = moment(el.data_zamera, "YYYY-MM-DD").format(
+        "YYYY-MM-DD"
+      );
+
+      const date_mont = moment(el.date_mont, "YYYY-MM-DD").format("YYYY-MM-DD");
+      return { ...el, data_zamera, date_mont };
+    });
 
     axios
       .get("https://door.webink.site/wp-json/door/v1/get/dopserv")

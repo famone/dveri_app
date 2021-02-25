@@ -58,8 +58,13 @@
         </div>
 
         <div class="col-lg-3">
-          <p>Часть города: 
-            <span class="uncheck" v-if="zakaz.part_city" @click="zakaz.part_city = '' ">
+          <p>
+            Часть города:
+            <span
+              class="uncheck"
+              v-if="zakaz.part_city"
+              @click="zakaz.part_city = ''"
+            >
               <strong>✕</strong>
               Очистить
             </span>
@@ -684,10 +689,10 @@ export default {
         doorPrice: "",
         status: "",
         prod_sale: "",
-        cost_diler: "",
+        cost_diler: 0,
         cost_saler: 0,
-        cost_zdi: "",
-        avans: "",
+        cost_zdi: 0,
+        avans: 0,
         sale: "",
         sum_premii: "",
         status_premii: "",
@@ -709,7 +714,13 @@ export default {
 
     totalSum() {
       if (this.zakaz) {
-        return this.zakaz.cost_saler + this.zakaz.cost_zdi - this.zakaz.avans;
+        return (
+          (this.zakaz.cost_diler
+            ? this.zakaz.cost_diler
+            : this.zakaz.cost_saler) +
+          this.zakaz.cost_zdi -
+          this.zakaz.avans
+        );
       }
     },
 

@@ -57,10 +57,12 @@
           <v-spacer></v-spacer>
 
           <downloadExcel
-            :data="excelJsonData"
+            :data="json_data"
+            :fields="json_fields"
+            :name="excelFileName"
             v-if="getUser.roles[0] !== 'shop_manager'"
           >
-            <v-btn @click="downloadExcel" depressed color="primary ma-2">
+            <v-btn depressed color="primary ma-2">
               <v-icon>mdi-download</v-icon>
               Выгрузить EXСEL
             </v-btn>
@@ -87,7 +89,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 
 import moment from "moment";
@@ -98,7 +99,8 @@ export default {
   data() {
     return {
       menu: false,
-      excelJsonData: [],
+      json_data: null,
+      json_fields: null,
       team: {},
       date: null,
       headers: [
@@ -159,31 +161,19 @@ export default {
         });
       }
     },
+
+    excelFileName() {
+      const date = this.date
+        ? `_${moment(this.date).format("DD.MM.YYYY")}`
+        : null;
+      return `${this.team.title}${date}.xls`;
+    },
   },
 
   methods: {
     ...mapActions({
       fetchSales: "zakaz/LOAD_SALES",
     }),
-
-    downloadExcel() {
-      this.excelJsonData = this.items.map((el) => {
-        const dopServ = el.dopServ.map((item) => item.name).join(",");
-
-        return {
-          "Номер заказа": el.id,
-          Адрес: el.adress,
-          "Номер телефона": el.phone,
-          "Модель двери": el.model_ruk.name,
-          "Размер двери": el.door_size,
-          "Размер проема": el.proem_size,
-          Примечание: el.prim_rukvod,
-          "Доп. работы": dopServ,
-          "Способ оплаты": el.payments_metod,
-          Остаток: el.payment_rest,
-        };
-      });
-    },
   },
 
   created() {
@@ -195,24 +185,29 @@ export default {
       this.date = null;
     },
 
-    // items(newVal) {
-    //   this.excelJsonData = newVal.map((el) => {
-    //     const dopServ = el.dopServ.map((item) => item.name).join(",");
+    items(newVal) {
+      this.json_fields = {
+        "Номер заказа": "id",
+        Адрес: "adress",
+        "Номер телефона": "phone",
+        "Модель двери": "model_ruk.name",
+        "Размер двери": "door_size",
+        "Размер проема": "proem_size",
+        "Примечание:": "prim_rukvod",
+        "Доп. работы": {
+          field: "dopServ",
+          callback: (value) => {
+            if (value) {
+              return value.map((item) => item.name).join(",\n");
+            } else return "Не заявлено доп.услуг";
+          },
+        },
+        "Способ оплаты": "payments_metod",
+        Остаток: "total",
+      };
 
-    //     return {
-    //       "Номер заказа": el.id,
-    //       Адрес: el.adress,
-    //       "Номер телефона": el.phone,
-    //       "Модель двери": el.model_ruk.name,
-    //       "Размер двери": el.door_size,
-    //       "Размер проема": el.proem_size,
-    //       Примечание: el.prim_rukvod,
-    //       "Доп. работы": dopServ,
-    //       "Способ оплаты": el.payments_metod,
-    //       Остаток: el.payment_rest,
-    //     };
-    //   });
-    // },
+      this.json_data = [...newVal];
+    },
   },
 };
 </script>

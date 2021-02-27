@@ -55,7 +55,8 @@
           </router-link>
 
           <downloadExcel
-            :data="excelJsonData"
+            :data="json_data"
+            :fields="json_fields"
             v-if="getUser.roles[0] !== 'shop_manager'"
           >
             <v-btn depressed color="primary ma-2"
@@ -346,8 +347,7 @@
   </div>
 </template>
 
-
-	<script>
+<script>
 import moment from "moment";
 
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
@@ -384,7 +384,7 @@ export default {
         { text: "Телефон", value: "phone" },
         { text: "ФИО", value: "fio" },
         { text: "Модель двери", value: "door_model" },
-        { text: "Размер / Сторона", value: "door_size" },
+        { text: "Размер/Сторона", value: "door_size" },
         { text: "Проем", value: "proem_size" },
         { text: "Дата замера", value: "data_zamera" },
         { text: "Замерщик", value: "zamershik.name" },
@@ -407,7 +407,7 @@ export default {
         { text: "Телефон", value: "phone" },
         { text: "ФИО", value: "fio" },
         { text: "Модель двери", value: "door_model" },
-        { text: "Размер / Сторона", value: "door_size" },
+        { text: "Размер/Сторона", value: "door_size" },
         { text: "Проем", value: "proem_size" },
         { text: "Дата замера", value: "data_zamera" },
         { text: "Замерщик", value: "zamershik.name" },
@@ -428,7 +428,7 @@ export default {
         { text: "Телефон", value: "phone" },
         { text: "ФИО", value: "fio" },
         { text: "Модель двери", value: "door_model" },
-        { text: "Размер / Сторона", value: "door_size" },
+        { text: "Размер/Сторона", value: "door_size" },
         { text: "Проем", value: "proem_size" },
         { text: "Дата замера", value: "data_zamera" },
         { text: "Замерщик", value: "zamershik.name" },
@@ -446,7 +446,6 @@ export default {
       data_zamera: null,
       zamershik: null,
       items: [],
-      excelJsonData: [],
       columnSearchQueries: {
         id: "",
         adress: "",
@@ -480,6 +479,8 @@ export default {
         { title: "Ожидает", value: "pending" },
         { title: "Отменен", value: "cancelled" },
       ],
+      json_data: null,
+      json_fields: null,
     };
   },
 
@@ -806,18 +807,37 @@ export default {
         this.itemsOnRole();
         this.items = [...this.filteredItems];
       }
-      this.excelJsonData = newVal.map((el) => {
-        return {
-          ...el,
-          saler: el.saler.name,
-          brigada_mont: el.brigada_mont.name,
-          category_ruk: el.category_ruk.name,
-          category_saler: el.category_saler.name,
-          model_ruk: el.model_ruk.name,
-          model_saler: el.model_saler.name,
-          zamershik: el.zamershik.name,
-        };
-      });
+
+      this.json_fields = {
+        Адрес: "adress",
+        Телефон: "phone",
+        ФИО: "fio",
+        "Модель двери": "door_model",
+        "Размер/Сторона": "door_size",
+        Проем: "proem_size",
+        "Дата замера": "data_zamera",
+        Замерщик: "zamershik.name",
+        "Дата монтажа": "date_mont",
+        Бригада: "brigada_mont.name",
+        "Цена диллера": "cost_diler",
+        "Примечание продавца": "prim_saler",
+        "Примечание Руководителя": "prim_rukvod",
+        "Дата продажи": "date",
+        Продавец: "saler.name",
+        "Доп. услуги": {
+          field: "dopServ",
+          callback: (value) => {
+            if (value) {
+              return value.map((item) => item.name).join(",\n");
+            } else return "Не заявлено доп.услуг";
+          },
+        },
+        "Остаток платежа": "total",
+        "Сумма премии": "sum_premia",
+        "Премия ВДЗ": "vdz_premia",
+      };
+
+      this.json_data = [...newVal];
     },
 
     filterTag: {

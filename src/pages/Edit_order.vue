@@ -73,7 +73,8 @@
         </div>
 
         <div class="col-lg-3">
-          <p>Часть города:
+          <p>
+            Часть города:
             <span
               class="uncheck"
               v-if="EditingOrder.part_city"
@@ -154,7 +155,8 @@
               return-object -->
         </div>
         <div class="col-lg-3">
-          <p>Сторона открывания:
+          <p>
+            Сторона открывания:
             <span
               class="uncheck"
               v-if="EditingOrder.door_direction"
@@ -705,6 +707,12 @@ export default {
     updateOrder() {
       this.loadBtn = true;
       //отправить новый заказ
+      const data_zamera = this.EditingOrder.data_zamera
+        ? moment(this.EditingOrder.data_zamera).format("DD/MM/YYYY")
+        : this.EditingOrder.data_zamera;
+      const date_mont = this.EditingOrder.date_mont
+        ? moment(this.EditingOrder.date_mont).format("DD/MM/YYYY")
+        : this.EditingOrder.date_mont;
 
       const reqestBody = {
         ...this.EditingOrder,
@@ -713,8 +721,8 @@ export default {
         model_saler: this.EditingOrder.model_saler.id,
         category_ruk: this.EditingOrder.category_ruk.term_id,
         model_ruk: this.EditingOrder.model_ruk.id,
-        data_zamera: moment(this.EditingOrder.data_zamera).format("DD/MM/YYYY"),
-        date_mont: moment(this.EditingOrder.date_mont).format("DD/MM/YYYY"),
+        data_zamera,
+        date_mont,
       };
 
       axios
@@ -734,11 +742,13 @@ export default {
     this.LOAD_SALES();
 
     this.sales = this.GET_SALES.map((el) => {
-      const data_zamera = moment(el.data_zamera, "YYYY-MM-DD").format(
-        "YYYY-MM-DD"
-      );
+      const data_zamera = el.data_zamera
+        ? moment(el.data_zamera, "YYYY-MM-DD").format("YYYY-MM-DD")
+        : el.data_zamera;
+      const date_mont = el.date_mont
+        ? moment(el.date_mont, "YYYY-MM-DD").format("YYYY-MM-DD")
+        : el.date_mont;
 
-      const date_mont = moment(el.date_mont, "YYYY-MM-DD").format("YYYY-MM-DD");
       return { ...el, data_zamera, date_mont };
     });
 

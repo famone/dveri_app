@@ -101,6 +101,14 @@ h3{
 	.shad-box{
 		padding:15px;
 	}
+
+	.bigger-on-mobile i{
+		font-size: 25px!important;
+		padding-right: 15px;
+	}
+	.mdi-delete{
+		font-size: 25px!important;
+	}
 }
 @media (max-width: 390px) {
 	

@@ -1,5 +1,8 @@
 <template>
   <section>
+
+
+
     <div class="container">
       <div class="row">
         <div class="col-lg-12">
@@ -213,6 +216,9 @@
           </h2>
         </div>
         <div class="col-lg-12">
+
+
+
           <div
             class="row repeater"
             v-for="(dop, index) in EditingOrder.dopServ"
@@ -262,7 +268,9 @@
           </div>
         </div>
 
-        <v-btn
+  
+        <div class="col-lg-6">
+          <v-btn
           depressed
           color="primary"
           @click="addDop('dopServ', 'Услуга')"
@@ -271,6 +279,11 @@
           <v-icon left>mdi-cart-plus</v-icon>
           Добавить
         </v-btn>
+        </div>
+        <div class="col-lg-6">
+          <h4 v-if="EditingOrder">Итого доп. работ: {{getTotalDop}}</h4>
+        </div>
+
         <!-- <v-btn
             depressed
             color="secondary"
@@ -279,6 +292,8 @@
             <v-icon left>mdi-plus</v-icon>Добавить другое
           </v-btn> -->
       </div>
+
+
 
       <div class="row shad-box" v-if="getUser.id !== 6">
         <div class="col-lg-12">
@@ -334,7 +349,7 @@
           ></v-select>
         </div>
 
-        <div class="col-lg-3">
+        <div class="col-lg-3" v-if="getUser.roles[0] !== 'zamershik' ">
           <v-menu
             ref="menu2"
             v-model="menu2"
@@ -344,6 +359,8 @@
             offset-y
             min-width="290px"
           >
+
+
             <template v-slot:activator="{ on, attrs }">
               <v-text-field
                 v-model="EditingOrder.date_mont"
@@ -367,7 +384,7 @@
           </v-menu>
         </div>
 
-        <div class="col-lg-3">
+        <div class="col-lg-3" v-if="getUser.roles[0] !== 'zamershik' ">
           <v-select
             :items="teams"
             label="Бригада"
@@ -377,6 +394,8 @@
             clearable
           ></v-select>
         </div>
+
+
       </div>
 
       <div class="row shad-box" v-if="getUser.id !== 6">
@@ -558,6 +577,31 @@ export default {
       GET_ZAMERSHIKI: "zakaz/GET_ZAMERSHIKI",
       doorsCategory: "zakaz/GET_DOOR_CATEGORIES",
     }),
+
+
+    getTotalDop(){
+    if(this.EditingOrder.dopServ){
+        let prices = []
+        let total = 0
+
+        this.EditingOrder.dopServ.forEach(item =>{
+          if(item.service){
+             prices.push(item.price)
+          }else{
+            let single = item.price * item.count
+            prices.push(single)
+          }
+        
+        })
+
+        prices.forEach(item =>{
+          total += parseInt(item)
+        })
+        this.EditingOrder.cost_zdi = total
+        
+        return total
+      }
+    },
 
     zamershiks() {
       return this.GET_ZAMERSHIKI.map((el) => {

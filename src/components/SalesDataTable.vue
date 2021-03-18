@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <v-dialog v-model="dialogDopServ" width="500px">
       <v-card class="pa-4">
         <v-container fluid>
@@ -293,6 +294,45 @@
         </v-edit-dialog>
       </template>
 
+
+
+
+
+
+<template #item.payments_metod="{ item }">
+        <v-edit-dialog
+          :return-value.sync="item.payments_metod"
+          @save="saveZakazPayment(item)"
+          @cancel="cancel"
+          @open="open"
+          @close="close"
+          save-text=" Выбрать"
+          cancel-text="Закрыть"
+          large
+          persistent
+        >
+          
+          {{item.payments_metod}}
+
+          <template #input>
+            <v-select
+              :items="payments_metod_list"
+              v-model="payments_metod"
+              item-text="title"
+              label="Тип оплаты"
+              clearable
+            ></v-select>
+          </template>
+        </v-edit-dialog>
+      </template>
+
+
+
+
+
+
+
+
       <template #item.door_model="{ item }">
         <span v-if="item.model_ruk.name" style="color: red">
           {{ item.model_ruk.name }}
@@ -331,7 +371,7 @@
         #item.actions="{ item }"
         v-if="getUser.roles[0] !== 'shop_manager'"
       >
-        <router-link tag="a" :to="'/edit_order/' + item.id">
+        <router-link tag="a" :to="'/edit_order/' + item.id" class="bigger-on-mobile">
           <v-icon small class="mr-2"> mdi-pencil </v-icon>
         </router-link>
 
@@ -376,10 +416,16 @@ export default {
       doMont: "",
       deliting: "",
       cities: ["Все", "Санкт-Петербург", "Москва"],
+      payments_metod_list: [
+        "Наличными",
+        "Терминал",
+        "Оплата по безналичному расчету",
+      ],
       city: "",
       adminHeaders: [
         { text: "Ред.", value: "actions", sortable: false },
         { text: "№", value: "id" },
+        { text: "Дата продажи", value: "date" },
         { text: "Адрес", value: "adress" },
         { text: "Телефон", value: "phone" },
         { text: "ФИО", value: "fio" },
@@ -393,16 +439,17 @@ export default {
         { text: "Цена диллера", value: "cost_diler" },
         { text: "Примечание продавца", value: "prim_saler" },
         { text: "Примечание Руководителя", value: "prim_rukvod" },
-        { text: "Дата продажи", value: "date" },
         { text: "Продавец", sortable: true, value: "saler.name" },
         { text: "Дополнительные услуги", value: "dopServ" },
         { text: "Остаток платежа", value: "payment_rest" },
-        { text: "Сумма премии", value: "sum_premia" },
-        { text: "Премия ВДЗ", value: "vdz_premia" },
+        { text: "Тип оплаты", value: "payments_metod" }
+        // { text: "Сумма премии", value: "sum_premia" },
+        // { text: "Премия ВДЗ", value: "vdz_premia" },
       ],
       zamershikHeaders: [
         { text: "Ред.", value: "actions", sortable: false },
         { text: "№", value: "id" },
+        { text: "Дата продажи", value: "date" },
         { text: "Адрес", value: "adress" },
         { text: "Телефон", value: "phone" },
         { text: "ФИО", value: "fio" },
@@ -414,16 +461,16 @@ export default {
         { text: "Цена диллера", value: "cost_diler" },
         { text: "Примечание продавца", value: "prim_saler" },
         { text: "Примечание Руководителя", value: "prim_rukvod" },
-        { text: "Дата продажи", value: "date" },
         { text: "Продавец", sortable: true, value: "saler.name" },
         { text: "Дополнительные услуги", value: "dopServ" },
         { text: "Остаток платежа", value: "payment_rest" },
-        { text: "Сумма премии", value: "sum_premia" },
-        { text: "Премия ВДЗ", value: "vdz_premia" },
+        // { text: "Сумма премии", value: "sum_premia" },
+        // { text: "Премия ВДЗ", value: "vdz_premia" },
       ],
       salesHeaders: [
         { text: "Ред.", value: "actions", sortable: false },
         { text: "№", value: "id" },
+        { text: "Дата продажи", value: "date" },
         { text: "Адрес", value: "adress" },
         { text: "Телефон", value: "phone" },
         { text: "ФИО", value: "fio" },
@@ -434,11 +481,10 @@ export default {
         { text: "Замерщик", value: "zamershik.name" },
         { text: "Примечание продавца", value: "prim_saler" },
         { text: "Примечание Руководителя", value: "prim_rukvod" },
-        { text: "Дата продажи", value: "date" },
-        { text: "Дополнительные услуги", value: "dopServ" },
-        { text: "Остаток платежа", value: "payment_rest" },
-        { text: "Сумма премии", value: "sum_premia" },
-        { text: "Премия ВДЗ", value: "vdz_premia" },
+        // { text: "Дополнительные услуги", value: "dopServ" },
+        // { text: "Остаток платежа", value: "payment_rest" },
+        // { text: "Сумма премии", value: "sum_premia" },
+        // { text: "Премия ВДЗ", value: "vdz_premia" },
       ],
       editedIndex: -1,
       team: "",
@@ -467,6 +513,7 @@ export default {
         vdz_premia: "",
       },
       status: null,
+      payments_metod: null,
       statuses: [
         { title: "Ожидает", value: "pending" },
         { title: "Ожидает монтаж", value: "waitmontazh" },
@@ -647,6 +694,16 @@ export default {
         status: this.status,
       }).then(() => {
         this.status = null;
+        this.fetchSales();
+      });
+    },
+
+    saveZakazPayment(item){
+      this.EDIT_ZAKAZ({
+        ...item,
+        payments_metod: this.payments_metod,
+      }).then(() => {
+        this.payments_metod = null;
         this.fetchSales();
       });
     },

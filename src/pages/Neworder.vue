@@ -124,7 +124,7 @@
         </div>
         <!--  -->
 
-        <div class="col-lg-3">
+        <div class="col-lg-3" v-if="noZamer">
           <v-select
             :items="doorSizes"
             label="Размер двери"
@@ -133,7 +133,7 @@
             clearable
           ></v-select>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-3" v-if="noZamer">
           <p>Сторона открывания:
             <span
               class="uncheck"
@@ -149,13 +149,13 @@
             <v-radio label="Право" value="Право"></v-radio>
           </v-radio-group>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-3" v-if="noZamer">
           <v-text-field
             label="Размер проема"
             v-model="zakaz.proem_size"
           ></v-text-field>
         </div>
-        <div class="col-lg-3">
+        <div class="col-lg-3" v-if="noZamer">
           <v-text-field
             label="Номер двери"
             v-model="zakaz.door_number"

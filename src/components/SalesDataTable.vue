@@ -484,6 +484,7 @@ export default {
         { text: "Примечание продавца", value: "prim_saler" },
         { text: "Примечание Руководителя", value: "prim_rukvod" },
         { text: "Продавец", sortable: true, value: "saler.name" },
+        { text: "Торговая точка", sortable: true, value: "tochka" },
         { text: "Дополнительные услуги", value: "dopServ" },
         { text: "Остаток платежа", value: "payment_rest" },
         { text: "Тип оплаты", value: "payments_metod" }

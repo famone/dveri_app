@@ -72,7 +72,7 @@
           <v-btn text color="primary" @click="menu = false">
             Отмена
           </v-btn>
-          <v-btn text color="primary" @click="$refs.menu.save(date_start)">
+          <v-btn text color="primary" @click="filterByDate">
             OK
           </v-btn>
         </v-date-picker>
@@ -760,6 +760,15 @@ export default {
           return !this.city || i.city === this.city;
         });
       }
+    },
+    filterByDate(){
+      this.$refs.menu.save(this.date_start)
+
+      this.items = this.filteredItems.filter((item) => item.date <= 
+        this.date_start[1] && 
+        item.date >= this.date_start[0]
+      ) 
+
     },
 
     searchByColumn(headerValue) {

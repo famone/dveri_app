@@ -26,8 +26,8 @@
     >
       <template #top>
         <v-toolbar flat>
-          <v-toolbar-title>Заказы</v-toolbar-title>
-          <v-divider class="mx-4" inset vertical></v-divider>
+          <!-- <v-toolbar-title>Заказы</v-toolbar-title>
+          <v-divider class="mx-4" inset vertical></v-divider> -->
           <v-toolbar-title
             >Сегодня: {{ now | moment("DD.MM.YY") }}</v-toolbar-title
           >
@@ -43,7 +43,49 @@
             clearable
           ></v-select>
 
+          <v-divider class="mx-4" inset vertical></v-divider>
+
+
+<!-- date range from -->
+    <v-menu
+        ref="menu"
+        v-model="menu"
+        :close-on-content-click="false"
+        :return-value.sync="date_start"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
+      >
+        <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="date_start"
+              label="Дата с-по:"
+              prepend-icon="mdi-calendar"
+              style="margin-bottom: -15px"
+              readonly
+              v-bind="attrs"
+              v-on="on">
+            </v-text-field>
+        </template>
+        <v-date-picker v-model="date_start" no-title scrollable range>
+            <v-spacer></v-spacer>
+          <v-btn text color="primary" @click="menu = false">
+            Отмена
+          </v-btn>
+          <v-btn text color="primary" @click="$refs.menu.save(date_start)">
+            OK
+          </v-btn>
+        </v-date-picker>
+      </v-menu>
+
+<!-- date picker range end -->
+
+
+
+
           <v-spacer></v-spacer>
+
+
 
           <router-link
             tag="a"
@@ -404,6 +446,8 @@ export default {
 
   data() {
     return {
+      date_start: null,
+      menu: false,
       filteredItems: [],
       now: new Date(),
       dialog: false,

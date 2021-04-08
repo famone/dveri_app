@@ -36,6 +36,7 @@
             v-mask="'+7 (###) ###-##-##'"
           ></v-text-field>
         </div>
+
         <div class="col-lg-3">
           <v-text-field
             label="Улица"
@@ -49,7 +50,7 @@
         <div class="col-lg-1">
           <v-text-field label="Корпус" v-model="zakaz.korpus"></v-text-field>
         </div>
-        <div class="col-lg-2">
+        <div class="col-lg-1">
           <v-text-field label="Квартира" v-model="zakaz.flat"></v-text-field>
         </div>
         <!--  -->
@@ -57,7 +58,7 @@
           <v-text-field label="Этаж" v-model="zakaz.floor"></v-text-field>
         </div>
 
-        <div class="col-lg-3">
+        <div class="col-lg-2">
           <p>
             Часть города:
             <span
@@ -74,6 +75,11 @@
             <v-radio label="Юг" value="Юг"></v-radio>
           </v-radio-group>
         </div>
+        <div class="col-lg-2">
+          <v-text-field label="Торговая точка" v-model="zakaz.tochka"></v-text-field>
+        </div>
+
+
       </div>
 
       <div class="row shad-box">
@@ -709,6 +715,7 @@ export default {
         dopServ: [],
         bossDop: [],
         total: 0,
+        tochka: ''
       },
     };
   },

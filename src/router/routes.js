@@ -11,6 +11,7 @@ const Edit_model = () => import('../pages/Edit_model');
 const NewDoor = () => import('../pages/NewDoor');
 const InstallationSchedule = () => import('../pages/InstallationSchedule');
 
+
 const routes = [
   {
     path: '/',
@@ -37,7 +38,7 @@ const routes = [
   },
   {
     path: '/users',
-    component: Users
+    component: Users,
   },
   {
     path: '/neworder',

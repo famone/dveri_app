@@ -22,10 +22,14 @@ td{
 	white-space: nowrap;	
 }
 .v-data-table__wrapper td:nth-child(4){
-	white-space: nowrap;	
+	/* white-space: nowrap;	 */
+	min-width: 200px;
 }
 .v-data-table__wrapper td:nth-child(17){
 	white-space: nowrap;	
+}
+.v-data-table__wrapper td:nth-child(15){
+	min-width: 200px;
 }
 
 

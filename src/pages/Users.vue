@@ -11,7 +11,7 @@
 			</div>
 			<div class="row">
 				<div class="col-lg-12">
-					<usertable :users="users" :load="load" />
+					<usertable :users="users" :load="load" @deleteUser="deleteUser" />
 				</div>
 			</div>
 		</div>
@@ -33,13 +33,26 @@ import newuser from '../components/newuser.vue'
 		},
 		components: {usertable, newuser},
 		methods: {
+			deleteUser(id){
+				this.users = []
+				this.load = true
+				axios
+				.get('https://door.webink.site/wp-json/door/v1/delete/user?user_id=' + id)
+				.then(res =>{
+					this.load = false
+					this.users = res.data.users
+					console.log(res.data)
+				})
+			},
 			setUser(user){
 				this.newuser = false
 				console.log(user)
+				this.load = true
 
 				axios.post('https://door.webink.site/wp-json/door/v1/create/user', user)
 				.then(res => {
-					console.log(res.data)
+					this.load = false
+					this.users = res.data.users
 				})
 			},
 			closePop(){

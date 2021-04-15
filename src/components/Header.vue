@@ -21,7 +21,7 @@
       </div>
     </div>
 
-    <button class="sidebar-btn" @click="sidebar = !sidebar" v-if="user !== null">
+    <button class="sidebar-btn" @click="sidebar = !sidebar" v-if="user !== null && user.roles[0] !== 'shop_manager' ">
       <span class="mdi mdi-menu"></span>Меню
     </button>
 

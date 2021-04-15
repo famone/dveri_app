@@ -1,5 +1,6 @@
 <template>
-  <v-data-table :headers="headers" :items="users" :loading="load">
+<div>
+  <v-data-table v-if="users" :headers="headers" :items="users" :loading="load" :footer-props="{'items-per-page-options': [20, 40, 60, -1]}">
     <template v-slot:item.name="{ item }">
       <v-avatar color="primary" size="25">
         <span class="white--text">{{ item.name }}</span>
@@ -28,13 +29,51 @@
     <template #item.lenter="{ item }">
       {{ item.lenter | formatDate("DD.MM.YYYY hh:mm:ss") }}
     </template>
+
+    <template #item.actions="{ item }">
+        <v-icon small @click="deleteItem(item.id)"> mdi-delete </v-icon>
+    </template>
+
+    
+
+
+
+
+
+
   </v-data-table>
+  <v-dialog v-model="delitPop" max-width="500px">
+            <v-card>
+              <v-card-title class="headline "
+                >Удалить этого пользователя?</v-card-title
+              >
+              <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="delitPop = false"
+                  >Отмена</v-btn
+                >
+                <v-btn color="blue darken-1" text @click="deleteItemConfirm"
+                  >Удалить</v-btn
+                >
+                <v-spacer></v-spacer>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
+</div> 
 </template>		
 
 
 
 <script>
+import {mapGetters} from 'vuex'
+import axios from 'axios'
+
 export default {
+  computed:{
+    ...mapGetters({
+      getUser: "auth/getUser"
+    }),
+  },
   props: {
     users: {
       required: true,
@@ -47,7 +86,10 @@ export default {
   },
   data() {
     return {
+      delitPop: false,
+      delitingItem: null,
       headers: [
+        {text: 'Действия', value: "actions"},
         { text: "Пользователи", value: "fname" },
         { text: "Роль", value: "role" },
         { text: "Почта", value: "email" },
@@ -58,6 +100,14 @@ export default {
     };
   },
   methods: {
+    deleteItem(id){
+      this.delitPop = true
+      this.delitingItem = id
+    },
+    deleteItemConfirm(){
+      this.delitPop = false
+      this.$emit('deleteUser', this.delitingItem)
+    },
     getColor(role) {
       if (role === "administrator") return "red";
       else if (role === "zamershik") return "orange";

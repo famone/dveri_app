@@ -22,6 +22,7 @@
       single-line
       must-sort
       class="elevation-1 rounded-lg"
+      :footer-props="{'items-per-page-options': [20, 40, 60, -1]}"
       @click:row="selectOrderRow"
     >
       <template #top>
@@ -389,7 +390,7 @@
       </template>
 
       <template #item.adress="{ item }">
-        <v-avatar :color="getPart(item.part_city)" size="15"></v-avatar>
+        <v-avatar :color="getPart(item.part_city)" size="14"></v-avatar>
         {{ item.adress }} {{ item.house }} {{ item.flat }}
       </template>
 

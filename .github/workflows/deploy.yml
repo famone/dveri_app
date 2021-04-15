@@ -27,7 +27,7 @@ jobs:
         username: u0470484
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./dist/
-        server-dir: /door.webink.site/dist
+        server-dir: /door.webink.site/dist/
 
     # - name: send message to tg
     #   uses: appleboy/telegram-action@master

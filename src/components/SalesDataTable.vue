@@ -439,7 +439,7 @@
     
 
       <v-snackbar :value="userAlert" @input="userAlert = false" v-if="getUser.roles[0] === 'administrator' ">
-       <span v-if="messages">Пользователь: {{messages.user_id}} просматривает заказы</span>
+       <span v-if="messages">{{messages.message}}</span>
 
         <template v-slot:action="{ attrs }">
           <v-btn
@@ -962,8 +962,13 @@ export default {
 
     //просмотр заказа
     channel.bind('viewOrder', function(data) {
-      vm.userAlert = true;
-     vm.messages = data;
+
+          if(vm.getUser.id == data.user_id){
+            return
+          }
+            vm.userAlert = true;
+            vm.messages = data;
+          
     });
 
 

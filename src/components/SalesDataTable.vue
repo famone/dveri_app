@@ -427,13 +427,32 @@
         </v-btn>
       </template>
     </v-data-table>
+
+    <div class="col-lg-6" v-if="getUser.roles[0] === 'administrator' ">
+      <div class="messages mt-10">
+      <v-alert icon="mdi-eye"  text v-for="mes in messages" dense text type="info">
+        Пользователь: {{mes.user_id}} просматривает заказы
+      </v-alert>
+    </div>
+    </div>
+
+
+
+
   </div>
 </template>
 
 <script>
 import moment from "moment";
-
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
+
+Pusher.logToConsole = true;
+var pusher = new Pusher('0cecb9eb64fb72e940ee', {
+      cluster: 'us2'
+});
+
+var channel = pusher.subscribe('door-update');
+
 
 export default {
   props: {
@@ -447,6 +466,7 @@ export default {
 
   data() {
     return {
+      messages: [],
       date_start: null,
       menu: false,
       filteredItems: [],
@@ -903,6 +923,34 @@ export default {
   mounted() {
     this.itemsOnRole();
     this.fetchSales();
+
+    let vm = this
+
+    
+
+
+    //добавление заказа
+    channel.bind('createOrder', function(data) {
+    // app.messages.push(JSON.stringify(data));
+      vm.fetchSales();
+      // console.log('ASDASDASDASDASDASDASDASD')
+    });
+
+    //изменение заказа
+    channel.bind('updateOrder', function(data) {
+    // app.messages.push(JSON.stringify(data));
+      vm.fetchSales();
+      // console.log('ASDASDASDASDASDASDASDASD')
+    });
+
+    //просмотр заказа
+    channel.bind('viewOrder', function(data) {
+     vm.messages.push(data);
+    });
+
+
+
+
   },
 
   filters: {

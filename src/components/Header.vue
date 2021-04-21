@@ -36,7 +36,7 @@
         <p>{{ user.user_email }}</p>
       </div>
       <div class="avatar" v-if="user !== null">
-        <span>{{ user.user_nicename }}</span>
+        <span>{{ user.user_email[0] }}</span>
       </div>
 
       <transition v-if="accpuntMenu" name="slide-fade" mode="out-in">

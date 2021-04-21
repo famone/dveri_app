@@ -18,7 +18,6 @@
       :headers="headers"
       :items="items"
       :loading="loading"
-      sort-by="id"
       single-line
       must-sort
       class="elevation-1 rounded-lg"
@@ -428,14 +427,23 @@
       </template>
     </v-data-table>
 
-    <div class="col-lg-6" v-if="getUser.roles[0] === 'administrator' ">
-      <div class="messages mt-10">
-      <v-alert icon="mdi-eye"  text v-for="mes in messages" dense text type="info">
-        Пользователь: {{mes.user_id}} просматривает заказы
-      </v-alert>
-    </div>
-    </div>
 
+    
+
+      <v-snackbar :value="userAlert" @input="userAlert = false">
+       <span v-if="messages">Пользователь: {{messages.user_id}} просматривает заказы</span>
+
+        <template v-slot:action="{ attrs }">
+          <v-btn
+            color="red"
+            text
+            v-bind="attrs"
+            @click="userAlert = false"
+          >
+            Закрыть
+          </v-btn>
+        </template>
+      </v-snackbar>
 
 
 
@@ -466,7 +474,8 @@ export default {
 
   data() {
     return {
-      messages: [],
+      userAlert: false,
+      messages: null,
       date_start: null,
       menu: false,
       filteredItems: [],
@@ -945,7 +954,8 @@ export default {
 
     //просмотр заказа
     channel.bind('viewOrder', function(data) {
-     vm.messages.push(data);
+      vm.userAlert = true;
+     vm.messages = data;
     });
 
 

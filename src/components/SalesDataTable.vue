@@ -427,10 +427,18 @@
       </template>
     </v-data-table>
 
+    <!-- <div class="col-lg-6" v-if="getUser.roles[0] === 'administrator' ">
+      <div class="messages mt-10">
+      <v-alert icon="mdi-eye"  text v-for="mes in messages" dense text type="info">
+        Пользователь: {{mes.user_id}} просматривает заказы
+      </v-alert>
+    </div>
+    </div> -->
+
 
     
 
-      <v-snackbar :value="userAlert" @input="userAlert = false">
+      <v-snackbar :value="userAlert" @input="userAlert = false" v-if="getUser.roles[0] === 'administrator' ">
        <span v-if="messages">Пользователь: {{messages.user_id}} просматривает заказы</span>
 
         <template v-slot:action="{ attrs }">

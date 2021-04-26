@@ -70,6 +70,9 @@
         </v-row>
       </v-container>
     </template>
+    <template #item.adress="{ item }">
+        {{ item.adress }} {{ item.house }} {{ item.flat }}
+      </template>
     <template #item.door_size="{ item }">
       {{ item.door_size }} / {{ item.door_direction }}
     </template>
@@ -186,9 +189,10 @@ export default {
     },
 
     items(newVal) {
+
       this.json_fields = {
         "Номер заказа": "id",
-        Адрес: "adress",
+        "Адрес": "adress",
         "Номер телефона": "phone",
         "Модель двери": "model_ruk.name",
         "Размер двери": "door_size",
@@ -205,6 +209,9 @@ export default {
         "Способ оплаты": "payments_metod",
         Остаток: "total",
       };
+
+      console.log(this.json_fields)
+      
 
       this.json_data = [...newVal];
     },

@@ -1,6 +1,7 @@
 <template>
   <div>
 
+    <!-- <pre>{{sales}}</pre> -->
     <v-dialog v-model="dialogDopServ" width="500px">
       <v-card class="pa-4">
         <v-container fluid>
@@ -518,7 +519,7 @@ export default {
         { text: "Замерщик", value: "zamershik.name" },
         { text: "Дата монтажа", value: "date_mont" },
         { text: "Бригада", value: "brigada_mont.name" },
-        { text: "Цена диллера", value: "cost_diler" },
+        { text: "Цена диллера", value: "cost_saler" },
         { text: "Примечание продавца", value: "prim_saler" },
         { text: "Примечание Руководителя", value: "prim_rukvod" },
         { text: "Продавец", sortable: true, value: "saler.name" },
@@ -541,7 +542,7 @@ export default {
         { text: "Проем", value: "proem_size" },
         { text: "Дата замера", value: "data_zamera" },
         { text: "Замерщик", value: "zamershik.name" },
-        { text: "Цена диллера", value: "cost_diler" },
+        { text: "Цена диллера", value: "cost_saler" },
         { text: "Примечание продавца", value: "prim_saler" },
         { text: "Примечание Руководителя", value: "prim_rukvod" },
         { text: "Продавец", sortable: true, value: "saler.name" },
@@ -602,8 +603,10 @@ export default {
         { title: "Ожидает монтаж", value: "waitmontazh" },
         { title: "Отменен", value: "cancelled" },
         { title: "Замер", value: "zamer" },
+        { title: "Выплачено", value: "vyplachen" },
         { title: "Индивидуальный", value: "individual" },
         { title: "Выполнен", value: "completed" },
+        
       ],
       statusesSaler: [
         { title: "Ожидает", value: "pending" },
@@ -674,16 +677,23 @@ export default {
           break;
         case "Заявки за сегодня":
           this.items = this.filteredItems.filter((el) => {
-            return el.data_zamera === moment().format("DD/MM/YYYY");
+            return moment(el.date).format("DD/MM") === moment().format("DD/MM");
           });
           break;
         case "Необработанные заявки":
-          console.log("Необработанные заявки");
+          this.items = this.filteredItems.filter(
+            (el) => el.status === "pending"
+          );
           break;
         case "Передано замерщику":
-          this.items = this.filteredItems.filter((el) => {
-            return el.zamershik.name;
-          });
+          this.items = this.filteredItems.filter(
+            (el) => el.status === "zamer"
+          );
+          break;
+        case "Выплачено":
+          this.items = this.filteredItems.filter(
+            (el) => el.status === "vyplachen"
+          );
           break;
         case "Монтаж завтра":
           this.items = this.filteredItems.filter(
@@ -696,16 +706,12 @@ export default {
           );
           break;
         case "Ожидают монтаж":
-          this.items = this.filteredItems.filter((el) => !el.date_mont);
-          break;
-        case "Возврат дилеру":
-          console.log("Возврат дилеру");
+          this.items = this.filteredItems.filter(
+            (el) => el.status === "waitmontazh"
+          );
           break;
         case "В исполнении":
           console.log("В исполнении");
-          break;
-        case "Купоны":
-          console.log("Купоны");
           break;
         case "Изменения продавцов":
           console.log("Изменения продавцов");
@@ -885,6 +891,8 @@ export default {
           return "green";
         case "pending":
           return "#5E35B1";
+        case "vyplachen":
+          return "#1976d2";
       }
     },
 
@@ -895,6 +903,7 @@ export default {
       else if (status === "zamer") return "Замер";
       else if (status === "individual") return "Индивидуальная";
       else if (status === "completed") return "Выполнен";
+      else if (status === "vyplachen") return "Выплачено";
       else return "В работе";
     },
 
@@ -943,14 +952,12 @@ export default {
 
     let vm = this
 
-    
-
+    let chislo = '2021-04-26 13:25:58'
 
     //добавление заказа
     channel.bind('createOrder', function(data) {
     // app.messages.push(JSON.stringify(data));
       vm.fetchSales();
-      // console.log('ASDASDASDASDASDASDASDASD')
     });
 
     //изменение заказа
@@ -970,9 +977,6 @@ export default {
             vm.messages = data;
           
     });
-
-
-
 
   },
 

@@ -192,10 +192,26 @@ export default {
 
       this.json_fields = {
         "Номер заказа": "id",
-        "Адрес": "adress",
+        "Адрес": {
+          callback: (newVal) => {
+            return newVal.adress + ' ' + newVal.house + ' ' + newVal.flat
+          },
+        },
         "Номер телефона": "phone",
-        "Модель двери": "model_ruk.name",
-        "Размер двери": "door_size",
+        "Модель двери": {
+          callback: (item) => {
+            if (!item.model_ruk.name){
+                return item.model_saler.name ;
+              }else{
+                return item.model_ruk.name;
+              }
+          },
+        },
+        "Размер двери/Сторона": {
+          callback: (item) => {
+            return item.door_size + "/" + item.door_direction;
+          }
+        },
         "Размер проема": "proem_size",
         "Примечание:": "prim_rukvod",
         "Доп. работы": {
@@ -209,8 +225,6 @@ export default {
         "Способ оплаты": "payments_metod",
         Остаток: "total",
       };
-
-      console.log(this.json_fields)
       
 
       this.json_data = [...newVal];

@@ -16,6 +16,8 @@
       </v-card>
     </v-dialog>
     <v-data-table
+      disable-pagination
+      :hide-default-footer="true"
       :headers="headers"
       :items="items"
       :loading="loading"

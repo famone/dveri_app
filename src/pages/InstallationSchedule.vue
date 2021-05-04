@@ -60,6 +60,7 @@
             :data="json_data"
             :fields="json_fields"
             :name="excelFileName"
+            :header="excelHeader"
             v-if="getUser.roles[0] !== 'shop_manager'"
           >
             <v-btn depressed color="primary ma-2">
@@ -171,6 +172,12 @@ export default {
         : null;
       return `${this.team.title}${date}.xls`;
     },
+    excelHeader(){
+      const date = this.date
+        ? `_${moment(this.date).format("DD.MM.YYYY")}`
+        : null;
+      return `${this.team.title}/${date}`;
+    }
   },
 
   methods: {
@@ -191,6 +198,7 @@ export default {
     items(newVal) {
 
       this.json_fields = {
+        "Время": "time_mont",
         "Номер заказа": "id",
         "Адрес": {
           callback: (newVal) => {

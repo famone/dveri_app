@@ -2,6 +2,9 @@
   <v-data-table
     :headers="headers"
     :items.sync="items"
+    :options.sync="options"
+    :sort-by='["time_mont"]'
+    :sort-desc=false
     single-line
     must-sort
     class="elevation-1 rounded-lg ma-4 px-4"
@@ -107,6 +110,7 @@ export default {
       json_fields: null,
       team: {},
       date: null,
+      options: {},
       headers: [
         { text: "Время", value: "time_mont" },
         { text: "№", value: "id" },
@@ -164,6 +168,7 @@ export default {
           return sale.date_mont === this.dateFormated;
         });
       }
+
     },
 
     excelFileName() {
@@ -234,8 +239,17 @@ export default {
         Остаток: "total",
       };
       
+      let sortData = newVal.sort((a, b) => {
+        if (a["time_mont"] < b["time_mont"]) {
+            return -1;
+        }
+        if (a["time_mont"] > b["time_mont"]) {
+            return 1;
+        }
+        return 0;
+      });
 
-      this.json_data = [...newVal];
+      this.json_data = [...sortData];
     },
   },
 };

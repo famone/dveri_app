@@ -52,6 +52,11 @@
                         {{ item.date | formatDate("DD/MM") }}
                     </template>
 
+                    <template #item.adress="{ item }">
+                        <v-avatar :color="getPart(item.part_city)" size="14"></v-avatar>
+                        {{ item.adress }} {{ item.house }} {{ item.flat }}
+                    </template>
+
 
                     <template #item.id="{ item }">
                        
@@ -128,6 +133,11 @@ import moment from "moment";
             openDopServDialog(item) {
                 this.dialogDopServ = true;
                 this.chosenItem = item;
+            },
+            getPart(part) {
+                if (part === "Север") return "primary";
+                else if (part === "Юг") return "orange";
+                else return "grey";
             },
             getChipTextColor(status) {
                 switch (status) {

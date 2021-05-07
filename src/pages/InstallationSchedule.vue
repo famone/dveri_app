@@ -114,8 +114,8 @@ export default {
       headers: [
         { text: "Время", value: "time_mont" },
         { text: "№", value: "id" },
-        { text: "Адрес", value: "adress" },
         { text: "Телефон", value: "phone" },
+        { text: "Адрес", value: "adress" },
         { text: "Модель двери", value: "model_ruk.name" },
         { text: "Размер / Сторона", value: "door_size" },
         { text: "Размер проема", value: "proem_size" },

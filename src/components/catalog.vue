@@ -10,8 +10,7 @@
             :headers="headers"
             :items="filteredItems"
             :loading="loading"
-            class="elevation-1"
-          >
+            class="elevation-1">
             <template v-slot:top>
               <v-toolbar flat class="pl-0">
                 <v-container

@@ -9,6 +9,7 @@ const Directories = () => import('../pages/Directories');
 const Edit_order = () => import('../pages/Edit_order');
 const Edit_model = () => import('../pages/Edit_model');
 const NewDoor = () => import('../pages/NewDoor');
+const Archive = () => import('../pages/Archive');
 const InstallationSchedule = () => import('../pages/InstallationSchedule');
 
 
@@ -43,6 +44,10 @@ const routes = [
   {
     path: '/neworder',
     component: Neworder
+  },
+  {
+    path: '/archive',
+    component: Archive
   },
   {
     path: '/directories',

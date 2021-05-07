@@ -25,8 +25,7 @@
       must-sort
       class="elevation-1 rounded-lg"
       :footer-props="{'items-per-page-options': [20, 40, 60, -1]}"
-      @click:row="selectOrderRow"
-    >
+      @click:row="selectOrderRow">
       <template #top>
         <v-toolbar flat>
           <!-- <v-toolbar-title>Заказы</v-toolbar-title>

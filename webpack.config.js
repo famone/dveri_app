@@ -67,33 +67,33 @@ module.exports = {
   ]
 }
 
-if (process.env.NODE_ENV === 'production') {
-  module.exports.devtool = '#source-map'
-  // http://vue-loader.vuejs.org/en/workflow/production.html
-  module.exports.plugins = (module.exports.plugins || []).concat([
-    new webpack.DefinePlugin({
-      'process.env': {
-        NODE_ENV: '"production"'
-      }
-    }),
-    new TerserPlugin({
-        parallel: true,
-        cache: true,
-        extractComments: true,
-        terserOptions: {
-          ecma: 5,
-          ie8: false,
-          compress: true,
-          warnings: false,
-        },
-      }),
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    }),
-    new ImageminPlugin({
-      pngquant: {
-        quality: '60'
-      }
-    })
-  ])
-}
+// if (process.env.NODE_ENV === 'production') {
+//   module.exports.devtool = '#source-map'
+//   // http://vue-loader.vuejs.org/en/workflow/production.html
+//   module.exports.plugins = (module.exports.plugins || []).concat([
+//     new webpack.DefinePlugin({
+//       'process.env': {
+//         NODE_ENV: '"production"'
+//       }
+//     }),
+//     new TerserPlugin({
+//         parallel: true,
+//         cache: true,
+//         extractComments: true,
+//         terserOptions: {
+//           ecma: 5,
+//           ie8: false,
+//           compress: true,
+//           warnings: false,
+//         },
+//       }),
+//     new webpack.LoaderOptionsPlugin({
+//       minimize: true
+//     }),
+//     new ImageminPlugin({
+//       pngquant: {
+//         quality: '60'
+//       }
+//     })
+//   ])
+// }

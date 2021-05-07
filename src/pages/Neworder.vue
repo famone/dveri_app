@@ -638,7 +638,7 @@
 
 <script>
 import axios from "axios";
-import { mapState, mapGetters } from "vuex";
+import { mapState, mapGetters, mapActions } from "vuex";
 
 export default {
   name: "NewOrder",
@@ -778,6 +778,9 @@ export default {
     //инициализируем и подключаем карты
   },
   methods: {
+     ...mapActions({
+      LOAD_DOOR_CATEGORIES: "zakaz/LOAD_DOOR_CATEGORIES",
+    }),
     yaMapInit2() {
       var suggestView1 = new ymaps.SuggestView("suggest", {
         provider: {

@@ -82,7 +82,7 @@
 
       </div>
 
-      <div class="row shad-box">
+      <div class="row shad-box" v-if="doorsCategory.length">
         <div class="col-lg-12">
           <h3>
             <span class="mdi mdi-cart-outline"></span> Информация о товаре:
@@ -638,13 +638,14 @@
 
 <script>
 import axios from "axios";
-import { mapState, mapGetters, mapActions } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "NewOrder",
 
   data() {
     return {
+      doorsCategory: [],
       noZamer: false,
       loadBtn: false,
       doorsModels: [],
@@ -724,7 +725,6 @@ export default {
     ...mapGetters({
       getUser: "auth/getUser",
       teams: "zakaz/GET_TEAMS",
-      doorsCategory: "zakaz/GET_DOOR_CATEGORIES",
       zamershiks: "zakaz/GET_ZAMERSHIKI",
     }),
 
@@ -776,11 +776,17 @@ export default {
     document.head.append(script);
 
     //инициализируем и подключаем карты
+
+
+    // чиним модели
+    axios
+        .get('https://door.webink.site/wp-json/door/v1/get/categorys')
+        .then(res => {
+            this.doorsCategory = res.data
+        })
+
   },
   methods: {
-     ...mapActions({
-      LOAD_DOOR_CATEGORIES: "zakaz/LOAD_DOOR_CATEGORIES",
-    }),
     yaMapInit2() {
       var suggestView1 = new ymaps.SuggestView("suggest", {
         provider: {

@@ -13,6 +13,7 @@ module.exports = {
     filename: (chunkData) => {
       return chunkData.chunk.name === 'main' ? '[name].js': '[name].[chunkhash].js';
     },
+    chunkFilename: '[name].[chunkhash].js'
   },
   module: {
     rules: [

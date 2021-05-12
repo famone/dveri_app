@@ -1,7 +1,5 @@
 <template>
     <div>
-        <!-- <pre>{{sales}}</pre> -->
-
         <v-dialog v-model="dialogDopServ" width="500px">
             <v-card class="pa-4">
                 <v-container fluid>
@@ -23,17 +21,17 @@
                     disable-pagination
                     :hide-default-footer="true"
                     :headers="adminHeaders"
-                    :items="sales"
+                    :items.sync="sales"
                     :loading="!sales.length"
                     single-line
                     must-sort
                     class="elevation-1 rounded-lg"
                     :footer-props="{'items-per-page-options': [20, 40, 60, -1]}"
-                    @click:row="selectOrderRow">
+                    >
 
 
 
-                            <template #top>
+                            <template #top >
                                 <v-toolbar flat>
                                     <v-text-field
                                         v-model="search"
@@ -42,7 +40,18 @@
                                         single-line
                                         hide-details></v-text-field>
                                          <v-spacer></v-spacer>
-                                </v-toolbar>
+                                                    <downloadExcel
+                                                        :data="sales"
+                                                        :fields="json_fields"
+                                                        :name="excelFileName"
+                                                        :header="excelHeader"
+                                                        v-if="sales.length">
+                                                        <v-btn depressed color="primary ma-2">
+                                                        <v-icon>mdi-download</v-icon>
+                                                        Выгрузить EXСEL
+                                                        </v-btn>
+                                                    </downloadExcel>
+                                            </v-toolbar>
                             </template>
 
 
@@ -83,11 +92,17 @@
                     </template>
 
 
+
+
                      <template #item.dopServ="{ item }">
                         <v-icon v-if="item.dopServ" @click="openDopServDialog(item)">
                         mdi-file
                         </v-icon>
                         <span v-else>Не заявлено доп.услуг</span>
+                    </template>
+
+                    <template #item.status="{ item }">
+                        {{getTippyTittle(item.status)}}
                     </template>
 
                 </v-data-table>
@@ -103,13 +118,39 @@ import { mapGetters } from 'vuex'
 import moment from "moment";
 
     export default{
+        props: ["id"],
         computed:{
             ...mapGetters({
-                getUser: "auth/getUser",
-            })
+                getUser: "auth/getUser"
+            }),
+            excelFileName() {
+                if(!this.users){
+                    return
+                }
+                const date = this.date
+                let userName = this.users.find(item =>{
+                    return item.id == this.id
+                })
+                this.userFileName = userName.email
+            
+                return `${userName.email}_${moment().format("DD.MM.YYYY")}.xls`;
+            },
+            excelHeader(){
+                if(!this.users){
+                    return
+                }
+                const date = this.date
+                let userName = this.users.find(item =>{
+                    return item.id == this.id
+                })
+                this.userFileName = userName.email
+            
+                return `${userName.email}_${moment().format("DD.MM.YYYY")}.xls`;
+            }
         },
         data(){
             return{
+                users: null,
                 search: '',
                 dialogDopServ: false,
                 chosenItem: {},
@@ -117,26 +158,18 @@ import moment from "moment";
                 adminHeaders: [
                     { text: "№", value: "id" },
                     { text: "Дата продажи", value: "date" },
-                    { text: "Телефон", value: "phone" },
                     { text: "Адрес", value: "adress" },
-                    
-                    { text: "ФИО", value: "fio" },
                     { text: "Модель двери", value: "door_model" },
-                    { text: "Размер/Сторона", value: "door_size" },
-                    { text: "Проем", value: "proem_size" },
-                    { text: "Дата замера", value: "data_zamera" },
-                    { text: "Замерщик", value: "zamershik.name" },
-                    { text: "Дата монтажа", value: "date_mont" },
-                    { text: "Бригада", value: "brigada_mont.name" },
-                    { text: "Цена диллера", value: "cost_saler" },
                     { text: "Примечание продавца", value: "prim_saler" },
                     { text: "Примечание Руководителя", value: "prim_rukvod" },
-                    { text: "Продавец", sortable: true, value: "saler.name" },
-                    { text: "Торговая точка", sortable: true, value: "tochka" },
-                    { text: "Дополнительные услуги", value: "dopServ" },
-                    { text: "Остаток платежа", value: "payment_rest" },
-                    { text: "Тип оплаты", value: "payments_metod" }
+                    { text: "Статус заявки", value: "status" },
+                    { text: "Цена диллера", value: "cost_saler" },
+                    { text: "Сумма премии", value: "sum_premia" },
                 ],
+                json_data: null,
+                json_fields: null,
+                date: new Date,
+                userFileName: ''
             }
         },
         methods: {
@@ -199,10 +232,59 @@ import moment from "moment";
         },
         created(){
             axios
-            .get(`https://door.webink.site/wp-json/door/v1/get/sales?user_id=${this.getUser.id}&type=archive`)
+            .get(`https://door.webink.site/wp-json/door/v1/get/sales?user_id=${this.id}`)
             .then(res =>{
                 this.sales = res.data  
             })
-        }
+
+            axios
+			.get('https://door.webink.site/wp-json/door/v1/get/users')
+			.then(res =>{
+				this.users = res.data
+			})
+        },
+        watch: {
+            items(newVal) {
+
+                this.json_fields = {
+                    "Номер заказа": "id",
+                    "Адрес": {
+                    callback: (newVal) => {
+                        return newVal.adress + ' ' + newVal.house + ' ' + newVal.flat
+                    },
+                    },
+                    "Модель двери": {
+                    callback: (item) => {
+                        if (!item.model_ruk.name){
+                            return item.model_saler.name ;
+                        }else{
+                            return item.model_ruk.name;
+                        }
+                    },
+                    },
+                    "Примечание:": "prim_rukvod",
+                };
+                
+                let sortData = newVal.sort((a, b) => {
+                    if (a["time_mont"] < b["time_mont"]) {
+                        return -1;
+                    }
+                    if (a["time_mont"] > b["time_mont"]) {
+                        return 1;
+                    }
+                    return 0;
+                });
+
+                this.json_data = [...newVal];
+                },
+            },
     }
 </script>
+
+<style scoped>
+.v-data-table__wrapper td:nth-child(3){
+	white-space: inherit!important;
+    background: red!important;
+    max-width: 200px!important;
+}
+</style>

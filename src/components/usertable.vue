@@ -33,6 +33,14 @@
     <template #item.actions="{ item }">
         <v-icon small @click="deleteItem(item.id)"> mdi-delete </v-icon>
     </template>
+    <template #item.id="{ item }">
+        <router-link tag="div" :to="'/report/' + item.id">
+         
+            <v-chip color="primary" dark label>
+              Отчет
+            </v-chip>
+        </router-link>
+    </template>
 
     
 
@@ -96,6 +104,7 @@ export default {
         { text: "Кол-во заказов", value: "zakaz" },
         { text: "Процент премии", value: "premia" },
         { text: "Последний визит", value: "lenter" },
+        { text: "Посмотреть отчет", value: "id" },
       ],
     };
   },

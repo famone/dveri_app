@@ -10,6 +10,7 @@ const Edit_order = () => import('../pages/Edit_order');
 const Edit_model = () => import('../pages/Edit_model');
 const NewDoor = () => import('../pages/NewDoor');
 const Archive = () => import('../pages/Archive');
+const Report = () => import('../pages/Report');
 const InstallationSchedule = () => import('../pages/InstallationSchedule');
 
 
@@ -66,7 +67,11 @@ const routes = [
     path: '/new_door',
     component: NewDoor,
   },
-
+  {   
+    path: '/report/:id',
+		component: Report,
+		props: true
+  },
   {
     path: '/installation-shedule',
     component: InstallationSchedule,

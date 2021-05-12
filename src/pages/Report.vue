@@ -41,7 +41,7 @@
                                         hide-details></v-text-field>
                                          <v-spacer></v-spacer>
                                                     <downloadExcel
-                                                        :data="sales"
+                                                        :data="json_data"
                                                         :fields="json_fields"
                                                         :name="excelFileName"
                                                         :header="excelHeader"
@@ -244,40 +244,48 @@ import moment from "moment";
 			})
         },
         watch: {
-            items(newVal) {
+            sales(newVal) {
 
                 this.json_fields = {
-                    "Номер заказа": "id",
-                    "Адрес": {
-                    callback: (newVal) => {
-                        return newVal.adress + ' ' + newVal.house + ' ' + newVal.flat
-                    },
-                    },
-                    "Модель двери": {
-                    callback: (item) => {
-                        if (!item.model_ruk.name){
-                            return item.model_saler.name ;
-                        }else{
-                            return item.model_ruk.name;
+                    "Номер заказа:": "id",
+                    "Дата продажи:": "prim_rukvod",
+                    "Адрес:": {
+                        callback: (newVal) => {
+                            return newVal.adress + ' ' + newVal.house + ' ' + newVal.flat
                         }
                     },
+                    "Модель двери": {
+                        callback: (newVal) => {
+                            if(newVal.model_ruk.name){
+                                return newVal.model_ruk.name
+                            }else{
+                                return newVal.model_saler.name
+                            }
+                        }
                     },
-                    "Примечание:": "prim_rukvod",
+                    "Примечание продавца:": "prim_saler",
+                    "Примечание руководителя:": "prim_rukvod",
+                    "Статус заявки" : {
+                        callback: (newVal) => {
+                            if (newVal.status === "pending") return "Ожидает";
+                            else if (newVal.status === "waitmontazh") return "Ожидает монтаж";
+                            else if (newVal.status === "cancelled") return "Отменен";
+                            else if (newVal.status === "zamer") return "Замер";
+                            else if (newVal.status === "individual") return "Индивидуальная";
+                            else if (newVal.status === "completed") return "Выполнен";
+                            else if (newVal.status === "vyplachen") return "Выплачено";
+                            else return "В работе"
+                        }
+                    },
+                    "Цена диллера:": "cost_saler",
+                    "Сумма премии:": "sum_premia",
                 };
                 
-                let sortData = newVal.sort((a, b) => {
-                    if (a["time_mont"] < b["time_mont"]) {
-                        return -1;
-                    }
-                    if (a["time_mont"] > b["time_mont"]) {
-                        return 1;
-                    }
-                    return 0;
-                });
 
                 this.json_data = [...newVal];
-                },
-            },
+                
+            }
+        }
     }
 </script>
 

@@ -164,6 +164,7 @@ import moment from "moment";
                     { text: "Примечание Руководителя", value: "prim_rukvod" },
                     { text: "Статус заявки", value: "status" },
                     { text: "Цена диллера", value: "cost_saler" },
+                    { text: "Торговая точка", value: "tochka" },
                     { text: "Сумма премии", value: "sum_premia" },
                 ],
                 json_data: null,
@@ -248,7 +249,11 @@ import moment from "moment";
 
                 this.json_fields = {
                     "Номер заказа:": "id",
-                    "Дата продажи:": "prim_rukvod",
+                    "Дата продажи:": {
+                        callback: (newVal) => {
+                            return moment(newVal.date).format("DD.MM.YYYY")
+                        }
+                    },
                     "Адрес:": {
                         callback: (newVal) => {
                             return newVal.adress + ' ' + newVal.house + ' ' + newVal.flat
@@ -279,6 +284,7 @@ import moment from "moment";
                     },
                     "Цена диллера:": "cost_saler",
                     "Сумма премии:": "sum_premia",
+                    "Торговая точка": "tochka" 
                 };
                 
 

@@ -233,7 +233,7 @@ import moment from "moment";
         },
         created(){
             axios
-            .get(`https://door.webink.site/wp-json/door/v1/get/sales?user_id=${this.id}`)
+            .get(`https://door.webink.site/wp-json/door/v1/get/sales?user_id=${this.id}&type=report`)
             .then(res =>{
                 this.sales = res.data  
             })

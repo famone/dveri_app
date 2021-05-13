@@ -268,8 +268,11 @@ import moment from "moment";
                             }
                         }
                     },
+                    "Цена диллера:": "cost_saler",
                     "Примечание продавца:": "prim_saler",
                     "Примечание руководителя:": "prim_rukvod",
+                    "Тип оплаты:": "payments_metod",
+                    "Сумма премии:": "sum_premia",
                     "Статус заявки" : {
                         callback: (newVal) => {
                             if (newVal.status === "pending") return "Ожидает";
@@ -282,8 +285,6 @@ import moment from "moment";
                             else return "В работе"
                         }
                     },
-                    "Цена диллера:": "cost_saler",
-                    "Сумма премии:": "sum_premia",
                     "Торговая точка": "tochka" 
                 };
                 

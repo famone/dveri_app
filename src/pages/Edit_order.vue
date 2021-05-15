@@ -2,7 +2,7 @@
   <section>
 
 
-    <pre>{{EditingOrder}}</pre>
+    <!-- <pre>{{EditingOrder}}</pre> -->
     <div class="container">
       <div class="row">
         <div class="col-lg-12">

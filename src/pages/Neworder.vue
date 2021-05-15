@@ -918,6 +918,8 @@ export default {
     addNewOrder() {
       this.loadBtn = true;
 
+     
+
       //отправить новый заказ
       axios
         .post("https://door.webink.site/wp-json/door/v1/add/sales", {

@@ -730,7 +730,7 @@ export default {
     },
 
     saveDataZamera(item) {
-      const data_zamera = moment(this.data_zamera).format("DD/MM/YYYY");
+      const data_zamera = moment(this.data_zamera).format("YYYY-MM-DD");
       const vremya_zamera = moment(this.data_zamera).format("HH:mm");
 
       this.EDIT_ZAKAZ({
@@ -745,7 +745,7 @@ export default {
 
     saveDateMontaz(item) {
       console.log(item);
-      const date_mont = moment(this.date_mont).format("DD/MM/YYYY");
+      const date_mont = moment(this.date_mont).format("YYYY-MM-DD");
       const time_mont = moment(this.date_mont).format("HH:mm");
 
       this.EDIT_ZAKAZ({

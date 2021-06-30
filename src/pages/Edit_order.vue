@@ -1,7 +1,5 @@
 <template>
   <section>
-
-
     <!-- <pre>{{EditingOrder}}</pre> -->
     <div class="container">
       <div class="row">
@@ -216,9 +214,6 @@
           </h2>
         </div>
         <div class="col-lg-12">
-
-
-
           <div
             class="row repeater"
             v-for="(dop, index) in EditingOrder.dopServ"
@@ -268,20 +263,19 @@
           </div>
         </div>
 
-  
         <div class="col-lg-6">
           <v-btn
-          depressed
-          color="primary"
-          @click="addDop('dopServ', 'Услуга')"
-          class="mr-4"
-        >
-          <v-icon left>mdi-cart-plus</v-icon>
-          Добавить
-        </v-btn>
+            depressed
+            color="primary"
+            @click="addDop('dopServ', 'Услуга')"
+            class="mr-4"
+          >
+            <v-icon left>mdi-cart-plus</v-icon>
+            Добавить
+          </v-btn>
         </div>
         <div class="col-lg-6">
-          <h4 v-if="EditingOrder">Итого доп. работ: {{getTotalDop}}</h4>
+          <h4 v-if="EditingOrder">Итого доп. работ: {{ getTotalDop }}</h4>
         </div>
 
         <!-- <v-btn
@@ -292,8 +286,6 @@
             <v-icon left>mdi-plus</v-icon>Добавить другое
           </v-btn> -->
       </div>
-
-
 
       <div class="row shad-box" v-if="getUser.id !== 6">
         <div class="col-lg-12">
@@ -349,42 +341,31 @@
           ></v-select>
         </div>
 
-        <div class="col-lg-3" v-if="getUser.roles[0] !== 'zamershik' ">
-          <v-menu
-            ref="menu2"
-            v-model="menu2"
-            :close-on-content-click="false"
-            :return-value.sync="EditingOrder.date_mont"
-            transition="scale-transition"
-            offset-y
-            min-width="290px"
+        <div class="col-lg-3" v-if="getUser.roles[0] !== 'zamershik'">
+          <v-datetime-picker
+            label="Выберите дату монтажа"
+            :value="montDateTime"
+            @input="changeDateTime('date_mont', 'time_mont', $event)"
+            :datetime="montDateTime"
+            dateFormat="dd.MM.yyyy"
+            timeFormat="HH:mm:ss"
+            clearText="отмена"
+            okText="выбрать"
+            :timePickerProps="{
+              format: '24hr',
+              'use-seconds': true,
+            }"
           >
-
-
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="EditingOrder.date_mont"
-                label="Желаемая дата монтажа"
-                prepend-icon="mdi-calendar"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-              ></v-text-field>
+            <template #dateIcon>
+              <v-icon> mdi-calendar </v-icon>
             </template>
-            <v-date-picker v-model="EditingOrder.date_mont" no-title scrollable>
-              <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="menu2 = false">Отмена</v-btn>
-              <v-btn
-                text
-                color="primary"
-                @click="$refs.menu2.save(EditingOrder.date_mont)"
-                >Ок</v-btn
-              >
-            </v-date-picker>
-          </v-menu>
+            <template #timeIcon>
+              <v-icon> mdi-clock </v-icon>
+            </template>
+          </v-datetime-picker>
         </div>
 
-        <div class="col-lg-3" v-if="getUser.roles[0] !== 'zamershik' ">
+        <div class="col-lg-3" v-if="getUser.roles[0] !== 'zamershik'">
           <v-select
             :items="teams"
             label="Бригада"
@@ -394,8 +375,6 @@
             clearable
           ></v-select>
         </div>
-
-
       </div>
 
       <div class="row shad-box" v-if="getUser.id !== 6">
@@ -578,28 +557,32 @@ export default {
       doorsCategory: "zakaz/GET_DOOR_CATEGORIES",
     }),
 
+    montDateTime() {
+      return `${moment(this.EditingOrder.date_mont).format("DD.MM.YYYY")} ${
+        this.EditingOrder.time_mont
+      }`;
+    },
 
-    getTotalDop(){
-    if(this.EditingOrder.dopServ){
-        let prices = []
-        let total = 0
+    getTotalDop() {
+      if (this.EditingOrder.dopServ) {
+        let prices = [];
+        let total = 0;
 
-        this.EditingOrder.dopServ.forEach(item =>{
-          if(item.service){
-             prices.push(item.price)
-          }else{
-            let single = item.price * item.count
-            prices.push(single)
+        this.EditingOrder.dopServ.forEach((item) => {
+          if (item.service) {
+            prices.push(item.price);
+          } else {
+            let single = item.price * item.count;
+            prices.push(single);
           }
-        
-        })
+        });
 
-        prices.forEach(item =>{
-          total += parseInt(item)
-        })
-        this.EditingOrder.cost_zdi = total
-        
-        return total
+        prices.forEach((item) => {
+          total += parseInt(item);
+        });
+        this.EditingOrder.cost_zdi = total;
+
+        return total;
       }
     },
 
@@ -610,13 +593,8 @@ export default {
     },
 
     totalSum() {
-      const {
-        cost_saler,
-        cost_diler,
-        cost_zdi,
-        discount,
-        avans,
-      } = this.EditingOrder;
+      const { cost_saler, cost_diler, cost_zdi, discount, avans } =
+        this.EditingOrder;
 
       return (
         (cost_diler ? cost_diler : cost_saler) + cost_zdi - discount - avans
@@ -628,6 +606,15 @@ export default {
     ...mapActions({
       LOAD_SALES: "zakaz/LOAD_SALES",
     }),
+
+    changeDateTime(dateType, timeType, newVal) {
+      const dateTimeArr = moment(newVal)
+        .format("YYYY-MM-DD HH:mm:ss")
+        .split(" ");
+
+      this.EditingOrder[dateType] = dateTimeArr[0];
+      this.EditingOrder[timeType] = dateTimeArr[1];
+    },
 
     yaMapInit2() {
       var suggestView1 = new ymaps.SuggestView("suggest1", {
@@ -751,11 +738,13 @@ export default {
     updateOrder() {
       this.loadBtn = true;
       //отправить новый заказ
+      console.log("this. :>> ", this.montDateTime);
+
       const data_zamera = this.EditingOrder.data_zamera
-        ? moment(this.EditingOrder.data_zamera).format("DD/MM/YYYY")
+        ? moment(this.EditingOrder.data_zamera).format("YYYY-MM-DD")
         : this.EditingOrder.data_zamera;
       const date_mont = this.EditingOrder.date_mont
-        ? moment(this.EditingOrder.date_mont).format("DD/MM/YYYY")
+        ? moment(this.EditingOrder.date_mont).format("YYYY-MM-DD")
         : this.EditingOrder.date_mont;
 
       const reqestBody = {
@@ -785,16 +774,17 @@ export default {
   mounted() {
     this.LOAD_SALES();
 
-    this.sales = this.GET_SALES.map((el) => {
-      const data_zamera = el.data_zamera
-        ? moment(el.data_zamera, "YYYY-MM-DD").format("YYYY-MM-DD")
-        : el.data_zamera;
-      const date_mont = el.date_mont
-        ? moment(el.date_mont, "YYYY-MM-DD").format("YYYY-MM-DD")
-        : el.date_mont;
+    this.sales = [...this.GET_SALES];
+    // .map((el) => {
+    //   const data_zamera = el.data_zamera
+    //     ? moment(el.data_zamera, "YYYY-MM-DD").format("YYYY-MM-DD")
+    //     : el.data_zamera;
+    //   const date_mont = el.date_mont
+    //     ? moment(el.date_mont, "YYYY-MM-DD").format("YYYY-MM-DD")
+    //     : el.date_mont;
 
-      return { ...el, data_zamera, date_mont };
-    });
+    //   return { ...el, data_zamera, date_mont };
+    // });
 
     axios
       .get("https://door.webink.site/wp-json/door/v1/get/dopserv")
@@ -822,6 +812,11 @@ export default {
     this.EditingOrder = this.sales.find((item) => {
       return item.id == this.routeId;
     });
+
+    console.log(
+      "this.EditingOrder.date_mont :>> ",
+      this.EditingOrder.date_mont
+    );
 
     const category_saler = this.doorsCategory.find((category) => {
       return category.term_id === this.EditingOrder.category_saler.id;

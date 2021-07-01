@@ -3,8 +3,8 @@
     :headers="headers"
     :items.sync="items"
     :options.sync="options"
-    :sort-by='["time_mont"]'
-    :sort-desc=false
+    :sort-by="['time_mont']"
+    :sort-desc="false"
     single-line
     must-sort
     class="elevation-1 rounded-lg ma-4 px-4"
@@ -75,8 +75,8 @@
       </v-container>
     </template>
     <template #item.adress="{ item }">
-        {{ item.adress }} {{ item.house }} {{ item.flat }}
-      </template>
+      {{ item.adress }} {{ item.house }} {{ item.flat }}
+    </template>
     <template #item.door_size="{ item }">
       {{ item.door_size }} / {{ item.door_direction }}
     </template>
@@ -135,7 +135,7 @@ export default {
     }),
 
     dateFormated() {
-      return this.date ? moment(this.date).format("DD/MM/YYYY") : null;
+      return this.date ? moment(this.date).format("YYYY-MM-DD") : null;
     },
 
     datePickerDisabled() {
@@ -168,7 +168,6 @@ export default {
           return sale.date_mont === this.dateFormated;
         });
       }
-
     },
 
     excelFileName() {
@@ -177,12 +176,12 @@ export default {
         : null;
       return `${this.team.title}${date}.xls`;
     },
-    excelHeader(){
+    excelHeader() {
       const date = this.date
         ? `_${moment(this.date).format("DD.MM.YYYY")}`
         : null;
       return `${this.team.title}/${date}`;
-    }
+    },
   },
 
   methods: {
@@ -201,29 +200,28 @@ export default {
     },
 
     items(newVal) {
-
       this.json_fields = {
-        "Время": "time_mont",
+        Время: "time_mont",
         "Номер заказа": "id",
-        "Адрес": {
+        Адрес: {
           callback: (newVal) => {
-            return newVal.adress + ' ' + newVal.house + ' ' + newVal.flat
+            return newVal.adress + " " + newVal.house + " " + newVal.flat;
           },
         },
         "Номер телефона": "phone",
         "Модель двери": {
           callback: (item) => {
-            if (!item.model_ruk.name){
-                return item.model_saler.name ;
-              }else{
-                return item.model_ruk.name;
-              }
+            if (!item.model_ruk.name) {
+              return item.model_saler.name;
+            } else {
+              return item.model_ruk.name;
+            }
           },
         },
         "Размер двери/Сторона": {
           callback: (item) => {
             return item.door_size + "/" + item.door_direction;
-          }
+          },
         },
         "Размер проема": "proem_size",
         "Примечание:": "prim_rukvod",
@@ -238,13 +236,13 @@ export default {
         "Способ оплаты": "payments_metod",
         Остаток: "total",
       };
-      
+
       let sortData = newVal.sort((a, b) => {
         if (a["time_mont"] < b["time_mont"]) {
-            return -1;
+          return -1;
         }
         if (a["time_mont"] > b["time_mont"]) {
-            return 1;
+          return 1;
         }
         return 0;
       });

@@ -1,6 +1,5 @@
 <template>
   <div>
-
     <!-- <pre>{{sales}}</pre> -->
     <v-dialog v-model="dialogDopServ" width="500px">
       <v-card class="pa-4">
@@ -24,8 +23,9 @@
       single-line
       must-sort
       class="elevation-1 rounded-lg"
-      :footer-props="{'items-per-page-options': [20, 40, 60, -1]}"
-      @click:row="selectOrderRow">
+      :footer-props="{ 'items-per-page-options': [20, 40, 60, -1] }"
+      @click:row="selectOrderRow"
+    >
       <template #top>
         <v-toolbar flat>
           <!-- <v-toolbar-title>Заказы</v-toolbar-title>
@@ -47,47 +47,38 @@
 
           <v-divider class="mx-4" inset vertical></v-divider>
 
+          <!-- date range from -->
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            :return-value.sync="date_start"
+            transition="scale-transition"
+            offset-y
+            min-width="auto"
+          >
+            <template v-slot:activator="{ on, attrs }">
+              <v-text-field
+                v-model="date_start"
+                label="Дата с-по:"
+                prepend-icon="mdi-calendar"
+                style="margin-bottom: -15px"
+                readonly
+                v-bind="attrs"
+                v-on="on"
+              >
+              </v-text-field>
+            </template>
+            <v-date-picker v-model="date_start" no-title scrollable range>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="menu = false"> Отмена </v-btn>
+              <v-btn text color="primary" @click="filterByDate"> OK </v-btn>
+            </v-date-picker>
+          </v-menu>
 
-<!-- date range from -->
-    <v-menu
-        ref="menu"
-        v-model="menu"
-        :close-on-content-click="false"
-        :return-value.sync="date_start"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
-      >
-        <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="date_start"
-              label="Дата с-по:"
-              prepend-icon="mdi-calendar"
-              style="margin-bottom: -15px"
-              readonly
-              v-bind="attrs"
-              v-on="on">
-            </v-text-field>
-        </template>
-        <v-date-picker v-model="date_start" no-title scrollable range>
-            <v-spacer></v-spacer>
-          <v-btn text color="primary" @click="menu = false">
-            Отмена
-          </v-btn>
-          <v-btn text color="primary" @click="filterByDate">
-            OK
-          </v-btn>
-        </v-date-picker>
-      </v-menu>
-
-<!-- date picker range end -->
-
-
-
+          <!-- date picker range end -->
 
           <v-spacer></v-spacer>
-
-
 
           <router-link
             tag="a"
@@ -338,12 +329,7 @@
         </v-edit-dialog>
       </template>
 
-
-
-
-
-
-<template #item.payments_metod="{ item }">
+      <template #item.payments_metod="{ item }">
         <v-edit-dialog
           :return-value.sync="item.payments_metod"
           @save="saveZakazPayment(item)"
@@ -355,8 +341,7 @@
           large
           persistent
         >
-          
-          {{item.payments_metod}}
+          {{ item.payments_metod }}
 
           <template #input>
             <v-select
@@ -369,13 +354,6 @@
           </template>
         </v-edit-dialog>
       </template>
-
-
-
-
-
-
-
 
       <template #item.door_model="{ item }">
         <span v-if="item.model_ruk.name" style="color: red">
@@ -415,7 +393,11 @@
         #item.actions="{ item }"
         v-if="getUser.roles[0] !== 'shop_manager'"
       >
-        <router-link tag="a" :to="'/edit_order/' + item.id" class="bigger-on-mobile">
+        <router-link
+          tag="a"
+          :to="'/edit_order/' + item.id"
+          class="bigger-on-mobile"
+        >
           <v-icon small class="mr-2"> mdi-pencil </v-icon>
         </router-link>
 
@@ -437,26 +419,19 @@
     </div>
     </div> -->
 
+    <v-snackbar
+      :value="userAlert"
+      @input="userAlert = false"
+      v-if="getUser.roles[0] === 'administrator'"
+    >
+      <span v-if="messages">{{ messages.message }}</span>
 
-    
-
-      <v-snackbar :value="userAlert" @input="userAlert = false" v-if="getUser.roles[0] === 'administrator' ">
-       <span v-if="messages">{{messages.message}}</span>
-
-        <template v-slot:action="{ attrs }">
-          <v-btn
-            color="red"
-            text
-            v-bind="attrs"
-            @click="userAlert = false"
-          >
-            Закрыть
-          </v-btn>
-        </template>
-      </v-snackbar>
-
-
-
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="userAlert = false">
+          Закрыть
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -465,12 +440,11 @@ import moment from "moment";
 import { mapActions, mapGetters, mapMutations, mapState } from "vuex";
 
 Pusher.logToConsole = true;
-var pusher = new Pusher('0cecb9eb64fb72e940ee', {
-      cluster: 'us2'
+var pusher = new Pusher("0cecb9eb64fb72e940ee", {
+  cluster: "us2",
 });
 
-var channel = pusher.subscribe('door-update');
-
+var channel = pusher.subscribe("door-update");
 
 export default {
   props: {
@@ -527,7 +501,7 @@ export default {
         { text: "Торговая точка", sortable: true, value: "tochka" },
         { text: "Дополнительные услуги", value: "dopServ" },
         { text: "Остаток платежа", value: "payment_rest" },
-        { text: "Тип оплаты", value: "payments_metod" }
+        { text: "Тип оплаты", value: "payments_metod" },
         // { text: "Сумма премии", value: "sum_premia" },
         // { text: "Премия ВДЗ", value: "vdz_premia" },
       ],
@@ -607,7 +581,6 @@ export default {
         { title: "Выплачено", value: "vyplachen" },
         { title: "Индивидуальный", value: "individual" },
         { title: "Выполнен", value: "completed" },
-        
       ],
       statusesSaler: [
         { title: "Ожидает", value: "pending" },
@@ -687,9 +660,7 @@ export default {
           );
           break;
         case "Передано замерщику":
-          this.items = this.filteredItems.filter(
-            (el) => el.status === "zamer"
-          );
+          this.items = this.filteredItems.filter((el) => el.status === "zamer");
           break;
         case "Выплачено":
           this.items = this.filteredItems.filter(
@@ -698,12 +669,12 @@ export default {
           break;
         case "Монтаж завтра":
           this.items = this.filteredItems.filter(
-            (el) => el.date_mont === moment().add(1, "d").format("DD/MM/YYYY")
+            (el) => el.date_mont === moment().add(1, "d").format("YYYY-MM-DD")
           );
           break;
         case "Монтаж сегодня":
           this.items = this.filteredItems.filter(
-            (el) => el.date_mont === moment().format("DD/MM/YYYY")
+            (el) => el.date_mont === moment().format("YYYY-MM-DD")
           );
           break;
         case "Ожидают монтаж":
@@ -788,7 +759,7 @@ export default {
       });
     },
 
-    saveZakazPayment(item){
+    saveZakazPayment(item) {
       this.EDIT_ZAKAZ({
         ...item,
         payments_metod: this.payments_metod,
@@ -807,14 +778,13 @@ export default {
         });
       }
     },
-    filterByDate(){
-      this.$refs.menu.save(this.date_start)
+    filterByDate() {
+      this.$refs.menu.save(this.date_start);
 
-      this.items = this.filteredItems.filter((item) => item.date <= 
-        this.date_start[1] && 
-        item.date >= this.date_start[0]
-      ) 
-
+      this.items = this.filteredItems.filter(
+        (item) =>
+          item.date <= this.date_start[1] && item.date >= this.date_start[0]
+      );
     },
 
     searchByColumn(headerValue) {
@@ -951,34 +921,31 @@ export default {
     this.itemsOnRole();
     this.fetchSales();
 
-    let vm = this
+    let vm = this;
 
-    let chislo = '2021-04-26 13:25:58'
+    let chislo = "2021-04-26 13:25:58";
 
     //добавление заказа
-    channel.bind('createOrder', function(data) {
-    // app.messages.push(JSON.stringify(data));
+    channel.bind("createOrder", function (data) {
+      // app.messages.push(JSON.stringify(data));
       vm.fetchSales();
     });
 
     //изменение заказа
-    channel.bind('updateOrder', function(data) {
-    // app.messages.push(JSON.stringify(data));
+    channel.bind("updateOrder", function (data) {
+      // app.messages.push(JSON.stringify(data));
       vm.fetchSales();
       // console.log('ASDASDASDASDASDASDASDASD')
     });
 
     //просмотр заказа
-    channel.bind('viewOrder', function(data) {
-
-          if(vm.getUser.id == data.user_id){
-            return
-          }
-            vm.userAlert = true;
-            vm.messages = data;
-          
+    channel.bind("viewOrder", function (data) {
+      if (vm.getUser.id == data.user_id) {
+        return;
+      }
+      vm.userAlert = true;
+      vm.messages = data;
     });
-
   },
 
   filters: {

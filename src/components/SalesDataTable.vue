@@ -682,12 +682,12 @@ export default {
           break;
         case "Монтаж завтра":
           this.items = this.filteredItems.filter(
-            (el) => el.date_mont === moment().add(1, "d").format("DD/MM/YYYY")
+            (el) => el.date_mont === moment().add(1, "d").format("YYYY-MM-DD")
           );
           break;
         case "Монтаж сегодня":
           this.items = this.filteredItems.filter(
-            (el) => el.date_mont === moment().format("DD/MM/YYYY")
+            (el) => el.date_mont === moment().format("YYYY-MM-DD")
           );
           break;
         case "Ожидают монтаж":

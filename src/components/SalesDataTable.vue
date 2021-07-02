@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="pb-4">
     <!-- <pre>{{sales}}</pre> -->
     <v-dialog v-model="dialogDopServ" width="500px">
       <v-card class="pa-4">
@@ -15,17 +15,18 @@
       </v-card>
     </v-dialog>
     <v-data-table
-      disable-pagination
-      :hide-default-footer="true"
       :headers="headers"
       :items="items"
       :loading="loading"
+      height="65vh"
       single-line
       must-sort
       class="elevation-1 rounded-lg"
-      :footer-props="{ 'items-per-page-options': [20, 40, 60, -1] }"
+      :footer-props="{ 'items-per-page': [20, 40, 60, -1] }"
       @click:row="selectOrderRow"
     >
+      <!-- items-per-page="15" -->
+
       <template #top>
         <v-toolbar flat>
           <!-- <v-toolbar-title>Заказы</v-toolbar-title>
@@ -1063,5 +1064,9 @@ table th {
 
 .chipColorBlack {
   color: black;
+}
+
+.v-data-table__wrapper::-webkit-scrollbar {
+  width: 8px;
 }
 </style>

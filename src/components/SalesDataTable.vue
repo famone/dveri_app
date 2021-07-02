@@ -18,17 +18,18 @@
       :headers="headers"
       :items="items"
       :loading="loading"
+      fixed-header
       height="65vh"
       single-line
       must-sort
       class="elevation-1 rounded-lg"
-      :footer-props="{ 'items-per-page': [20, 40, 60, -1] }"
+      :footer-props="{ 'items-per-page-options': [20, 50, 100, -1] }"
       @click:row="selectOrderRow"
     >
       <!-- items-per-page="15" -->
 
       <template #top>
-        <v-toolbar flat>
+        <v-toolbar elevation="0" class="pa-0 ma-0 mb-6">
           <!-- <v-toolbar-title>Заказы</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider> -->
           <v-toolbar-title

@@ -168,18 +168,28 @@
           persistent
         >
           <v-chip v-if="item.data_zamera">
-            <span>{{ item.data_zamera | dateWithoutYear }}</span>
-            <span v-if="item.vremya_zamera">, {{ item.vremya_zamera }}</span>
+            <span>{{ formatDate(item.data_zamera, "DD.MM.YYYY") }}</span>
+            <span v-if="item.vremya_zamera"
+              >,
+              {{
+                formatDate(`${item.data_zamera}T${item.vremya_zamera}`, "HH:mm")
+              }}</span
+            >
           </v-chip>
-          <div v-else class="popupBtn text-center">назначить дату</div>
+          <div v-else class="popupBtn text-center">назначить монтаж</div>
+
           <template #input>
             <v-datetime-picker
               label="Выберите дату замера"
-              v-model="data_zamera"
+              v-model="zamerDateTime"
+              :datetime="zamerDateTime"
+              dateFormat="dd.MM.yyyy"
+              timeFormat="HH:mm:ss"
               clearText="отмена"
               okText="выбрать"
               :timePickerProps="{
                 format: '24hr',
+                'use-seconds': true,
               }"
             >
               <template #dateIcon>
@@ -219,6 +229,7 @@
           <template #input>
             <v-datetime-picker
               label="Выберите дату монтажа"
+              v-model="montDateTime"
               :datetime="montDateTime"
               dateFormat="dd.MM.yyyy"
               timeFormat="HH:mm:ss"
@@ -597,6 +608,7 @@ export default {
       json_data: null,
       json_fields: null,
       montDateTime: null,
+      zamerDateTime: null,
     };
   },
 
@@ -714,8 +726,12 @@ export default {
     },
 
     saveDataZamera(item) {
-      const data_zamera = moment(this.data_zamera).format("YYYY-MM-DD");
-      const vremya_zamera = moment(this.data_zamera).format("HH:mm");
+      const dateTimeArr = moment(this.zamertDateTime)
+        .format("YYYY-MM-DD HH:mm:ss")
+        .split(" ");
+
+      const data_zamera = dateTimeArr[0];
+      const vremya_zamera = dateTimeArr[1];
 
       this.EDIT_ZAKAZ({
         ...item,
@@ -723,16 +739,18 @@ export default {
         vremya_zamera,
       }).then(() => {
         this.data_zamera = null;
+        this.vremya_zamera = null;
         this.fetchSales();
       });
     },
 
     saveDateMontaz(item) {
-      console.log("object :>> ", this.montDateTime);
-      const date_mont = moment(item.date_mont).format("YYYY-MM-DD");
-      // const time_mont = moment(item.time_mont).format("HH:mm:ss");
-      // console.log(item.date_mont);
-      // console.log(item.time_mont);
+      const dateTimeArr = moment(this.montDateTime)
+        .format("YYYY-MM-DD HH:mm:ss")
+        .split(" ");
+
+      const date_mont = dateTimeArr[0];
+      const time_mont = dateTimeArr[1];
 
       this.EDIT_ZAKAZ({
         ...item,
@@ -740,6 +758,7 @@ export default {
         time_mont,
       }).then(() => {
         this.date_mont = null;
+        this.time_mont = null;
         this.fetchSales();
       });
     },

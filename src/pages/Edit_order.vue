@@ -295,40 +295,30 @@
         </div>
 
         <div class="col-lg-3">
-          <v-menu
-            ref="menu"
-            v-model="menu"
-            :close-on-content-click="false"
-            :return-value.sync="EditingOrder.data_zamera"
-            transition="scale-transition"
-            offset-y
-            min-width="290px"
+          <!-- data_zamera -->
+          <!-- vremya_zamera -->
+          <!-- Желаемая дата замера -->
+          <v-datetime-picker
+            label="Желаемая дата замера"
+            :value="zamerDateTime"
+            @input="changeDateTime('data_zamera', 'vremya_zamera', $event)"
+            :datetime="zamerDateTime"
+            dateFormat="dd.MM.yyyy"
+            timeFormat="HH:mm:ss"
+            clearText="отмена"
+            okText="выбрать"
+            :timePickerProps="{
+              format: '24hr',
+              'use-seconds': true,
+            }"
           >
-            <template v-slot:activator="{ on, attrs }">
-              <v-text-field
-                v-model="EditingOrder.data_zamera"
-                label="Желаемая дата замера"
-                prepend-icon="mdi-calendar"
-                readonly
-                v-bind="attrs"
-                v-on="on"
-              ></v-text-field>
+            <template #dateIcon>
+              <v-icon> mdi-calendar </v-icon>
             </template>
-            <v-date-picker
-              v-model="EditingOrder.data_zamera"
-              no-title
-              scrollable
-            >
-              <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="menu = false">Отмена</v-btn>
-              <v-btn
-                text
-                color="primary"
-                @click="$refs.menu.save(EditingOrder.data_zamera)"
-                >Ок</v-btn
-              >
-            </v-date-picker>
-          </v-menu>
+            <template #timeIcon>
+              <v-icon> mdi-clock </v-icon>
+            </template>
+          </v-datetime-picker>
         </div>
         <div class="col-lg-3">
           <v-select
@@ -562,6 +552,13 @@ export default {
         this.EditingOrder.time_mont
       }`;
     },
+    
+    zamerDateTime() {
+      
+      return `${moment(this.EditingOrder.data_zamera).format("DD.MM.YYYY")} ${
+        this.EditingOrder.vremya_zamera
+      }`;
+    },
 
     getTotalDop() {
       if (this.EditingOrder.dopServ) {
@@ -738,7 +735,6 @@ export default {
     updateOrder() {
       this.loadBtn = true;
       //отправить новый заказ
-      console.log("this. :>> ", this.montDateTime);
 
       const data_zamera = this.EditingOrder.data_zamera
         ? moment(this.EditingOrder.data_zamera).format("YYYY-MM-DD")

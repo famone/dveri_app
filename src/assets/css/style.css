@@ -76,6 +76,10 @@ h3{
 	background-color: #d2d0d0;
 }
 
+.v-data-table__wrapper{
+	min-height: 75vh;
+}
+
 /*ADAPTIIIIIIIIIV*/
 
 

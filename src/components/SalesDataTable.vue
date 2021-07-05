@@ -178,7 +178,7 @@
               }}</span
             >
           </v-chip>
-          <div v-else class="popupBtn text-center">назначить монтаж</div>
+          <div v-else class="popupBtn text-center">назначить замер</div>
 
           <template #input>
             <v-datetime-picker
